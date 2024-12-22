@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@100..900&display=swap');
+
+.newsletter {
+    background-color: #f7f7f7;
+    font-family: "Raleway";
+    font-size: 16px;
+    color: #555;
+}
+
+.newsletter * a {
+    color: black;
+    font-weight: bold;
+}
+
+.newsletter * a:hover {
+    text-decoration: underline;
+}
+
+.newsletter-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: white;
+}
+
+.section {
+    padding: 10px;
+}
+
+.blue {
+    background: #80CCFC;
+}
+
+.yellow {
+    background-color: #DBBC25;
+}
+
+.inner {
+    padding: 5px 0;
+}
+
+.editable {
+    padding: 5px;
+    margin: 5px;
+    border: 2px dashed #ddd;
+}

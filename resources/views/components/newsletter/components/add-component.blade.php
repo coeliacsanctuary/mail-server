@@ -1,0 +1,41 @@
+@props(['blockId', 'index'])
+
+<div>
+    <div class="flex items-center justify-center py-2"
+         x-data="addComponent('{{ $blockId }}', {{ $index }})"
+         x-on:add-component.window="addComponent"
+         wire:key="{{ $blockId }}-{{ $index }}-add-inner"
+    >
+        <div class="w-36 h-24 rounded-lg bg-gray-200 p-2 flex flex-col items-center justify-center transition cursor-pointer"
+             x-on:click="$dispatch('open-modal', { id: 'add-component' });window.activeBlock = '{{ $blockId }}';window.activeIndex = {{ $index }};"
+             wire:key="{{ $blockId }}-{{ $index }}-add-content"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                 stroke="currentColor" class="w-6 h-6"
+            >
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z"
+                />
+            </svg>
+
+            <p class="text-sm text-center m-0">Add Component</p>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+    <script type="text/javascript">
+        const addComponent = (blockId, index) => ({
+            addComponent(event) {
+                if(window.activeBlock !== blockId || window.activeIndex !== index) {
+                    return;
+                }
+
+                const component = event.detail[0];
+
+                this.$dispatch('add-component-remote', [blockId, component, index]);
+                this.$dispatch('close-modal', { id: 'add-component' })
+            }
+        })
+    </script>
+@endpush

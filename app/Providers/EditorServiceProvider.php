@@ -26,6 +26,6 @@ class EditorServiceProvider extends ServiceProvider
             return;
         }
 
-        Mailcoach::editorStyle(Editor::class, Vite::asset('/resources/css/app.css'));
+        Mailcoach::editorStyle(Editor::class, Vite::asset('resources/css/app.css'));
     }
 }

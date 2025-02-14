@@ -9,7 +9,10 @@
                 <mj-section>
                     @foreach($block['properties'] as $index => $properties)
                         <mj-column>
-                            @if(\Illuminate\Support\Facades\View::exists("components.newsletter.rendered.components.{$properties['component']['name']}"))
+                            @php
+                                $component = data_get($properties, 'component.name')
+                            @endphp
+                            @if($component && \Illuminate\Support\Facades\View::exists("components.newsletter.rendered.components.{$component}"))
                                 <x-dynamic-component
                                     component="newsletter.rendered.components.{{ $properties['component']['name'] }}"
                                     :properties="$properties['component']['properties']"

@@ -23,4 +23,27 @@
         <mj-class name="social" padding="0px"></mj-class>
         <mj-class name="no-padding" padding="0px"></mj-class>
     </mj-attributes>
+    <mj-style>
+        .double-1, .triple-2 {
+            padding-top: 5px!important;
+        }
+        .triple-1 {
+            padding-top: 5px!important;
+        }
+
+        @media only screen and (min-width:480px) {
+            .double-0, .triple-0 {
+                padding-right: 5px!important;
+            }
+            .double-1, .triple-2 {
+                padding-left: 5px!important;
+                padding-top: 0!important;
+            }
+            .triple-1 {
+                padding-right: 5px!important;
+                padding-left: 5px!important;
+                padding-top: 0!important;
+            }
+        }
+    </mj-style>
 </mj-head>

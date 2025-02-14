@@ -1,17 +1,21 @@
 @props(['properties', 'block', 'position'])
 
-<mj-column
-    @if(($block === 'double' || $block === 'triple') && $position === 0)
-        padding-right="10px"
-    @endif
+@php
+    $class = 'full';
 
-    @if($block === 'triple' && $position === 1)
-        padding-right="10px"
-    @endif
->
+    if($block === 'double') {
+        $class = "double-{$position}";
+    }
+
+    if($block === 'triple') {
+        $class = "triple-{$position}";
+    }
+@endphp
+
+<mj-column css-class="{{ $class }}">
     @if($block === 'single')
-        <mj-text mj-class="inner">
-            <h2>
+        <mj-text mj-class="inner blue-links">
+            <h2 class="blue-links">
                 <a href="{{ $properties['link'] ?? '' }}">{{ $properties['title'] }}</a>
             </h2>
         </mj-text>

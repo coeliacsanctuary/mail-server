@@ -13,5 +13,6 @@ return [
 
     'coeliac' => [
         'url' => env('COELIAC_SANCTUARY_URL'),
+        'key' => env('COELIAC_KEY'),
     ],
 ];

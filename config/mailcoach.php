@@ -9,6 +9,7 @@ use Spatie\Mailcoach\Domain\Automation\Support\Actions\AutomationAction;
 use Spatie\Mailcoach\Domain\Automation\Support\Triggers\AutomationTrigger;
 use Spatie\Mailcoach\Domain\Campaign\Models\Campaign;
 use Spatie\Mailcoach\Domain\ConditionBuilder\Collections\ConditionCollection;
+use Spatie\Mailcoach\Livewire\Campaigns\CampaignDeliveryComponent;
 use Spatie\Mailcoach\Mailcoach;
 
 return [
@@ -358,6 +359,7 @@ return [
      * be a Livewire component and extend \Livewire\Component
      */
     'livewire' => [
+        CampaignDeliveryComponent::class => \App\Livewire\Overrides\CampaignDeliveryComponent::class,
         // \Spatie\Mailcoach\Livewire\Campaigns\CreateCampaignComponent::class => \App\Livewire\CustomCreateCampaignComponent::class
     ],
 

@@ -10,13 +10,11 @@ use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 use Spatie\Mailcoach\Domain\Settings\Models\MailcoachUser;
 use Spatie\Mailcoach\Domain\Shared\Traits\UsesMailcoachModels;
-use Spatie\WelcomeNotification\ReceivesWelcomeNotification;
 
 class User extends \Illuminate\Foundation\Auth\User implements MailcoachUser
 {
     use HasApiTokens;
     use Notifiable;
-    use ReceivesWelcomeNotification;
     use UsesMailcoachModels;
 
     protected $fillable = [

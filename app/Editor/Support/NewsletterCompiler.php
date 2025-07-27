@@ -26,6 +26,9 @@ class NewsletterCompiler
             'blocks' => $this->getBlocks(),
         ])->render();
 
-        return Mjml::new()->minify()->toHtml($mjml);
+        return Mjml::new()
+            ->sidecar()
+            ->minify()
+            ->toHtml($mjml);
     }
 }

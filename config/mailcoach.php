@@ -314,7 +314,7 @@ return [
         ],
         'api' => [
             'api',
-            'auth:sanctum',
+//            'auth:sanctum',
         ],
     ],
 

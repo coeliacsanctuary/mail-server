@@ -7,7 +7,7 @@
     </mj-section>
     <mj-section mj-class="blue">
         <mj-column>
-            <mj-image src="{{ config('services.coeliac.url') }}/assets/email/logo-new.jpg" width="60%"></mj-image>
+            <mj-image src="{{ config('services.coeliac.url') }}/images/email/logo-new.jpg" width="60%"></mj-image>
         </mj-column>
         <mj-column vertical-align="bottom">
         </mj-column>

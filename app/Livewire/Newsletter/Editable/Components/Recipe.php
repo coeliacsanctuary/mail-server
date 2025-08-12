@@ -60,7 +60,7 @@ class Recipe extends NewsletterComponent
     {
         $this->results = Http::coeliac()
             ->get('api/recipes', ['search' => $this->search])
-            ->collect('data')
+            ->collect('data.data')
             ->map(fn ($recipe) => new ApiResult(
                 id: $recipe['id'],
                 title: $recipe['title'],

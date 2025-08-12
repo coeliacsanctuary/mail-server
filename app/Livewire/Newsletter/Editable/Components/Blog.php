@@ -60,7 +60,7 @@ class Blog extends NewsletterComponent
     {
         $this->results = Http::coeliac()
             ->get('api/blogs', ['search' => $this->search])
-            ->collect('data')
+            ->collect('data.data')
             ->map(fn ($blog) => new ApiResult(
                 id: $blog['id'],
                 title: $blog['title'],

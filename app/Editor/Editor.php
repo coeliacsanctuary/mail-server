@@ -26,6 +26,8 @@ class Editor extends EditorComponent
 
         $this->model->setHtml($this->fullHtml);
         $this->model->save();
+
+        $this->dispatch('editorUpdated', $this->model->uuid, $this->previewHtml());
     }
 
     public function renderFullHtml(): void
@@ -144,6 +146,7 @@ class Editor extends EditorComponent
         $data['blocks'][$indexToUpdate]['properties'][$index]['component']['properties'] = $properties;
 
         $this->model->update(['structured_html' => json_encode($data)]);
+        $this->dispatch('editorUpdated', $this->model->uuid, $this->previewHtml());
     }
 
     protected function getBlocks(): mixed
@@ -181,4 +184,6 @@ class Editor extends EditorComponent
         $rtr += array_slice($array, ($index + 1), count($array), true);
         return($rtr);
     }
+
+
 }

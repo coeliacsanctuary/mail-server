@@ -43,3 +43,7 @@
     margin: 5px;
     border: 2px dashed #ddd;
 }
+
+.group:hover .group-hover\:opacity-100 {
+    opacity: 1;
+}

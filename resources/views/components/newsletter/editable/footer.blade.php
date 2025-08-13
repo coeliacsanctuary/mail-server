@@ -1,4 +1,3 @@
-<div class="yellow" style="padding: 5px"></div>
 <div class="blue" style="padding: 10px; text-align: center">
     <p style="">This email was sent to ::subscriber.email:: because you are signed up to the Coeliac Sanctuary mailing list.</p>
     <p>&nbsp;</p>

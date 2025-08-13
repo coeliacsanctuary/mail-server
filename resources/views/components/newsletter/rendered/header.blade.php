@@ -7,14 +7,12 @@
     </mj-section>
     <mj-section mj-class="blue">
         <mj-column>
-            <mj-image src="{{ config('services.coeliac.url') }}/images/email/logo-new.jpg" width="60%"></mj-image>
-        </mj-column>
-        <mj-column vertical-align="bottom">
+            <mj-image src="{{ config('services.coeliac.url') }}/images/email/logo-new.jpg" width="300"></mj-image>
         </mj-column>
     </mj-section>
-    <mj-section mj-class="yellow" padding="4px 10px">
+    <mj-section mj-class="blue" padding="0" vertical-align="middle">
         <mj-column>
-            <mj-text align="right">{{ date('jS F Y')  }}</mj-text>
+            <mj-text>&nbsp;</mj-text>
         </mj-column>
     </mj-section>
 </mj-wrapper>

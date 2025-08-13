@@ -20,7 +20,7 @@ class Text extends NewsletterComponent
         $this->content = '';
 
         if (isset($this->properties['content'])) {
-            $this->content = $this->properties['content'][0] ?? $this->properties['content'];
+            $this->content = is_array($this->properties['content']) ? $this->properties['content'][0] : $this->properties['content'];
         }
     }
 

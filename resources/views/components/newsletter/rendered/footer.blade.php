@@ -1,5 +1,4 @@
 <mj-wrapper>
-    <mj-section mj-class="yellow" padding="5px"></mj-section>
     <mj-section mj-class="blue" padding="10px">
         <mj-column>
             <mj-text align="center">This email was sent to ::subscriber.email:: because you are signed up to the Coeliac Sanctuary mailing list.</mj-text>

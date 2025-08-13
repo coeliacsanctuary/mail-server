@@ -1,5 +1,20 @@
 <mj-head>
     <mj-font name="Raleway" href="https://fonts.googleapis.com/css?family=Raleway"></mj-font>
+
+    <mj-style>
+        a {color:black;font-weight:600;text-decoration:none}
+        a:hover {text-decoration:underline;}
+        h1 {font-size:30px;text-align:center;margin:10px 0; padding:0;color:#000;font-weight:600}
+        h2 {font-size:20px;font-weight: 600;}
+        h2,h3,h4 {margin:0;padding:0;}
+        h4 {font-size:18px;font-weight:600;}
+        strong {font-weight: 600!important;}
+
+        @media only screen and (max-width: 480px) { *[class~=hide_on_mobile] { display: none !important;} }
+        *[class~=force-half-width] { width:50% !important;}
+        *[class~=red-text] { color:#E53E3E !important;}
+    </mj-style>
+
     <mj-style>.wrapper a { color:black; font-weight:bold; text-decoration:none; }</mj-style>
     <mj-style>.wrapper * a { color:black!important; font-weight:bold; text-decoration:none; }</mj-style>
     <mj-style>.wrapper a:hover { text-decoration:underline; }</mj-style>
@@ -24,14 +39,16 @@
         <mj-class name="no-padding" padding="0px"></mj-class>
     </mj-attributes>
     <mj-style>
-        .double-1, .triple-2 {
-            padding-top: 5px!important;
-        }
-        .triple-1 {
-            padding-top: 5px!important;
+        @media screen and (max-width:479px) {
+            .double-1, .triple-2 {
+                padding-top: 5px!important;
+            }
+            .triple-1 {
+                padding-top: 5px!important;
+            }
         }
 
-        @media only screen and (min-width:480px) {
+        @media screen and (min-width:480px) {
             .double-0, .triple-0 {
                 padding-right: 5px!important;
             }

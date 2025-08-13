@@ -2,7 +2,18 @@
 
 <div>
     <div class="flex items-center justify-center py-2"
-         x-data="addComponent('{{ $blockId }}', {{ $index }})"
+         x-data="{
+            addComponent() {
+                if(window.activeBlock !== '{{ $blockId }}' || window.activeIndex !== {{ $index }}) {
+                    return;
+                }
+
+                const component = event.detail[0];
+
+                this.$dispatch('add-component-remote', ['{{ $blockId }}', component, {{ $index }}]);
+                this.$dispatch('close-modal', { id: 'add-component' })
+            }
+         }"
          x-on:add-component.window="addComponent"
          wire:key="{{ $blockId }}-{{ $index }}-add-inner"
     >
@@ -27,13 +38,13 @@
     <script type="text/javascript">
         const addComponent = (blockId, index) => ({
             addComponent(event) {
-                if(window.activeBlock !== blockId || window.activeIndex !== index) {
+                if(window.activeBlock !== "{{ $blockId }}" || window.activeIndex !== {{ $index }}) {
                     return;
                 }
 
                 const component = event.detail[0];
 
-                this.$dispatch('add-component-remote', [blockId, component, index]);
+                this.$dispatch('add-component-remote', ["{{ $blockId }}", component, {{ $index }}]);
                 this.$dispatch('close-modal', { id: 'add-component' })
             }
         })

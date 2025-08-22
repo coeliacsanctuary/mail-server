@@ -1,5 +1,5 @@
 <div>
-    <div class="text-xs uppercase font-semibold mb-2">Image</div>
+    <div class="text-xs uppercase font-semibold mb-2">Image with button</div>
 
     @if($image)
         <div class="w-full p-2">

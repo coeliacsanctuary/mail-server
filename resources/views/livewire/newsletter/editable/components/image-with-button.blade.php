@@ -15,7 +15,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z"/>
                 </svg>
 
-                <input type="text" wire:model.blur="label" class="flex-1" placeholder="Label"/>
+                <input type="text" wire:model.blur="label" class="flex-1" placeholder="Label (Leave blank to hide button)"/>
             </div>
 
             <div class="mt-2 text-base w-full flex items-center space-x-2">

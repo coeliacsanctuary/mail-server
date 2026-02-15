@@ -359,7 +359,7 @@ return [
      * be a Livewire component and extend \Livewire\Component
      */
     'livewire' => [
-        CampaignDeliveryComponent::class => \App\Livewire\Overrides\CampaignDeliveryComponent::class,
+        CampaignDeliveryComponent::class => App\Livewire\Overrides\CampaignDeliveryComponent::class,
         // \Spatie\Mailcoach\Livewire\Campaigns\CreateCampaignComponent::class => \App\Livewire\CustomCreateCampaignComponent::class
     ],
 

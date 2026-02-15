@@ -31,5 +31,7 @@ class Button extends NewsletterComponent
         ];
 
         $this->dispatch('component-updated', $this->blockId, $properties, $this->index);
+
+        $this->skipRender();
     }
 }

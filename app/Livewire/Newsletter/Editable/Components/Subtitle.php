@@ -30,12 +30,11 @@ class Subtitle extends NewsletterComponent
     {
         $properties = [
             'content' => $this->subtitle,
+            'link' => $this->link,
         ];
 
-        if ($this->link) {
-            $properties['link'] = $this->link;
-        }
-
         $this->dispatch('component-updated', $this->blockId, $properties, $this->index);
+
+        $this->skipRender();
     }
 }

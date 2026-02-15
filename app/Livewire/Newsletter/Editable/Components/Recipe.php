@@ -54,6 +54,10 @@ class Recipe extends NewsletterComponent
         ];
 
         $this->dispatch('component-updated', $this->blockId, $this->properties, $this->index);
+
+        if ($property !== null) {
+            $this->skipRender();
+        }
     }
 
     protected function handleSearch(): void
@@ -81,7 +85,7 @@ class Recipe extends NewsletterComponent
         return new ApiResult(...$response);
     }
 
-    public function selectRecipe($id): void
+    public function selectRecipe(int $id): void
     {
         $this->recipeId = $id;
         $this->recipe = $this->getRecipe($id);

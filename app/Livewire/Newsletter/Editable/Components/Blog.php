@@ -54,6 +54,10 @@ class Blog extends NewsletterComponent
         ];
 
         $this->dispatch('component-updated', $this->blockId, $this->properties, $this->index);
+
+        if ($property !== null) {
+            $this->skipRender();
+        }
     }
 
     protected function handleSearch(): void
@@ -81,7 +85,7 @@ class Blog extends NewsletterComponent
         return new ApiResult(...$response);
     }
 
-    public function selectBlog($id): void
+    public function selectBlog(int $id): void
     {
         $this->blogId = $id;
         $this->blog = $this->getBlog($id);

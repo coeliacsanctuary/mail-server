@@ -17,6 +17,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+*.DS_Store
 
 build
 !resources/css/vendor
@@ -28,3 +29,9 @@ coverage
 node_modules
 /mix-manifest.json
 dump.rdb
+
+.mcp.json
+boost.json
+.claude
+CLAUDE.md
+postgres.load

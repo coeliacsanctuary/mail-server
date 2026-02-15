@@ -6,9 +6,10 @@ namespace App\Http\Controllers\Auth;
 
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
+use Spatie\WelcomeNotification\WelcomeController as BaseWelcomeController;
 use Symfony\Component\HttpFoundation\Response;
 
-class WelcomeController
+class WelcomeController extends BaseWelcomeController
 {
     public function showWelcomeForm(Request $request, User $user)
     {

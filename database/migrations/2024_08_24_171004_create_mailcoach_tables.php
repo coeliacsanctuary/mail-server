@@ -554,10 +554,15 @@ return new class () extends Migration {
             $table->uuid('uuid')->unique();
             $table->string('label')->nullable();
             $table->string('name');
+            $table->string('subject')->nullable();
+            ;
             $table->text('from')->nullable();
             $table->json('cc')->nullable();
             $table->json('to')->nullable();
             $table->json('bcc')->nullable();
+            $table->unsignedBigInteger('template_id')->nullable();
+            $table->longText('structured_html')->nullable();
+            $table->longText('body')->nullable();
             $table->string('type'); // html, blade, markdown
             $table->json('replacers')->nullable();
             $table->boolean('store_mail')->default(false);

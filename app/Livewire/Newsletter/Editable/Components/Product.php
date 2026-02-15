@@ -56,6 +56,10 @@ class Product extends NewsletterComponent
         ];
 
         $this->dispatch('component-updated', $this->blockId, $this->properties, $this->index);
+
+        if ($property !== null) {
+            $this->skipRender();
+        }
     }
 
     protected function handleSearch(): void
@@ -90,7 +94,7 @@ class Product extends NewsletterComponent
         return new ApiResult(...$params);
     }
 
-    public function selectProduct($id): void
+    public function selectProduct(int $id): void
     {
         $this->productId = $id;
         $this->product = $this->getProduct($id);

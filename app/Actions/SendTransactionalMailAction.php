@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions;
 
 use Illuminate\Support\Facades\Http;
 use Spatie\Mailcoach\Http\Api\Requests\SendTransactionalMailRequest;
-use Spatie\Mjml\Mjml;
 
 class SendTransactionalMailAction extends \Spatie\Mailcoach\Domain\Shared\Actions\SendTransactionalMailAction
 {
@@ -12,7 +13,7 @@ class SendTransactionalMailAction extends \Spatie\Mailcoach\Domain\Shared\Action
     {
         $id = $request->html;
 
-        $message = Http::coeliac()->get("/mailcoach-message/{$id}?key=".config('services.coeliac.key'));
+        $message = Http::coeliac()->get("/mailcoach-message/{$id}?key=" . config('services.coeliac.key'));
 
         $request->html = $message->getBody()->getContents();
 

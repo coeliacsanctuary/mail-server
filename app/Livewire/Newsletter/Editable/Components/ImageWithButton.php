@@ -47,5 +47,9 @@ class ImageWithButton extends NewsletterComponent
         ];
 
         $this->dispatch('component-updated', $this->blockId, $properties, $this->index);
+
+        if ($property !== 'image') {
+            $this->skipRender();
+        }
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\Overrides;
 
 use Exception;
@@ -7,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 
 class CampaignDeliveryComponent extends \Spatie\Mailcoach\Livewire\Campaigns\CampaignDeliveryComponent
 {
-    public function schedule()
+    public function schedule(): void
     {
         parent::schedule();
 

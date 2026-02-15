@@ -102,7 +102,7 @@ class AccountComponent extends Component implements HasForms, HasActions
             ->action(function (array $arguments): void {
                 $token = Auth::user()->personalAccessTokens->find($arguments['token']);
 
-                abort_unless($token !== null, 404);
+                abort_unless($token, 404);
 
                 $token->delete();
 

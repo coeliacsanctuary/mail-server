@@ -35,11 +35,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        });
+        RateLimiter::for('api', fn (Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
 
-        $this->app->bind(SendTransactionalMailAction::class, fn() => new \App\Actions\SendTransactionalMailAction());
+        $this->app->bind(SendTransactionalMailAction::class, fn () => new \App\Actions\SendTransactionalMailAction());
 
         Route::mailcoach('/');
     }

@@ -31,5 +31,7 @@ class Text extends NewsletterComponent
         ];
 
         $this->dispatch('component-updated', $this->blockId, $properties, $this->index);
+
+        $this->skipRender();
     }
 }

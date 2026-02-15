@@ -15,24 +15,25 @@
     "require": {
         "php": "^8.2",
         "guzzlehttp/guzzle": "^7.9.2",
-        "laravel/framework": "^11.44.1",
+        "laravel/framework": "^12.0",
         "laravel/horizon": "^5.31.0",
         "laravel/sanctum": "^4.0.8",
         "laravel/tinker": "^2.10.1",
         "laravel/ui": ">=4.6.1",
         "league/flysystem-aws-s3-v3": "^3.29",
-        "spatie/laravel-mailcoach": "^8.19.0",
+        "spatie/laravel-mailcoach": "^9.0",
         "spatie/mjml-sidecar": "^1.1",
-        "symfony/process": "7.0.7"
+        "symfony/process": "^7.0.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24.1",
         "larastan/larastan": "^3.1.0",
+        "laravel/boost": "^2.0",
         "laravel/pint": "^1.21",
         "laravel/sail": "^1.41.0",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.5",
-        "phpunit/phpunit": "^10.5.45",
+        "phpunit/phpunit": "^11.0",
         "spatie/laravel-ignition": "^2.9.1"
     },
     "autoload": {

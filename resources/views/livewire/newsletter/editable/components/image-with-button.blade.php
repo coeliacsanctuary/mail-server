@@ -15,7 +15,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z"/>
                 </svg>
 
-                <input type="text" wire:model.blur="label" class="flex-1" placeholder="Label (Leave blank to hide button)"/>
+                <input type="text" wire:model.live.blur="label" class="flex-1" placeholder="Label (Leave blank to hide button)"/>
             </div>
 
             <div class="mt-2 text-base w-full flex items-center space-x-2">
@@ -27,10 +27,10 @@
                     />
                 </svg>
 
-                <input type="text" wire:model.blur="link" class="flex-1" placeholder="Link"/>
+                <input type="text" wire:model.live.blur="link" class="flex-1" placeholder="Link"/>
             </div>
         </div>
     @endif
 
-    <input type="file" wire:model.blur="image" class="text-2xl w-full" accept="image/*"/>
+    <input type="file" wire:model.live.blur="image" class="text-2xl w-full" accept="image/*"/>
 </div>

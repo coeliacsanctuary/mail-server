@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Mailcoach\Domain\Shared\Actions\SendTransactionalMailAction;
+use Spatie\Mailcoach\Domain\Shared\Commands\WorkCommand as MailcoachWorkCommand;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,6 +29,8 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->register(EditorServiceProvider::class);
+
+        $this->app->bind(MailcoachWorkCommand::class, \App\Console\Commands\MailcoachWorkCommand::class);
     }
 
     /**

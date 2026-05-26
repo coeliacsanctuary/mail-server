@@ -15,11 +15,11 @@
                 />
             </svg>
 
-            <input type="text" wire:model.blur="link" class="flex-1"
+            <input type="text" wire:model.live.blur="link" class="flex-1"
                    placeholder="Link (Leave blank for no link)"
             />
         </div>
     @endif
 
-    <input type="file" wire:model.blur="image" class="text-2xl w-full" accept="image/*"/>
+    <input type="file" wire:model.live.blur="image" class="text-2xl w-full" accept="image/*"/>
 </div>

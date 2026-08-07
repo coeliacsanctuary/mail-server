@@ -20,6 +20,12 @@ class Editor extends EditorComponent
         ]);
     }
 
+    /**
+     * The #[On] attribute must be re-declared here. Overriding a parent method
+     * drops any Livewire attribute on the parent's declaration, which silently
+     * unregisters the listener — Mailcoach's own Unlayer editor does the same.
+     */
+    #[On('saveContentQuietly')]
     public function saveQuietly(): void
     {
         $this->renderFullHtml();
@@ -28,6 +34,7 @@ class Editor extends EditorComponent
         $this->model->save();
 
         $this->dispatch('editorUpdated', $this->model->uuid, $this->previewHtml());
+        $this->dispatch('editorSavedQuietly', uuid: $this->model->uuid);
     }
 
     public function renderFullHtml(): void

@@ -9,11 +9,13 @@
 @endphp
 
 {{--
-    wire:sort:item is evaluated as a JavaScript expression, so the id has to go
-    through @js() — a bare uuid would be a syntax error and the drag would
-    report an undefined item.
+    wire:sort:item is used VERBATIM as a string, not evaluated as JavaScript.
+    supportWireSort binds it through Alpine.bind() with a function value, so
+    Alpine takes generateEvaluatorFromFunction and simply returns the attribute
+    content. Wrapping it in @js() makes the surrounding quotes part of the id,
+    and the drop then fails with "No block ['<uuid>']".
 --}}
-<div wire:key="{{ $block['id'] }}-outer" wire:sort:item="@js($block['id'])">
+<div wire:key="{{ $block['id'] }}-outer" wire:sort:item="{{ $block['id'] }}">
     <div class="group relative" >
         <div wire:key="{{ $block['id'] }}-inner" class="flex w-full">
             @foreach($block['properties'] as $index => $properties)

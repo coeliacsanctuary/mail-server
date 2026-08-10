@@ -86,6 +86,38 @@ class ReorderBlockTest extends TestCase
         ];
     }
 
+    /**
+     * Every other test here uses the builder's tidy "block-N" ids. Real blocks
+     * get a uuid from Str::uuid(), and the drag-and-drop bug that shipped was
+     * about how that id survives the trip through a Blade attribute — so
+     * exercise the real shape end to end.
+     */
+    public function test_it_reorders_blocks_created_through_the_editor(): void
+    {
+        $contentItem = NewsletterBuilder::make()->create();
+
+        $component = Livewire::test(Editor::class, ['model' => $contentItem]);
+        $component->call('addBlock', 'single');
+        $component->call('addBlock', 'single');
+
+        [$first, $second] = $this->blockIds($contentItem);
+
+        $component->call('reorderBlock', $second, 0);
+
+        $this->assertSame([$second, $first], $this->blockIds($contentItem));
+    }
+
+    /** The exact failure that shipped: a quoted id must not be treated as valid. */
+    public function test_a_quoted_id_is_not_silently_accepted(): void
+    {
+        $contentItem = $this->threeBlocks();
+
+        $this->expectException(RuntimeException::class);
+
+        Livewire::test(Editor::class, ['model' => $contentItem])
+            ->call('reorderBlock', "'block-1'", 0);
+    }
+
     public function test_it_throws_when_the_block_does_not_exist(): void
     {
         $contentItem = $this->threeBlocks();
@@ -168,11 +200,16 @@ class ReorderBlockTest extends TestCase
         $this->assertStringContainsString('wire:sort.ghost="reorderBlock"', $html);
         $this->assertStringContainsString('wire:sort:handle', $html);
 
-        // One sortable item per block, each carrying its id as a JS string.
+        // One sortable item per block, each carrying its BARE id.
+        //
+        // The attribute is used verbatim as a string, never evaluated as
+        // JavaScript, so it must not be quoted — wrapping it in @js() made the
+        // quotes part of the id and every drop failed with "No block ['<uuid>']".
         $this->assertSame(3, mb_substr_count($html, 'wire:sort:item='));
         foreach (['block-1', 'block-2', 'block-3'] as $id) {
-            $this->assertStringContainsString("wire:sort:item=\"'{$id}'\"", $html);
+            $this->assertStringContainsString("wire:sort:item=\"{$id}\"", $html);
         }
+        $this->assertStringNotContainsString('wire:sort:item="\'', $html);
 
         // Whether "Add Block" sits OUTSIDE the sort container is a structural
         // property that a flat string can't prove — it's on the browser

@@ -82,6 +82,36 @@ final class Block
         $component->properties = $properties;
     }
 
+    /**
+     * Empty a column, which puts the "Add Component" placeholder back and so
+     * doubles as the way to swap one component for another.
+     */
+    public function removeComponent(int $index): void
+    {
+        if ( ! array_key_exists($index, $this->columns)) {
+            return;
+        }
+
+        $this->columns[$index] = null;
+    }
+
+    /**
+     * A detached copy with a new id. The clone must be deep - columns hold
+     * mutable BlockComponent objects, and a shallow copy would leave two
+     * blocks sharing one component.
+     */
+    public function copy(?string $id = null): self
+    {
+        return new self(
+            $id ?? (string) Str::uuid(),
+            $this->layout,
+            array_map(
+                fn (?BlockComponent $component) => $component?->copy(),
+                $this->columns,
+            ),
+        );
+    }
+
     private static function columnCountFor(string $layout): int
     {
         return match ($layout) {

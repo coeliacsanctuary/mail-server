@@ -63,6 +63,25 @@ class Editor extends EditorComponent
         $this->persist($blocks);
     }
 
+    /** Drag-and-drop reordering. $position is the block's index after the drop. */
+    public function reorderBlock(string $blockId, int $position): void
+    {
+        $blocks = $this->blocks();
+
+        $blocks->moveTo($blockId, $position);
+
+        $this->persist($blocks);
+    }
+
+    public function duplicateBlock(string $blockId): void
+    {
+        $blocks = $this->blocks();
+
+        $blocks->duplicate($blockId);
+
+        $this->persist($blocks);
+    }
+
     public function deleteBlock(string $blockId): void
     {
         $blocks = $this->blocks();
@@ -78,6 +97,16 @@ class Editor extends EditorComponent
         $blocks = $this->blocks();
 
         $blocks->find($blockId)->putComponent($index, new BlockComponent($component));
+
+        $this->persist($blocks);
+    }
+
+    /** Empties a column, which restores the "Add Component" placeholder. */
+    public function removeComponent(string $blockId, int $index): void
+    {
+        $blocks = $this->blocks();
+
+        $blocks->find($blockId)->removeComponent($index);
 
         $this->persist($blocks);
     }

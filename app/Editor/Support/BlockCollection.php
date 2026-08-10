@@ -77,13 +77,38 @@ final class BlockCollection
     public function move(string $id, string $direction): void
     {
         $index = $this->indexOf($id);
-        $target = $direction === 'up' ? $index - 1 : $index + 1;
 
-        if ($target < 0 || $target >= count($this->blocks)) {
+        $this->moveTo($id, $direction === 'up' ? $index - 1 : $index + 1);
+    }
+
+    /**
+     * Move a block to an absolute position. $position is the index in the
+     * RESULTING list, which is what the drag-and-drop handler reports.
+     *
+     * An out-of-range position is a no-op rather than a clamp, matching
+     * move() and Block::putComponent(). The negative guard is load-bearing:
+     * array_splice($a, -1, 0, [$x]) inserts before the last element rather
+     * than erroring, which would be a silent wrong answer.
+     */
+    public function moveTo(string $id, int $position): void
+    {
+        $index = $this->indexOf($id);
+
+        if ($position < 0 || $position >= count($this->blocks)) {
             return;
         }
 
-        [$this->blocks[$index], $this->blocks[$target]] = [$this->blocks[$target], $this->blocks[$index]];
+        [$block] = array_splice($this->blocks, $index, 1);
+
+        array_splice($this->blocks, $position, 0, [$block]);
+    }
+
+    /** Insert a detached copy of a block directly after the original. */
+    public function duplicate(string $id): void
+    {
+        $index = $this->indexOf($id);
+
+        array_splice($this->blocks, $index + 1, 0, [$this->blocks[$index]->copy()]);
     }
 
     public function remove(string $id): void

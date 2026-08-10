@@ -42,4 +42,13 @@ final class BlockComponent
             'properties' => $this->properties,
         ];
     }
+
+    /**
+     * A detached copy. $properties is an array, so PHP copies it by value and
+     * the two components share no state.
+     */
+    public function copy(): self
+    {
+        return new self($this->name, $this->properties);
+    }
 }

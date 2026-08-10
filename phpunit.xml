@@ -2,6 +2,7 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
+         cacheDirectory=".phpunit.cache"
          colors="true"
 >
     <testsuites>
@@ -12,20 +13,46 @@
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
     </testsuites>
-    <coverage processUncoveredFiles="true">
+
+    <!--
+        The mjml group compiles MJML for real via Sidecar/Lambda. Excluded by
+        default; run it explicitly before deploying with the phpunit binary
+        and the "group mjml" flag.
+    -->
+    <groups>
+        <exclude>
+            <group>mjml</group>
+        </exclude>
+    </groups>
+
+    <source>
         <include>
             <directory suffix=".php">./app</directory>
         </include>
-    </coverage>
+    </source>
+
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_STORE" value="array"/>
-        <!-- <env name="DB_CONNECTION" value="sqlite"/> -->
-        <!-- <env name="DB_DATABASE" value=":memory:"/> -->
+        <env name="DB_CONNECTION" value="sqlite" force="true"/>
+        <env name="DB_DATABASE" value=":memory:" force="true"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+
+        <!--
+            Tests never dial this: Http::fake() intercepts before any network
+            I/O and Http::preventStrayRequests() makes a missed fake fail.
+            It is pointed at a reserved TLD (RFC 2606) purely so that a request
+            escaping both of those fails loudly instead of reaching production.
+            Deliberately not a .test domain — Herd parks those on 127.0.0.1.
+        -->
+        <env name="COELIAC_SANCTUARY_URL" value="https://coeliac.invalid" force="true"/>
+        <env name="COELIAC_KEY" value="testing-key" force="true"/>
+
+        <!-- config/filesystems.php defaults this to s3. -->
+        <env name="FILESYSTEM_DISK" value="local" force="true"/>
     </php>
 </phpunit>

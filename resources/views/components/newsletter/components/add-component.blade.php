@@ -33,20 +33,3 @@
         </div>
     </div>
 </div>
-
-@push('scripts')
-    <script type="text/javascript">
-        const addComponent = (blockId, index) => ({
-            addComponent(event) {
-                if(window.activeBlock !== "{{ $blockId }}" || window.activeIndex !== {{ $index }}) {
-                    return;
-                }
-
-                const component = event.detail[0];
-
-                this.$dispatch('add-component-remote', ["{{ $blockId }}", component, {{ $index }}]);
-                this.$dispatch('close-modal', { id: 'add-component' })
-            }
-        })
-    </script>
-@endpush

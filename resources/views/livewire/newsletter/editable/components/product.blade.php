@@ -8,13 +8,10 @@
                 <h2 class="text-xl">{{ $product->title }}</h2>
                 <p class="text-italic text-xs">{{ $product->extra['price'] }}</p>
 
-                <textarea
+                <x-newsletter.editable.auto-textarea
                     wire:model.live="description"
-                    class="text-base w-full border m-1 p-1"
-                    x-data="{ resize: () => { $el.style.height = '5px'; $el.style.height = $el.scrollHeight + 'px' } }"
-                    x-init="resize()"
-                    @input="resize()"
-                ></textarea>
+                    class="border m-1 p-1"
+                />
 
                 <a class="text-sm cursor-pointer" wire:click="remove">Remove...</a>
             </div>

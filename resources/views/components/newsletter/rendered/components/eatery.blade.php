@@ -1,18 +1,6 @@
 @props(['properties', 'block', 'position'])
 
-@php
-    $class = 'full';
-
-    if($block === 'double') {
-        $class = "double-{$position}";
-    }
-
-    if($block === 'triple') {
-        $class = "triple-{$position}";
-    }
-@endphp
-
-<mj-column css-class="{{ $class }}">
+<x-newsletter.rendered.column :block="$block" :position="$position">
     <mj-text css-class="blue-links">
         <h3 style="font-size:1.5rem" class="blue-links">
             <a href="{{ $properties['link'] ?? '' }}"
@@ -36,4 +24,4 @@
             from {{ $properties['reviews']['number'] }} ratings.
         </mj-text>
     @endif
-</mj-column>
+</x-newsletter.rendered.column>

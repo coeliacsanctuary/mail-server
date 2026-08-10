@@ -11,13 +11,10 @@
         <input type="text" wire:model.live.blur="link" class="flex-1" placeholder="Link (Leave blank for no link)"/>
     </div>
 
-    <textarea
+    <x-newsletter.editable.auto-textarea
         wire:model.live.blur="content"
         placeholder="Type your content..."
-        class="w-full text-base mt-2"
-        x-data="{ resize: () => { $el.style.height = '5px'; $el.style.height = $el.scrollHeight + 'px' } }"
-        x-init="resize()"
-        @input="resize()"
+        class="mt-2"
         style="min-height: 100px;"
-    ></textarea>
+    />
 </div>

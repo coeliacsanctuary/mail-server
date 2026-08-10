@@ -1,15 +1,11 @@
 <div>
     <div class="text-xs uppercase font-semibold mb-2">Text with button</div>
 
-    <textarea
-            wire:model.live.blur="content"
-            placeholder="Type your content..."
-            class="w-full text-base"
-            x-data="{ resize: () => { $el.style.height = '5px'; $el.style.height = $el.scrollHeight + 'px' } }"
-            x-init="resize()"
-            @input="resize()"
-            style="min-height: 100px;"
-    ></textarea>
+    <x-newsletter.editable.auto-textarea
+        wire:model.live.blur="content"
+        placeholder="Type your content..."
+        style="min-height: 100px;"
+    />
 
     <div class="mt-2 text-base w-full flex items-center space-x-2">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"

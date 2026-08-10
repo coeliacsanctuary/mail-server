@@ -1,18 +1,6 @@
 @props(['properties', 'block', 'position'])
 
-@php
-    $class = 'full';
-
-    if($block === 'double') {
-        $class = "double-{$position}";
-    }
-
-    if($block === 'triple') {
-        $class = "triple-{$position}";
-    }
-@endphp
-
-<mj-column css-class="{{ $class }}">
+<x-newsletter.rendered.column :block="$block" :position="$position">
     @if($block === 'single')
         <mj-text mj-class="inner">
             <h2 class="blue-links">
@@ -44,4 +32,4 @@
                font-size="20px" @endif>
         View Product
     </mj-button>
-</mj-column>
+</x-newsletter.rendered.column>

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Editor;
 
 use App\Editor\Editor;
-use ErrorException;
 use Livewire\Livewire;
 use RuntimeException;
 use Spatie\Mailcoach\Domain\Content\Models\ContentItem;
@@ -83,32 +82,29 @@ class MoveBlockTest extends TestCase
     }
 
     /**
-     * Pins an out-of-bounds read. moveItemUp() does array_slice($array, 0, -1)
-     * for index 0, which returns everything but the LAST element, then reads
-     * $array[-1]. The UI hides the button at the boundary, but moveBlock is a
-     * public Livewire method.
+     * Moving past either end is a no-op. This used to read out of bounds:
+     * moveItemUp() did array_slice($array, 0, -1) for index 0 - everything but
+     * the LAST element - and then read $array[-1]. The UI hides the button at
+     * the boundary, but moveBlock is a public Livewire method.
      */
-    public function test_moving_the_first_block_up_throws(): void
+    public function test_moving_the_first_block_up_does_nothing(): void
     {
         $contentItem = $this->threeBlocks();
-
-        $this->expectException(ErrorException::class);
-        $this->expectExceptionMessageMatches('/Undefined array key -1/');
 
         Livewire::test(Editor::class, ['model' => $contentItem])
             ->call('moveBlock', 'block-1', 'up');
+
+        $this->assertSame(['block-1', 'block-2', 'block-3'], $this->blockIds($contentItem));
     }
 
-    /** And the mirror: moveItemDown() reads $array[$index + 1]. */
-    public function test_moving_the_last_block_down_throws(): void
+    public function test_moving_the_last_block_down_does_nothing(): void
     {
         $contentItem = $this->threeBlocks();
 
-        $this->expectException(ErrorException::class);
-        $this->expectExceptionMessageMatches('/Undefined array key 3/');
-
         Livewire::test(Editor::class, ['model' => $contentItem])
             ->call('moveBlock', 'block-3', 'down');
+
+        $this->assertSame(['block-1', 'block-2', 'block-3'], $this->blockIds($contentItem));
     }
 
     public function test_it_throws_when_the_block_does_not_exist(): void

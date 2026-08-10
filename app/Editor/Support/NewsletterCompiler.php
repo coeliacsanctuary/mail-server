@@ -49,11 +49,9 @@ class NewsletterCompiler
             ->toHtml($this->renderMjml());
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /** @return list<array<string, mixed>> */
     protected function getBlocks(): array
     {
-        $data = json_decode($this->campaign->getStructuredHtml() ?? '', true);
-
-        return $data['blocks'] ?? [];
+        return BlockCollection::fromJson($this->campaign->getStructuredHtml())->toArray();
     }
 }

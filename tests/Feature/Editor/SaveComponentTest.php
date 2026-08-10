@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Editor;
 
 use App\Editor\Editor;
-use Illuminate\View\ViewException;
 use Livewire\Livewire;
 use RuntimeException;
 use Tests\Support\ComponentData;
@@ -63,41 +62,40 @@ class SaveComponentTest extends TestCase
     }
 
     /**
-     * Pins a data-loss path: saving into a column whose component is null
-     * auto-vivifies an array with a "properties" key but no "name".
+     * Saving into a column that holds no component is ignored.
+     *
+     * This used to auto-vivify an array with a "properties" key but no "name",
+     * which the renderer skipped (it keys off component.name) while
+     * editable/block.blade.php read that key unguarded - so the editor page
+     * itself broke, with no way to recover through the UI.
      */
-    public function test_saving_into_an_empty_column_creates_a_component_with_no_name(): void
+    public function test_saving_into_an_empty_column_is_ignored(): void
     {
         $contentItem = NewsletterBuilder::make()->single()->empty()->create();
-
-        try {
-            Livewire::test(Editor::class, ['model' => $contentItem])
-                ->call('saveComponent', 'block-1', ComponentData::title(), 0);
-        } catch (ViewException) {
-            // The write lands before the re-render blows up - see the next test.
-        }
-
-        $component = $this->componentAt($contentItem, 0, 0);
-
-        $this->assertArrayNotHasKey('name', $component);
-        $this->assertArrayHasKey('properties', $component);
-    }
-
-    /**
-     * And the consequence, which is worse than it first looks: the nameless
-     * component is skipped by the renderer (which guards on component.name)
-     * but editable/block.blade.php reads that key unguarded, so the editor
-     * page itself breaks and cannot be recovered through the UI.
-     */
-    public function test_a_nameless_component_breaks_the_editor_render(): void
-    {
-        $contentItem = NewsletterBuilder::make()->single()->empty()->create();
-
-        $this->expectException(ViewException::class);
-        $this->expectExceptionMessageMatches('/Undefined array key "name"/');
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('saveComponent', 'block-1', ComponentData::title(), 0);
+            ->call('saveComponent', 'block-1', ComponentData::title(), 0)
+            ->assertOk();
+
+        $this->assertNull($this->componentAt($contentItem, 0, 0));
+    }
+
+    /** A document that already contains a nameless component still renders. */
+    public function test_a_legacy_nameless_component_is_treated_as_an_empty_column(): void
+    {
+        $contentItem = NewsletterBuilder::make()->single()->empty()->create();
+
+        $contentItem->update(['structured_html' => json_encode([
+            'blocks' => [[
+                'id' => 'block-1',
+                'block' => 'single',
+                'properties' => [['component' => ['properties' => ComponentData::title()]]],
+            ]],
+        ])]);
+
+        Livewire::test(Editor::class, ['model' => $contentItem])
+            ->assertOk()
+            ->assertSee('Add Component');
     }
 
     public function test_it_throws_when_the_block_does_not_exist(): void

@@ -66,10 +66,10 @@ class AddComponentTest extends TestCase
     }
 
     /**
-     * The index comes from the browser and is not bounds-checked, so a stale
-     * tab can grow a single-column block a third column.
+     * The index comes from the browser. An out-of-range one used to grow the
+     * block a sparse extra column; it is now ignored.
      */
-    public function test_an_out_of_range_index_silently_creates_a_new_column(): void
+    public function test_an_out_of_range_index_is_ignored(): void
     {
         $contentItem = NewsletterBuilder::make()->single()->empty()->create();
 
@@ -78,7 +78,8 @@ class AddComponentTest extends TestCase
 
         $properties = $this->blocks($contentItem)[0]['properties'];
 
-        $this->assertSame(['0', '2'], array_map(strval(...), array_keys($properties)));
+        $this->assertCount(1, $properties);
+        $this->assertNull($this->componentAt($contentItem, 0, 0));
     }
 
     public function test_it_throws_when_the_block_does_not_exist(): void

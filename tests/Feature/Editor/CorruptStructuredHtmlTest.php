@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Editor;
 
 use App\Editor\Editor;
-use ErrorException;
+use App\Editor\Support\BlockNotFound;
 use Livewire\Exceptions\ComponentNotFoundException;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -16,12 +16,13 @@ use Tests\Support\Concerns\ReadsStructuredHtml;
 use Tests\TestCase;
 
 /**
- * addBlock() guards against a missing document; moveBlock, deleteBlock,
- * addComponent and saveComponent all reach straight for $data['blocks'].
+ * A missing or malformed document now decodes to "no blocks" in one place
+ * (BlockCollection::fromJson), so every mutation reports the same thing: the
+ * block you asked for is not there.
  *
- * Not reachable through the UI today - the first thing anyone does is add a
- * block, which creates the document - but it is the asymmetry that makes the
- * typed block objects worth introducing.
+ * Before the typed objects, moveBlock/deleteBlock/addComponent/saveComponent
+ * each reached straight for $data['blocks'] and raised a PHP warning that
+ * Laravel promoted to an ErrorException, with a message that varied by input.
  */
 class CorruptStructuredHtmlTest extends TestCase
 {
@@ -36,29 +37,21 @@ class CorruptStructuredHtmlTest extends TestCase
     }
 
     #[DataProvider('brokenDocumentProvider')]
-    public function test_block_mutations_throw_on_a_broken_document(
+    public function test_block_mutations_report_a_missing_block(
         ?string $structuredHtml,
-        string $expectedMessage,
         string $method,
         array $arguments,
     ): void {
         $contentItem = $this->contentItemWith($structuredHtml);
 
-        $this->expectException(ErrorException::class);
-        $this->expectExceptionMessageMatches($expectedMessage);
+        $this->expectException(BlockNotFound::class);
+        $this->expectExceptionMessage('No block [block-1]');
 
         Livewire::test(Editor::class, ['model' => $contentItem])->call($method, ...$arguments);
     }
 
     public static function brokenDocumentProvider(): array
     {
-        $documents = [
-            'null' => [null, '/Trying to access array offset on/'],
-            'empty string' => ['', '/Trying to access array offset on/'],
-            'not json' => ['not json at all', '/Trying to access array offset on/'],
-            'json without a blocks key' => ['{"templateValues":{}}', '/Undefined array key "blocks"/'],
-        ];
-
         $methods = [
             'moveBlock' => ['block-1', 'up'],
             'deleteBlock' => ['block-1'],
@@ -68,14 +61,9 @@ class CorruptStructuredHtmlTest extends TestCase
 
         $cases = [];
 
-        foreach ($documents as $documentName => [$structuredHtml, $expectedMessage]) {
+        foreach (self::documentProvider() as $documentName => [$structuredHtml]) {
             foreach ($methods as $method => $arguments) {
-                $cases["{$method} with {$documentName}"] = [
-                    $structuredHtml,
-                    $expectedMessage,
-                    $method,
-                    $arguments,
-                ];
+                $cases["{$method} with {$documentName}"] = [$structuredHtml, $method, $arguments];
             }
         }
 

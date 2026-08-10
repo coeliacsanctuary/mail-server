@@ -1,7 +1,7 @@
 <x-mailcoach::modal name="add-block" :dismissable="true">
     <div class="grid grid-cols-3 w-full gap-2" x-data>
         <div class="w-1/4 rounded p-2 bg-gray-200 flex flex-col justify-center items-center"
-             x-on:click="$dispatch('add-block', ['single', window._addBlockBelow]); $dispatch('close-modal', {id:'add-block'}); window._addBlockBelow = null;"
+             x-on:click="$dispatch('add-block', ['single', window._addBlockBelow]); $dispatch('close-modal', {id:'add-block'})"
         >
             <div class="flex">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -17,7 +17,7 @@
         </div>
 
         <div class="w-1/4 rounded p-2 bg-gray-200 flex flex-col justify-center items-center"
-             x-on:click="$dispatch('add-block', ['double', window._addBlockBelow]); $dispatch('close-modal', {id:'add-block'}); window._addBlockBelow = null;"
+             x-on:click="$dispatch('add-block', ['double', window._addBlockBelow]); $dispatch('close-modal', {id:'add-block'})"
         >
             <div class="flex">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -41,7 +41,7 @@
         </div>
 
         <div class="w-1/4 rounded p-2 bg-gray-200 flex flex-col justify-center items-center"
-             x-on:click="$dispatch('add-block', ['triple', window._addBlockBelow]); $dispatch('close-modal', {id:'add-block'}); window._addBlockBelow = null;"
+             x-on:click="$dispatch('add-block', ['triple', window._addBlockBelow]); $dispatch('close-modal', {id:'add-block'})"
         >
             <div class="flex">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

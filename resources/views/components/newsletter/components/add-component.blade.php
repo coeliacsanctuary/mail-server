@@ -1,9 +1,14 @@
 @props(['blockId', 'index'])
 
 <div>
+    {{--
+        The add-component modal is shared, so its choice is broadcast to every
+        placeholder on the page. Each one checks whether it was the placeholder
+        that opened the modal before acting on it.
+    --}}
     <div class="flex items-center justify-center py-2"
          x-data="{
-            addComponent() {
+            addComponent(event) {
                 if(window.activeBlock !== '{{ $blockId }}' || window.activeIndex !== {{ $index }}) {
                     return;
                 }
@@ -14,7 +19,7 @@
                 this.$dispatch('close-modal', { id: 'add-component' })
             }
          }"
-         x-on:add-component.window="addComponent"
+         x-on:add-component.window="addComponent($event)"
          wire:key="{{ $blockId }}-{{ $index }}-add-inner"
     >
         <div class="w-36 h-24 rounded-lg bg-gray-200 p-2 flex flex-col items-center justify-center transition cursor-pointer"

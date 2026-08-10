@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Tests\Feature\Editor;
 
 use App\Editor\Editor;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use RuntimeException;
 use Spatie\Mailcoach\Domain\Content\Models\ContentItem;
+use Tests\Support\ComponentData;
 use Tests\Support\Concerns\ReadsStructuredHtml;
 use Tests\Support\NewsletterBuilder;
 use Tests\TestCase;
@@ -116,6 +118,31 @@ class MoveBlockTest extends TestCase
 
         Livewire::test(Editor::class, ['model' => $contentItem])
             ->call('moveBlock', 'nope', 'up');
+    }
+
+    /**
+     * The chevrons have always relied on child components surviving a parent
+     * re-render — Blog fetches from the API in mount(), so a move that
+     * re-mounted them would fire one request per API-backed block. That was
+     * never actually asserted. See ReorderBlockTest for the same guard on the
+     * drag-and-drop path.
+     */
+    public function test_moving_a_block_does_not_remount_the_api_backed_components(): void
+    {
+        $this->fakeCoeliacApi();
+
+        $contentItem = NewsletterBuilder::make()
+            ->single()->with('blog', ComponentData::blog())
+            ->single()->with('blog', ComponentData::blog())
+            ->create();
+
+        $component = Livewire::test(Editor::class, ['model' => $contentItem]);
+
+        Http::assertSentCount(2);
+
+        $component->call('moveBlock', 'block-2', 'up');
+
+        Http::assertSentCount(2);
     }
 
     /**

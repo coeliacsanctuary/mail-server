@@ -2,12 +2,31 @@
 
 <div
     wire:key="{{ $blockId }}-{{ $index }}-actions"
-    class="absolute right-10 opacity-0 group-hover:opacity-100 transition h-full top-0 flex items-center" style="right: -200px"
+    class="block-actions absolute right-10 opacity-0 group-hover:opacity-100 transition h-full top-0 flex items-center" style="right: -200px"
 >
     <div
         class="bg-gray-200 rounded border border-gray-600 flex"
         wire:key="{{ $blockId }}-{{ $index }}-actions-inner"
     >
+        {{--
+            Dragging is restricted to this handle so that text selection inside
+            the block's inputs and textareas still works. The up/down chevrons
+            stay: Sortable has no keyboard support, so they are the only
+            keyboard route to reordering.
+        --}}
+        <div
+            class="border-gray-600 py-1 px-2 hover:bg-gray-400/10"
+            style="border-right-width: 1px; cursor: grab"
+            wire:key="{{ $blockId }}-{{ $index }}-actions-drag"
+            wire:sort:handle
+            x-tooltip="'{{ __mc('Drag to reorder') }}'"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
+                <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
+            </svg>
+        </div>
         <div
             class="border-gray-600 py-1 px-2 @if($first) text-gray-400 @else hover:bg-gray-400/10 @endif"
             style="border-right-width: 1px; @if($first) cursor: not-allowed @endif"

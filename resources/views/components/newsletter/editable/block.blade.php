@@ -8,7 +8,12 @@
     }
 @endphp
 
-<div wire:key="{{ $block['id'] }}-outer">
+{{--
+    wire:sort:item is evaluated as a JavaScript expression, so the id has to go
+    through @js() — a bare uuid would be a syntax error and the drag would
+    report an undefined item.
+--}}
+<div wire:key="{{ $block['id'] }}-outer" wire:sort:item="@js($block['id'])">
     <div class="group relative" >
         <div wire:key="{{ $block['id'] }}-inner" class="flex w-full">
             @foreach($block['properties'] as $index => $properties)
@@ -25,7 +30,7 @@
                             placeholder, which is also how a component gets
                             swapped for a different one.
                         --}}
-                        <div class="absolute top-0 right-0" style="z-index: 20" x-show="hovered" x-cloak>
+                        <div class="absolute" style="top: 0; right: 0; z-index: 20" x-show="hovered" x-cloak>
                             <x-mailcoach::confirm-button
                                 class="bg-gray-200 rounded border border-gray-600 p-1 hover:bg-gray-400/10 cursor-pointer"
                                 danger

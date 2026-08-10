@@ -47,3 +47,26 @@
 .group:hover .group-hover\:opacity-100 {
     opacity: 1;
 }
+
+[x-cloak] {
+    display: none !important;
+}
+
+/*
+ * Drag-and-drop block reordering, via Livewire's bundled Sortable.
+ * The .ghost modifier on wire:sort is what stops Livewire forcing
+ * opacity:0 on the placeholder, so these rules are visible.
+ */
+body.sorting {
+    user-select: none;
+}
+
+.sortable-ghost {
+    opacity: 0.4;
+    outline: 2px dashed #9ca3af;
+}
+
+/* The whole block is cloned as the drag image; hide its controls. */
+.sortable-drag .block-actions {
+    display: none;
+}

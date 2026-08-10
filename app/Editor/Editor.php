@@ -9,15 +9,53 @@ use App\Editor\Support\BlockCollection;
 use App\Editor\Support\BlockComponent;
 use App\Editor\Support\NewsletterCompiler;
 use Livewire\Attributes\On;
+use Spatie\Mailcoach\Domain\Content\Models\Concerns\HasHtmlContent;
 use Spatie\Mailcoach\Livewire\Editor\EditorComponent;
 
 class Editor extends EditorComponent
 {
+    public string $preheader = '';
+
+    public function mount(HasHtmlContent $model): void
+    {
+        parent::mount($model);
+
+        $this->preheader = $this->blocks()->preheader();
+    }
+
     public function render()
     {
         return view('editor.editor', [
             'blocks' => $this->blocks()->toArray(),
         ]);
+    }
+
+    /**
+     * The parent recompiles the entire newsletter on every property update, to
+     * keep the preview in step with its template-field editors. This editor has
+     * no template fields — its preview is refreshed explicitly in
+     * saveComponent() and saveQuietly() — so the inherited hook is a wasted
+     * MJML round trip on every keystroke-blur.
+     */
+    public function updated(): void
+    {
+        //
+    }
+
+    /**
+     * No editorUpdated dispatch: the preheader is a display:none element, so
+     * recompiling the preview would cost an MJML round trip to change nothing
+     * anyone can see. It reaches the email on the next save like everything else.
+     */
+    public function updatedPreheader(): void
+    {
+        $blocks = $this->blocks();
+
+        $blocks->setPreheader($this->preheader);
+
+        $this->persist($blocks);
+
+        $this->skipRender();
     }
 
     /**

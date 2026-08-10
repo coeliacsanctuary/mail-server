@@ -57,6 +57,22 @@ final class BlockCollection
         return array_map(fn (Block $block) => $block->toArray(), $this->blocks);
     }
 
+    /**
+     * The inbox preview text, stored alongside the blocks rather than in its
+     * own column. Campaigns saved before this existed simply have no key.
+     */
+    public function preheader(): string
+    {
+        $preheader = $this->siblingKeys['preheader'] ?? '';
+
+        return is_string($preheader) ? $preheader : '';
+    }
+
+    public function setPreheader(string $preheader): void
+    {
+        $this->siblingKeys['preheader'] = $preheader;
+    }
+
     public function find(string $id): Block
     {
         return $this->blocks[$this->indexOf($id)];

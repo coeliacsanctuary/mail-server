@@ -37,8 +37,11 @@ class NewsletterCompiler
      */
     public function renderMjml(): string
     {
+        $document = $this->document();
+
         return view('editor.rendered', [
-            'blocks' => $this->getBlocks(),
+            'blocks' => $document->toArray(),
+            'preheader' => $document->preheader(),
         ])->render();
     }
 
@@ -49,9 +52,8 @@ class NewsletterCompiler
             ->toHtml($this->renderMjml());
     }
 
-    /** @return list<array<string, mixed>> */
-    protected function getBlocks(): array
+    protected function document(): BlockCollection
     {
-        return BlockCollection::fromJson($this->campaign->getStructuredHtml())->toArray();
+        return BlockCollection::fromJson($this->campaign->getStructuredHtml());
     }
 }

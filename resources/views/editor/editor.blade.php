@@ -1,6 +1,14 @@
 <div class="form-grid">
 {{--    <x-mailcoach::template-chooser :clearable="false" />--}}
 
+    <x-mailcoach::text-field
+        name="preheader"
+        wire:model.live.blur="preheader"
+        :label="__mc('Preview text')"
+        :placeholder="__mc('Shown next to the subject line in the inbox')"
+        :description="__mc('The snippet inboxes show after the subject. Leave blank and most clients will show the top of the email instead.')"
+    />
+
     <div class="relative w-full">
         <div class="newsletter">
             <div class="newsletter-inner">

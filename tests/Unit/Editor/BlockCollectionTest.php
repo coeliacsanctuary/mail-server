@@ -385,4 +385,56 @@ class BlockCollectionTest extends TestCase
 
         $this->assertNull($block->columns[0]);
     }
+
+    public function test_a_document_with_no_preheader_key_reads_as_empty(): void
+    {
+        $blocks = BlockCollection::fromJson($this->json([$this->block('block-1')]));
+
+        $this->assertSame('', $blocks->preheader());
+    }
+
+    public function test_it_round_trips_a_preheader(): void
+    {
+        $blocks = BlockCollection::fromJson($this->json([$this->block('block-1')]));
+
+        $blocks->setPreheader('This month: three new recipes.');
+
+        $reloaded = BlockCollection::fromJson($blocks->toJson());
+
+        $this->assertSame('This month: three new recipes.', $reloaded->preheader());
+    }
+
+    /** Hand-edited or legacy documents should not be able to break the render. */
+    public function test_a_non_string_preheader_reads_as_empty(): void
+    {
+        $json = $this->json([$this->block('block-1')], ['preheader' => ['unexpected']]);
+
+        $this->assertSame('', BlockCollection::fromJson($json)->preheader());
+    }
+
+    public function test_the_preheader_survives_block_mutations(): void
+    {
+        $blocks = BlockCollection::fromJson(
+            $this->json([$this->block('block-1'), $this->block('block-2')], ['preheader' => 'Kept']),
+        );
+
+        $blocks->moveTo('block-2', 0);
+        $blocks->duplicate('block-1');
+        $blocks->remove('block-2');
+
+        $this->assertSame('Kept', BlockCollection::fromJson($blocks->toJson())->preheader());
+    }
+
+    public function test_setting_a_preheader_leaves_other_sibling_keys_alone(): void
+    {
+        $json = $this->json([$this->block('block-1')], ['templateValues' => ['html' => null]]);
+
+        $blocks = BlockCollection::fromJson($json);
+        $blocks->setPreheader('Hello');
+
+        $decoded = json_decode($blocks->toJson(), true);
+
+        $this->assertSame(['html' => null], $decoded['templateValues']);
+        $this->assertSame('Hello', $decoded['preheader']);
+    }
 }

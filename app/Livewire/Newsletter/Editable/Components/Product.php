@@ -18,6 +18,7 @@ class Product extends NewsletterComponent
 
     public string $search = '';
 
+    /** @var Collection<int, ApiResult> */
     public Collection $results;
 
     public ApiResult $product;
@@ -29,7 +30,9 @@ class Product extends NewsletterComponent
 
         if ($this->productId) {
             $this->product = $this->getProduct();
-            $this->description = $this->block === 'single' ? $this->product->description : $this->product->meta_description;
+            $this->description = $this->block === 'single'
+                ? $this->product->description
+                : $this->product->meta_description;
         }
 
         if (isset($this->properties['description'])) {
@@ -37,37 +40,13 @@ class Product extends NewsletterComponent
         }
     }
 
-    public function updated($property = null): void
-    {
-        if ($property === 'search') {
-            $this->handleSearch();
-
-            return;
-        }
-
-        $this->properties = [
-            'content' => $this->productId,
-            'description' => $this->description,
-            'title' => $this->product->title,
-            'image' => $this->product->main_image,
-            'created_at' => $this->product->created_at,
-            'link' => $this->product->link,
-            'price' => $this->product->extra['price'],
-        ];
-
-        $this->dispatch('component-updated', $this->blockId, $this->properties, $this->index);
-
-        if ($property !== null) {
-            $this->skipRender();
-        }
-    }
-
-    protected function handleSearch(): void
+    /** Products are not paginated, so the results sit under "data", not "data.data". */
+    public function updatedSearch(): void
     {
         $this->results = Http::coeliac()
             ->get('api/shop/products', ['search' => $this->search])
             ->collect('data')
-            ->map(fn ($product) => new ApiResult(
+            ->map(fn (array $product) => new ApiResult(
                 id: $product['id'],
                 title: $product['title'],
                 description: $product['description'],
@@ -75,10 +54,41 @@ class Product extends NewsletterComponent
                 created_at: $product['created_at'],
                 main_image: $product['main_image'],
                 link: $product['link'],
-                extra: [
-                    'price' => $product['price'],
-                ]
+                extra: ['price' => $product['price']],
             ));
+    }
+
+    public function updatedDescription(): void
+    {
+        $this->syncProperties();
+
+        $this->skipRender();
+    }
+
+    public function selectProduct(int $id): void
+    {
+        $this->productId = $id;
+        $this->product = $this->getProduct($id);
+        $this->description = $this->block === 'single'
+            ? $this->product->description
+            : $this->product->meta_description;
+
+        $this->clearSearch();
+        $this->syncProperties();
+    }
+
+    public function remove(): void
+    {
+        $this->productId = null;
+        $this->description = '';
+
+        $this->clearSearch();
+        $this->syncProperties();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.newsletter.editable.components.product');
     }
 
     protected function getProduct(?int $id = null): ApiResult
@@ -87,35 +97,29 @@ class Product extends NewsletterComponent
 
         $response = Http::coeliac()->get("api/shop/products/{$id}")->json();
 
-        $params = array_merge(Arr::except($response, ['price']), [
-            'extra' => ['price' => $response['price']]
+        return new ApiResult(...[
+            ...Arr::except($response, ['price']),
+            'extra' => ['price' => $response['price']],
         ]);
-
-        return new ApiResult(...$params);
     }
 
-    public function selectProduct(int $id): void
+    protected function clearSearch(): void
     {
-        $this->productId = $id;
-        $this->product = $this->getProduct($id);
-        $this->description = $this->block === 'single' ? $this->product->description : $this->product->meta_description;
-        $this->results = collect();
         $this->search = '';
-        $this->updated();
+        $this->results = new Collection();
     }
 
-    public function remove(): void
+    /** @return array<string, mixed> */
+    protected function savedProperties(): array
     {
-        $this->productId = null;
-        $this->description = '';
-        $this->results = collect();
-        $this->search = '';
-        $this->updated();
-    }
-
-
-    public function render(): View
-    {
-        return view('livewire.newsletter.editable.components.product');
+        return [
+            'content' => $this->productId,
+            'description' => $this->description,
+            'title' => $this->product->title,
+            'image' => $this->product->main_image,
+            'created_at' => $this->product->created_at,
+            'link' => $this->product->link,
+            'price' => $this->product->extra['price'],
+        ];
     }
 }

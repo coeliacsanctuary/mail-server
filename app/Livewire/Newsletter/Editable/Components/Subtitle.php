@@ -12,11 +12,6 @@ class Subtitle extends NewsletterComponent
 
     public ?string $link = null;
 
-    public function render(): View
-    {
-        return view('livewire.newsletter.editable.components.subtitle');
-    }
-
     public function mount(): void
     {
         $this->subtitle = $this->properties['content'] ?? '';
@@ -28,13 +23,22 @@ class Subtitle extends NewsletterComponent
 
     public function updated(): void
     {
-        $properties = [
+        $this->syncProperties();
+
+        $this->skipRender();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.newsletter.editable.components.subtitle');
+    }
+
+    /** @return array<string, mixed> */
+    protected function savedProperties(): array
+    {
+        return [
             'content' => $this->subtitle,
             'link' => $this->link,
         ];
-
-        $this->dispatch('component-updated', $this->blockId, $properties, $this->index);
-
-        $this->skipRender();
     }
 }

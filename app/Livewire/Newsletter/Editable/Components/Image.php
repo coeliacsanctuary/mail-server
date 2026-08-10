@@ -13,15 +13,10 @@ class Image extends NewsletterComponent
 {
     use WithFileUploads;
 
-    /** @var UploadedFile */
+    /** @var UploadedFile|string Holds the stored URL until a new file is chosen. */
     public $image;
 
     public ?string $link = null;
-
-    public function render(): View
-    {
-        return view('livewire.newsletter.editable.components.image');
-    }
 
     public function mount(): void
     {
@@ -29,23 +24,44 @@ class Image extends NewsletterComponent
         $this->link = $this->properties['link'] ?? '';
     }
 
-    public function updated($property): void
+    public function updatedImage(): void
     {
-        if ($property === 'image') {
-            $upload = $this->image->storeAs($this->blockId, $this->image->getFilename(), ['disk' => 's3', 'visibility' => 'public']);
+        $this->storeImage();
 
-            $this->properties['content'] = Storage::disk('s3')->url($upload);
-        }
+        $this->syncProperties();
 
-        $properties = [
+        /** No skipRender: the view has to re-render to show the new image. */
+    }
+
+    public function updatedLink(): void
+    {
+        $this->syncProperties();
+
+        $this->skipRender();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.newsletter.editable.components.image');
+    }
+
+    protected function storeImage(): void
+    {
+        $upload = $this->image->storeAs(
+            $this->blockId,
+            $this->image->getFilename(),
+            ['disk' => 's3', 'visibility' => 'public'],
+        );
+
+        $this->properties['content'] = Storage::disk('s3')->url($upload);
+    }
+
+    /** @return array<string, mixed> */
+    protected function savedProperties(): array
+    {
+        return [
             'content' => $this->properties['content'],
             'link' => $this->link,
         ];
-
-        $this->dispatch('component-updated', $this->blockId, $properties, $this->index);
-
-        if ($property !== 'image') {
-            $this->skipRender();
-        }
     }
 }

@@ -8,6 +8,11 @@ use App\Dto\ApiResult;
 use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 
+/**
+ * Not folded in with Blog/Recipe/Product: no search, and it is the only
+ * component whose API field names differ from ApiResult's, so it translates
+ * name/info/full_location in both directions.
+ */
 class Eatery extends NewsletterComponent
 {
     public ?int $eateryId = null;
@@ -20,31 +25,41 @@ class Eatery extends NewsletterComponent
 
         if ($this->eateryId) {
             $this->eatery = $this->getEatery();
-        } else {
-            $this->randomEatery();
+
+            return;
         }
+
+        $this->randomEatery();
     }
 
-    public function updated(): void
+    public function randomEatery(): void
     {
-        $this->properties = [
-            'content' => $this->eateryId,
-            'name' => $this->eatery->title,
-            'info' => $this->eatery->description,
-            'location' => $this->eatery->meta_description,
-            'link' => $this->eatery->link,
-            'reviews' => $this->eatery->extra['reviews'],
-        ];
+        $this->eatery = $this->toApiResult(
+            Http::coeliac()->get('api/wheretoeat/random')->json(),
+        );
 
-        $this->dispatch('component-updated', $this->blockId, $this->properties, $this->index);
+        $this->eateryId = $this->eatery->id;
+
+        $this->syncProperties();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.newsletter.editable.components.eatery');
     }
 
     protected function getEatery(?int $id = null): ApiResult
     {
         $id ??= $this->eateryId;
 
-        $response = Http::coeliac()->get("api/wheretoeat/{$id}")->json();
+        return $this->toApiResult(
+            Http::coeliac()->get("api/wheretoeat/{$id}")->json(),
+        );
+    }
 
+    /** @param array<string, mixed> $response */
+    protected function toApiResult(array $response): ApiResult
+    {
         return new ApiResult(
             id: $response['id'],
             title: $response['name'],
@@ -53,31 +68,20 @@ class Eatery extends NewsletterComponent
             created_at: '',
             main_image: '',
             link: $response['link'],
-            extra: ['reviews' => $response['reviews']]
+            extra: ['reviews' => $response['reviews']],
         );
     }
 
-    public function randomEatery(): void
+    /** @return array<string, mixed> */
+    protected function savedProperties(): array
     {
-        $response = Http::coeliac()->get("api/wheretoeat/random")->json();
-
-        $this->eateryId = $response['id'];
-        $this->eatery = new ApiResult(
-            id: $response['id'],
-            title: $response['name'],
-            description: $response['info'],
-            meta_description: $response['full_location'],
-            created_at: '',
-            main_image: '',
-            link: $response['link'],
-            extra: ['reviews' => $response['reviews']]
-        );
-
-        $this->updated();
-    }
-
-    public function render(): View
-    {
-        return view('livewire.newsletter.editable.components.eatery');
+        return [
+            'content' => $this->eateryId,
+            'name' => $this->eatery->title,
+            'info' => $this->eatery->description,
+            'location' => $this->eatery->meta_description,
+            'link' => $this->eatery->link,
+            'reviews' => $this->eatery->extra['reviews'],
+        ];
     }
 }

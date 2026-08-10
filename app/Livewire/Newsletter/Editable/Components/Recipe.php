@@ -17,6 +17,7 @@ class Recipe extends NewsletterComponent
 
     public string $search = '';
 
+    /** @var Collection<int, ApiResult> */
     public Collection $results;
 
     public ApiResult $recipe;
@@ -28,7 +29,9 @@ class Recipe extends NewsletterComponent
 
         if ($this->recipeId) {
             $this->recipe = $this->getRecipe();
-            $this->description = $this->block === 'single' ? $this->recipe->description : $this->recipe->meta_description;
+            $this->description = $this->block === 'single'
+                ? $this->recipe->description
+                : $this->recipe->meta_description;
         }
 
         if (isset($this->properties['description'])) {
@@ -36,36 +39,12 @@ class Recipe extends NewsletterComponent
         }
     }
 
-    public function updated($property = null): void
-    {
-        if ($property === 'search') {
-            $this->handleSearch();
-
-            return;
-        }
-
-        $this->properties = [
-            'content' => $this->recipeId,
-            'description' => $this->description,
-            'title' => $this->recipe->title,
-            'image' => $this->recipe->main_image,
-            'created_at' => $this->recipe->created_at,
-            'link' => $this->recipe->link,
-        ];
-
-        $this->dispatch('component-updated', $this->blockId, $this->properties, $this->index);
-
-        if ($property !== null) {
-            $this->skipRender();
-        }
-    }
-
-    protected function handleSearch(): void
+    public function updatedSearch(): void
     {
         $this->results = Http::coeliac()
             ->get('api/recipes', ['search' => $this->search])
             ->collect('data.data')
-            ->map(fn ($recipe) => new ApiResult(
+            ->map(fn (array $recipe) => new ApiResult(
                 id: $recipe['id'],
                 title: $recipe['title'],
                 description: $recipe['description'],
@@ -74,6 +53,39 @@ class Recipe extends NewsletterComponent
                 main_image: $recipe['main_image'],
                 link: $recipe['link'],
             ));
+    }
+
+    public function updatedDescription(): void
+    {
+        $this->syncProperties();
+
+        $this->skipRender();
+    }
+
+    public function selectRecipe(int $id): void
+    {
+        $this->recipeId = $id;
+        $this->recipe = $this->getRecipe($id);
+        $this->description = $this->block === 'single'
+            ? $this->recipe->description
+            : $this->recipe->meta_description;
+
+        $this->clearSearch();
+        $this->syncProperties();
+    }
+
+    public function remove(): void
+    {
+        $this->recipeId = null;
+        $this->description = '';
+
+        $this->clearSearch();
+        $this->syncProperties();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.newsletter.editable.components.recipe');
     }
 
     protected function getRecipe(?int $id = null): ApiResult
@@ -85,28 +97,22 @@ class Recipe extends NewsletterComponent
         return new ApiResult(...$response);
     }
 
-    public function selectRecipe(int $id): void
+    protected function clearSearch(): void
     {
-        $this->recipeId = $id;
-        $this->recipe = $this->getRecipe($id);
-        $this->description = $this->block === 'single' ? $this->recipe->description : $this->recipe->meta_description;
-        $this->results = collect();
         $this->search = '';
-        $this->updated();
+        $this->results = new Collection();
     }
 
-    public function remove(): void
+    /** @return array<string, mixed> */
+    protected function savedProperties(): array
     {
-        $this->recipeId = null;
-        $this->description = '';
-        $this->results = collect();
-        $this->search = '';
-        $this->updated();
-    }
-
-
-    public function render(): View
-    {
-        return view('livewire.newsletter.editable.components.recipe');
+        return [
+            'content' => $this->recipeId,
+            'description' => $this->description,
+            'title' => $this->recipe->title,
+            'image' => $this->recipe->main_image,
+            'created_at' => $this->recipe->created_at,
+            'link' => $this->recipe->link,
+        ];
     }
 }

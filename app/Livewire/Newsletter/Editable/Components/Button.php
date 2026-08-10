@@ -12,11 +12,6 @@ class Button extends NewsletterComponent
 
     public string $link;
 
-    public function render(): View
-    {
-        return view('livewire.newsletter.editable.components.button');
-    }
-
     public function mount(): void
     {
         $this->label = $this->properties['content'] ?? '';
@@ -25,13 +20,22 @@ class Button extends NewsletterComponent
 
     public function updated(): void
     {
-        $properties = [
+        $this->syncProperties();
+
+        $this->skipRender();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.newsletter.editable.components.button');
+    }
+
+    /** @return array<string, mixed> */
+    protected function savedProperties(): array
+    {
+        return [
             'content' => $this->label,
             'link' => $this->link,
         ];
-
-        $this->dispatch('component-updated', $this->blockId, $properties, $this->index);
-
-        $this->skipRender();
     }
 }

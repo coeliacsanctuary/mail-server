@@ -12,11 +12,6 @@ class Title extends NewsletterComponent
 
     public ?string $link = null;
 
-    public function render(): View
-    {
-        return view('livewire.newsletter.editable.components.title');
-    }
-
     public function mount(): void
     {
         $this->title = $this->properties['content'] ?? '';
@@ -28,13 +23,22 @@ class Title extends NewsletterComponent
 
     public function updated(): void
     {
-        $properties = [
+        $this->syncProperties();
+
+        $this->skipRender();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.newsletter.editable.components.title');
+    }
+
+    /** @return array<string, mixed> */
+    protected function savedProperties(): array
+    {
+        return [
             'content' => $this->title,
             'link' => $this->link,
         ];
-
-        $this->dispatch('component-updated', $this->blockId, $properties, $this->index);
-
-        $this->skipRender();
     }
 }

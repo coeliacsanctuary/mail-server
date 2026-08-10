@@ -10,28 +10,35 @@ class Text extends NewsletterComponent
 {
     public string $content;
 
-    public function render(): View
-    {
-        return view('livewire.newsletter.editable.components.text');
-    }
-
     public function mount(): void
     {
         $this->content = '';
 
         if (isset($this->properties['content'])) {
-            $this->content = is_array($this->properties['content']) ? $this->properties['content'][0] : $this->properties['content'];
+            /** Legacy data: content used to be stored as an array of lines. */
+            $this->content = is_array($this->properties['content'])
+                ? $this->properties['content'][0]
+                : $this->properties['content'];
         }
     }
 
     public function updated(): void
     {
-        $properties = [
-            'content' => $this->content,
-        ];
-
-        $this->dispatch('component-updated', $this->blockId, $properties, $this->index);
+        $this->syncProperties();
 
         $this->skipRender();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.newsletter.editable.components.text');
+    }
+
+    /** @return array<string, mixed> */
+    protected function savedProperties(): array
+    {
+        return [
+            'content' => $this->content,
+        ];
     }
 }

@@ -6,6 +6,12 @@ namespace App\Livewire\Newsletter\Editable\Components;
 
 use Illuminate\View\View;
 
+/**
+ * Deliberately not folded into a shared heading base with Title and Subtitle:
+ * those store their heading under "content", this one stores it under "title"
+ * and uses "content" for the body. Reconciling that would need either a data
+ * migration or a per-subclass key indirection, and the keys collide.
+ */
 class TitleWithText extends NewsletterComponent
 {
     public string $title;
@@ -13,11 +19,6 @@ class TitleWithText extends NewsletterComponent
     public ?string $link = null;
 
     public string $content;
-
-    public function render(): View
-    {
-        return view('livewire.newsletter.editable.components.title-with-text');
-    }
 
     public function mount(): void
     {
@@ -28,14 +29,23 @@ class TitleWithText extends NewsletterComponent
 
     public function updated(): void
     {
-        $properties = [
+        $this->syncProperties();
+
+        $this->skipRender();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.newsletter.editable.components.title-with-text');
+    }
+
+    /** @return array<string, mixed> */
+    protected function savedProperties(): array
+    {
+        return [
             'title' => $this->title,
             'link' => $this->link,
             'content' => $this->content,
         ];
-
-        $this->dispatch('component-updated', $this->blockId, $properties, $this->index);
-
-        $this->skipRender();
     }
 }

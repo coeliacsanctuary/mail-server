@@ -14,11 +14,6 @@ class TextWithButton extends NewsletterComponent
 
     public string $link;
 
-    public function render(): View
-    {
-        return view('livewire.newsletter.editable.components.text-with-button');
-    }
-
     public function mount(): void
     {
         $this->content = $this->properties['content'] ?? '';
@@ -28,14 +23,23 @@ class TextWithButton extends NewsletterComponent
 
     public function updated(): void
     {
-        $properties = [
+        $this->syncProperties();
+
+        $this->skipRender();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.newsletter.editable.components.text-with-button');
+    }
+
+    /** @return array<string, mixed> */
+    protected function savedProperties(): array
+    {
+        return [
             'content' => $this->content,
             'label' => $this->label,
             'link' => $this->link,
         ];
-
-        $this->dispatch('component-updated', $this->blockId, $properties, $this->index);
-
-        $this->skipRender();
     }
 }

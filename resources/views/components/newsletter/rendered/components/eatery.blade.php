@@ -18,7 +18,8 @@
         {{ $properties['info'] ?? '' }}
     </mj-text>
 
-    @if(($properties['reviews']['number'] ?? 0) > 0)
+    {{-- Both keys are needed: guarding on "number" alone left "average" unguarded. --}}
+    @if(($properties['reviews']['number'] ?? 0) > 0 && filled($properties['reviews']['average'] ?? null))
         <mj-text css-class="blue-links" padding-top="10px">
             Rated <strong style="font-weight: bold">{{ $properties['reviews']['average'] }} stars</strong>
             from {{ $properties['reviews']['number'] }} ratings.

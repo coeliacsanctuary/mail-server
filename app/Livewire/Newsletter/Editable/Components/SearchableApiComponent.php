@@ -82,6 +82,7 @@ abstract class SearchableApiComponent extends NewsletterComponent
     public function remove(): void
     {
         $this->selectedId = null;
+        $this->selected = null;
         $this->description = '';
 
         $this->clearSearch();

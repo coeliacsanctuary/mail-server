@@ -181,35 +181,29 @@ class SearchableComponentTest extends TestCase
     }
 
     /**
-     * BUG PIN. remove() nulls the id but never clears the DTO, and updated()
-     * rebuilds the property bag from it - so title, image, created_at and link
-     * are re-persisted unchanged. Only "content" and "description" are cleared.
+     * remove() clears the DTO as well as the id, so nothing of the old item
+     * survives into the persisted properties.
+     *
+     * It used to null only the id while rebuilding the property bag from a
+     * still-populated DTO, leaving the old title, image, created_at and link
+     * behind.
      */
     #[DataProvider('searchableComponentProvider')]
-    public function test_remove_leaves_the_old_title_image_and_link_behind(array $component): void
+    public function test_remove_clears_the_persisted_properties(array $component): void
     {
-        $properties = $component['properties'];
-
-        $this->mountComponent($component['class'], $properties)
+        $this->mountComponent($component['class'], $component['properties'])
             ->call('remove')
             ->assertSet('selectedId', null)
+            ->assertSet('selected', null)
             ->assertSet('description', '')
             ->assertDispatched(
                 'component-updated',
-                fn ($event, $params) => $params[1]['content'] === null
-                    && $params[1]['description'] === ''
-                    && $params[1]['title'] === $properties['title']
-                    && $params[1]['image'] === $properties['image']
-                    && $params[1]['link'] === $properties['link'],
+                fn ($event, $params) => $params[1] === ['content' => null],
             );
     }
 
-    /**
-     * And the user-visible consequence: the editor shows an empty search box,
-     * but the newsletter still renders the removed item. This is the assertion
-     * that should flip when the bug is fixed.
-     */
-    public function test_a_removed_blog_still_renders_in_the_email(): void
+    /** And the consequence that matters: the removed item leaves the email. */
+    public function test_a_removed_blog_no_longer_renders_in_the_email(): void
     {
         $removed = [];
 
@@ -225,7 +219,8 @@ class SearchableComponentTest extends TestCase
             NewsletterBuilder::make()->single()->with('blog', $removed)->contentItem(),
         ))->renderMjml();
 
-        $this->assertMjmlContains('A Gluten Free Blog', $mjml);
-        $this->assertMjmlContains('src="https://coeliac.invalid/images/blog.jpg"', $mjml);
+        $this->assertMjmlNotContains('A Gluten Free Blog', $mjml);
+        $this->assertMjmlNotContains('src="https://coeliac.invalid/images/blog.jpg"', $mjml);
+        $this->assertMjmlNotContains('Read more', $mjml);
     }
 }

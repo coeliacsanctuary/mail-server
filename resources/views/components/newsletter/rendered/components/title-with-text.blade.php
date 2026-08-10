@@ -1,11 +1,12 @@
 @props(['properties', 'block'])
 
+{{-- filled(), not isset(): a link that was typed and then cleared is stored as '', and isset('') is true. --}}
 <mj-column css-class="blue-links">
     <mj-text align="center">
         <h1>
-            @isset($properties['link'])<a href="{{ trim($properties['link']) }}"> @endisset
+            @if(filled($properties['link'] ?? null))<a href="{{ trim($properties['link']) }}"> @endif
                 {{ $properties['title'] ?? '[MISSING TITLE]' }}
-            @isset($properties['link']) </a>@endisset
+            @if(filled($properties['link'] ?? null)) </a>@endif
         </h1>
     </mj-text>
 

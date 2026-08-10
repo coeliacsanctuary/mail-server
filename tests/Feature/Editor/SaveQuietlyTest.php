@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Editor;
 
 use App\Editor\Editor;
-use Illuminate\View\ViewException;
 use Livewire\Livewire;
 use Tests\Support\ComponentData;
 use Tests\Support\Concerns\ReadsStructuredHtml;
@@ -69,20 +68,19 @@ class SaveQuietlyTest extends TestCase
 
     /**
      * The end-to-end form of the headline crash: choose a component from the
-     * modal, never touch its fields, hit save.
+     * modal, never touch its fields, hit save. This used to throw
+     * "Undefined array key link" while rendering the MJML.
      */
-    public function test_saving_a_newsletter_with_an_unfilled_component_throws(): void
+    public function test_saving_a_newsletter_with_an_unfilled_component_succeeds(): void
     {
         $contentItem = NewsletterBuilder::make()->single()->empty()->create();
 
         $component = Livewire::test(Editor::class, ['model' => $contentItem]);
 
         $component->call('addComponent', 'block-1', 'button', 0);
+        $component->call('saveQuietly')->assertDispatched('editorSavedQuietly');
 
-        $this->expectException(ViewException::class);
-        $this->expectExceptionMessageMatches('/Undefined array key "link"/');
-
-        $component->call('saveQuietly');
+        $this->assertStringContainsString('<mj-body', $contentItem->refresh()->html);
     }
 
     public function test_saving_compiles_the_newsletter_once(): void

@@ -33,8 +33,8 @@ class Editor extends EditorComponent
         $this->model->setHtml($this->fullHtml);
         $this->model->save();
 
-        $this->dispatch('editorUpdated', $this->model->uuid, $this->previewHtml());
-        $this->dispatch('editorSavedQuietly', uuid: $this->model->uuid);
+        $this->dispatch('editorUpdated', $this->modelUuid(), $this->previewHtml());
+        $this->dispatch('editorSavedQuietly', uuid: $this->modelUuid());
     }
 
     public function renderFullHtml(): void
@@ -94,7 +94,17 @@ class Editor extends EditorComponent
 
         $this->persist($blocks);
 
-        $this->dispatch('editorUpdated', $this->model->uuid, $this->previewHtml());
+        $this->dispatch('editorUpdated', $this->modelUuid(), $this->previewHtml());
+    }
+
+    /**
+     * Mailcoach's HasHtmlContent interface does not declare a uuid, but every
+     * implementation of it (ContentItem, Template) is an Eloquent model that
+     * has one, and the preview pane is keyed on it.
+     */
+    protected function modelUuid(): string
+    {
+        return (string) data_get($this->model, 'uuid');
     }
 
     protected function blocks(): BlockCollection

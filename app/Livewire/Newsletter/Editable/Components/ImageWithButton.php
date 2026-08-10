@@ -36,6 +36,7 @@ class ImageWithButton extends ImageComponent
             'content' => $this->properties['content'],
             'label' => $this->label,
             'link' => $this->link,
+            'alt' => $this->alt,
         ];
     }
 }

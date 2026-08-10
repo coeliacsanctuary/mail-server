@@ -107,13 +107,41 @@ class ImageComponentTest extends TestCase
         $this->mountComponent($class)->set('link', 'https://coeliac.invalid');
     }
 
+    #[DataProvider('imageComponentProvider')]
+    public function test_it_persists_alt_text(string $class, array $properties): void
+    {
+        $this->mountComponent($class, $properties)
+            ->set('alt', 'A slice of gluten free bread')
+            ->assertDispatched(
+                'component-updated',
+                fn ($event, $params) => $params[1]['alt'] === 'A slice of gluten free bread'
+                    && $params[1]['content'] === $properties['content'],
+            );
+    }
+
+    #[DataProvider('imageComponentProvider')]
+    public function test_it_hydrates_stored_alt_text(string $class, array $properties): void
+    {
+        $this->mountComponent($class, [...$properties, 'alt' => 'Stored'])
+            ->assertSet('alt', 'Stored');
+    }
+
+    /** Campaigns saved before alt text existed have no such key. */
+    #[DataProvider('imageComponentProvider')]
+    public function test_a_legacy_image_with_no_alt_key_hydrates_as_empty(string $class, array $properties): void
+    {
+        $this->assertArrayNotHasKey('alt', $properties);
+
+        $this->mountComponent($class, $properties)->assertSet('alt', '');
+    }
+
     public function test_image_with_button_also_persists_its_label(): void
     {
         $this->mountComponent(ImageWithButton::class, ComponentData::imageWithButton())
             ->set('label', 'Buy now')
             ->assertDispatched(
                 'component-updated',
-                fn ($event, $params) => array_keys($params[1]) === ['content', 'label', 'link']
+                fn ($event, $params) => array_keys($params[1]) === ['content', 'label', 'link', 'alt']
                     && $params[1]['label'] === 'Buy now',
             );
     }

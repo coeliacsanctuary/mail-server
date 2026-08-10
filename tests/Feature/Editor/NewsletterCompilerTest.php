@@ -46,7 +46,7 @@ class NewsletterCompilerTest extends TestCase
         $mjml = (new NewsletterCompiler(new ContentItem()))->renderMjml();
 
         $this->assertMjmlContains(
-            '<mj-image src="https://coeliac.invalid/images/email/logo-new.jpg" width="300">',
+            '<mj-image src="https://coeliac.invalid/images/email/logo-new.jpg" alt="Coeliac Sanctuary" width="300">',
             $mjml,
         );
     }
@@ -241,21 +241,29 @@ class NewsletterCompilerTest extends TestCase
 
             'image' => [
                 'image', 'single', ComponentData::image(),
-                '<mj-image href="https://coeliac.invalid/blog" src="https://coeliac.invalid/images/upload.jpg" fluid-on-mobile="true">',
+                '<mj-image href="https://coeliac.invalid/blog" src="https://coeliac.invalid/images/upload.jpg" alt="" fluid-on-mobile="true">',
+            ],
+            'image renders alt text when it has some' => [
+                'image', 'single', ComponentData::image(['alt' => 'A loaf of bread']),
+                'alt="A loaf of bread"',
+            ],
+            'image with button renders alt text when it has some' => [
+                'image-with-button', 'single', ComponentData::imageWithButton(['alt' => 'A loaf of bread']),
+                'alt="A loaf of bread"',
             ],
             'image with an empty link omits the href' => [
                 'image', 'single', ComponentData::image(['link' => '']),
-                '<mj-image src="https://coeliac.invalid/images/upload.jpg" fluid-on-mobile="true">',
+                '<mj-image src="https://coeliac.invalid/images/upload.jpg" alt="" fluid-on-mobile="true">',
             ],
 
             // Note fluid-on-width here, where image uses fluid-on-mobile.
             'image with button' => [
                 'image-with-button', 'single', ComponentData::imageWithButton(),
-                '<mj-image href="https://coeliac.invalid/blog" src="https://coeliac.invalid/images/upload.jpg" fluid-on-width="true">',
+                '<mj-image href="https://coeliac.invalid/blog" src="https://coeliac.invalid/images/upload.jpg" alt="" fluid-on-width="true">',
             ],
             'image with button hides the button when the label is empty' => [
                 'image-with-button', 'single', ComponentData::imageWithButton(['label' => '']),
-                '<mj-image href="https://coeliac.invalid/blog" src="https://coeliac.invalid/images/upload.jpg" fluid-on-width="true"></mj-image> </mj-column>',
+                '<mj-image href="https://coeliac.invalid/blog" src="https://coeliac.invalid/images/upload.jpg" alt="" fluid-on-width="true"></mj-image> </mj-column>',
             ],
 
             'button' => [

@@ -1,7 +1,8 @@
+{{-- Shared by Title and Subtitle - see HeadingComponent. --}}
 <div>
-    <div class="text-xs uppercase font-semibold mb-2">Subtitle</div>
+    <div class="text-xs uppercase font-semibold mb-2">{{ $label }}</div>
 
-    <input type="text" wire:model.live.blur="subtitle" placeholder="Subtitle..." class="text-xl w-full"/>
+    <input type="text" wire:model.live.blur="content" placeholder="{{ $label }}..." class="{{ $inputClass }} w-full"/>
 
     <div class="mt-2 text-base w-full flex items-center space-x-2">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

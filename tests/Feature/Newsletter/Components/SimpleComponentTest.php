@@ -42,13 +42,13 @@ class SimpleComponentTest extends TestCase
             'title' => [[
                 'class' => Title::class,
                 'properties' => ComponentData::title(),
-                'field' => 'title',
+                'field' => 'content',
                 'keys' => ['content', 'link'],
             ]],
             'subtitle' => [[
                 'class' => Subtitle::class,
                 'properties' => ComponentData::subtitle(),
-                'field' => 'subtitle',
+                'field' => 'content',
                 'keys' => ['content', 'link'],
             ]],
             'text' => [[
@@ -73,7 +73,7 @@ class SimpleComponentTest extends TestCase
             'title with text' => [[
                 'class' => TitleWithText::class,
                 'properties' => ComponentData::titleWithText(),
-                'field' => 'title',
+                'field' => 'content',
                 'keys' => ['title', 'link', 'content'],
             ]],
         ];
@@ -95,8 +95,14 @@ class SimpleComponentTest extends TestCase
     public function test_title_hydrates_its_content_and_link(): void
     {
         $this->mountComponent(Title::class, ComponentData::title(['link' => 'https://coeliac.invalid']))
-            ->assertSet('title', 'A Newsletter Title')
+            ->assertSet('content', 'A Newsletter Title')
             ->assertSet('link', 'https://coeliac.invalid');
+    }
+
+    public function test_subtitle_shares_the_heading_component_state(): void
+    {
+        $this->mountComponent(Subtitle::class, ComponentData::subtitle())
+            ->assertSet('content', 'A Newsletter Subtitle');
     }
 
     public function test_title_with_text_hydrates_all_three_fields(): void

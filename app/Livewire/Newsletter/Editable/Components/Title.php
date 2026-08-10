@@ -4,41 +4,10 @@ declare(strict_types=1);
 
 namespace App\Livewire\Newsletter\Editable\Components;
 
-use Illuminate\View\View;
-
-class Title extends NewsletterComponent
+class Title extends HeadingComponent
 {
-    public string $title;
-
-    public ?string $link = null;
-
-    public function mount(): void
+    protected function label(): string
     {
-        $this->title = $this->properties['content'] ?? '';
-
-        if (isset($this->properties['link'])) {
-            $this->link = $this->properties['link'];
-        }
-    }
-
-    public function updated(): void
-    {
-        $this->syncProperties();
-
-        $this->skipRender();
-    }
-
-    public function render(): View
-    {
-        return view('livewire.newsletter.editable.components.title');
-    }
-
-    /** @return array<string, mixed> */
-    protected function savedProperties(): array
-    {
-        return [
-            'content' => $this->title,
-            'link' => $this->link,
-        ];
+        return 'Title';
     }
 }

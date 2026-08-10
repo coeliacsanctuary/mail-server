@@ -4,41 +4,15 @@ declare(strict_types=1);
 
 namespace App\Livewire\Newsletter\Editable\Components;
 
-use Illuminate\View\View;
-
-class Subtitle extends NewsletterComponent
+class Subtitle extends HeadingComponent
 {
-    public string $subtitle;
-
-    public ?string $link = null;
-
-    public function mount(): void
+    protected function label(): string
     {
-        $this->subtitle = $this->properties['content'] ?? '';
-
-        if (isset($this->properties['link'])) {
-            $this->link = $this->properties['link'];
-        }
+        return 'Subtitle';
     }
 
-    public function updated(): void
+    protected function inputClass(): string
     {
-        $this->syncProperties();
-
-        $this->skipRender();
-    }
-
-    public function render(): View
-    {
-        return view('livewire.newsletter.editable.components.subtitle');
-    }
-
-    /** @return array<string, mixed> */
-    protected function savedProperties(): array
-    {
-        return [
-            'content' => $this->subtitle,
-            'link' => $this->link,
-        ];
+        return 'text-xl';
     }
 }

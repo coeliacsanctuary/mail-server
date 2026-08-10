@@ -30,30 +30,30 @@ class SearchableComponentTest extends TestCase
         $this->fakeCoeliacApi();
     }
 
-    /** @return array<string, array{array<string, mixed>}> */
+    /**
+     * Since these three collapsed onto SearchableApiComponent the only things
+     * that differ are the class, its endpoint and its fixture data - the
+     * property and method names are shared.
+     *
+     * @return array<string, array{array<string, mixed>}>
+     */
     public static function searchableComponentProvider(): array
     {
         return [
             'blog' => [[
                 'class' => Blog::class,
-                'idProperty' => 'blogId',
-                'selectMethod' => 'selectBlog',
                 'indexEndpoint' => 'api/blogs',
                 'showEndpoint' => 'api/blogs/1',
                 'properties' => ComponentData::blog(),
             ]],
             'recipe' => [[
                 'class' => Recipe::class,
-                'idProperty' => 'recipeId',
-                'selectMethod' => 'selectRecipe',
                 'indexEndpoint' => 'api/recipes',
                 'showEndpoint' => 'api/recipes/2',
                 'properties' => ComponentData::recipe(),
             ]],
             'product' => [[
                 'class' => Product::class,
-                'idProperty' => 'productId',
-                'selectMethod' => 'selectProduct',
                 // The odd one out: a flat "data" envelope, not "data.data".
                 'indexEndpoint' => 'api/shop/products',
                 'showEndpoint' => 'api/shop/products/3',
@@ -85,7 +85,7 @@ class SearchableComponentTest extends TestCase
     public function test_it_fetches_the_stored_item_on_mount(array $component): void
     {
         $this->mountComponent($component['class'], $component['properties'])
-            ->assertSet($component['idProperty'], $component['properties']['content']);
+            ->assertSet('selectedId', $component['properties']['content']);
 
         Http::assertSent(
             fn ($request) => $request->url() === "https://coeliac.invalid/{$component['showEndpoint']}",
@@ -160,8 +160,8 @@ class SearchableComponentTest extends TestCase
     {
         $this->mountComponent($component['class'])
             ->set('search', 'gluten')
-            ->call($component['selectMethod'], $component['properties']['content'])
-            ->assertSet($component['idProperty'], $component['properties']['content'])
+            ->call('select', $component['properties']['content'])
+            ->assertSet('selectedId', $component['properties']['content'])
             ->assertSet('search', '')
             ->assertDispatched('component-updated');
     }
@@ -192,7 +192,7 @@ class SearchableComponentTest extends TestCase
 
         $this->mountComponent($component['class'], $properties)
             ->call('remove')
-            ->assertSet($component['idProperty'], null)
+            ->assertSet('selectedId', null)
             ->assertSet('description', '')
             ->assertDispatched(
                 'component-updated',

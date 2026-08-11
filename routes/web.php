@@ -6,8 +6,6 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Auth\WelcomeController;
-use App\Http\Middleware\WelcomesNewUsers;
 use App\Livewire\AccountComponent;
 use App\Livewire\EditUserComponent;
 use App\Livewire\UsersComponent;
@@ -26,11 +24,6 @@ Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkE
 
 Route::get('reset-password', [ResetPasswordController::class, 'showResetForm'])->name('mailcoach.password.reset');
 Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
-
-Route::middleware('web', WelcomesNewUsers::class)->group(function (): void {
-    Route::get('welcome/{user}', [WelcomeController::class, 'showWelcomeForm'])->name('welcome');
-    Route::post('welcome/{user}', [WelcomeController::class, 'savePassword']);
-});
 
 Route::middleware('auth')->group(function (): void {
     Route::post('logout', LogoutController::class)->name('logout');

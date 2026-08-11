@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Models\User;
-use App\Notifications\QueuedWelcomeNotification;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -28,19 +27,16 @@ class CreateUserComponent extends Component implements HasActions, HasForms
     {
         $validated = $this->validate([
             'email' => ['required', 'email:rfc', Rule::unique('users', 'email')],
-            'name' => 'required|string',
+            'name' => ['required', 'string'],
         ]);
 
-        /** @var User $user */
-        $user = User::make();
+        $user = new User();
         $user->email = $validated['email'];
         $user->name = $validated['name'];
         $user->password = Hash::make(Str::random(64));
         $user->save();
 
-        $user->notify(new QueuedWelcomeNotification(now()->addDay()));
-
-        notify(__mc('The user has been created. A mail with login instructions will be sent to :email', ['email' => $user->email]));
+        notify(__mc('The user has been created. :email can set a password using the forgot password link.', ['email' => $user->email]));
 
         return redirect()->route('users.edit', $user);
     }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Models\User;
-use App\Notifications\QueuedWelcomeNotification;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -38,13 +37,6 @@ class EditUserComponent extends Component
         $this->user->save();
 
         notify(__mc('The user has been updated.'));
-    }
-
-    public function resendInvitation(): void
-    {
-        $this->user->notify(new QueuedWelcomeNotification(now()->addDay()));
-
-        notify(__mc('An invitation mail will be sent to :email.', ['email' => $this->user->email]));
     }
 
     public function render()

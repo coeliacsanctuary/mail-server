@@ -24,5 +24,5 @@
 ## Tests
 
 - `tests/Feature/Editor` and `tests/Feature/Newsletter/Components`, with fixtures in `tests/Support`.
-- MJML is faked by default. The one test that compiles for real is in the excluded `mjml` group and needs AWS credentials — run `vendor/bin/phpunit --group mjml` before deploying.
+- MJML is always faked. No test compiles for real: that would need either Lambda or a node `mjml` install, and the suite deliberately depends on neither. The tests assert the MJML we generate, never the HTML it turns into — a real test send is the only check on that.
 - Property arrays are compared with `assertEquals`, not `assertSame` — key order across components is deliberately not locked.

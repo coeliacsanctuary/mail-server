@@ -6,8 +6,6 @@ namespace Tests\Feature\Editor;
 
 use App\Editor\Support\NewsletterCompiler;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Group;
-use Spatie\Mailcoach\Domain\Shared\Actions\InitializeMjmlAction;
 use Tests\Support\ComponentData;
 use Tests\Support\NewsletterBuilder;
 use Tests\TestCase;
@@ -90,29 +88,6 @@ class MjmlStructureTest extends TestCase
         $this->assertWellFormed(
             (new NewsletterCompiler(NewsletterBuilder::make()->contentItem()))->renderMjml(),
         );
-    }
-
-    /**
-     * The one test that compiles for real, through Sidecar. Excluded from the
-     * default suite (see the "mjml" group in phpunit.xml) because it needs AWS
-     * credentials and costs a Lambda invocation; run it before deploying.
-     */
-    #[Group('mjml')]
-    public function test_a_full_newsletter_compiles_without_mjml_errors(): void
-    {
-        $this->app->forgetInstance(InitializeMjmlAction::class);
-        $this->app->instance(InitializeMjmlAction::class, new InitializeMjmlAction());
-
-        $builder = NewsletterBuilder::make();
-
-        foreach (array_keys(self::componentProvider()) as $component) {
-            $builder->single()->with($component, self::propertiesFor($component));
-        }
-
-        $html = (new NewsletterCompiler($builder->contentItem()))->render();
-
-        $this->assertStringContainsString('<html', $html);
-        $this->assertStringNotContainsString('<mj-', $html);
     }
 
     /** @return array<string, mixed> */

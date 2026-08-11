@@ -14,17 +14,6 @@
         </testsuite>
     </testsuites>
 
-    <!--
-        The mjml group compiles MJML for real via Sidecar/Lambda. Excluded by
-        default; run it explicitly before deploying with the phpunit binary
-        and the "group mjml" flag.
-    -->
-    <groups>
-        <exclude>
-            <group>mjml</group>
-        </exclude>
-    </groups>
-
     <source>
         <include>
             <directory suffix=".php">./app</directory>

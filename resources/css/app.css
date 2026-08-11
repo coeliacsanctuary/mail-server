@@ -64,13 +64,21 @@
  * ---------------------------------------------------------------- */
 
 /*
- * Blocks used to sit 10px apart, which is less than the height of the toolbar
- * chip that appears above each one — so hovering a block covered the bottom of
- * the block above it, including things you can click. This is the seam the chip
- * lives in; keep it at least as tall as the chip.
+ * The seam above each block, which its toolbar chip sits in.
+ *
+ * Deliberately padding on the hover target rather than margin above it. Blocks
+ * used to sit 10px apart — less than the chip's height — so the chip covered
+ * the bottom of the block above, including things you can click. Opening the
+ * gap with a margin fixed that but put the chip outside .group's box, so
+ * reaching for it meant crossing dead space where :hover was already lost: the
+ * chip faded and went pointer-events:none mid-reach. As padding it is inside
+ * the box, so the whole journey from block to chip stays hovered.
+ *
+ * Keep this at least as tall as the chip (~34px). Scoped to .newsletter-block
+ * because .group is a plain Tailwind marker that Mailcoach's own views use too.
  */
-.newsletter-block {
-    margin-top: 2.25rem;
+.newsletter-block > .group {
+    padding-top: 2.25rem;
 }
 
 /* One column of a block. Highlights so it is clear which one you are editing. */
@@ -89,16 +97,17 @@
 /*
  * The per-block toolbar.
  *
- * Sits in the seam directly above the block, right-aligned, needing no room
+ * Sits in the seam above the block's content, right-aligned, needing no room
  * beside the email column — which is what lets .newsletter-inner stay centred.
  * It used to hang off style="right: -200px": 247px of toolbar overlapping the
  * block's own inputs by 47px and escaping the card below 1440px. A reserved
  * gutter fixed that but pushed the 600px column off centre, which looked odd.
  *
- * Lifted clear of the block rather than straddling its top border, so it can
- * never collide with a column's own remove-component X (also top-right). Only
- * one block's toolbar is ever visible, and .editable's hover border says which
- * block that is.
+ * It occupies the padding-top of .group rather than being transformed above it,
+ * so it stays inside its own hover target — see .newsletter-block > .group. It
+ * also keeps clear of a column's remove-component X, which is top-right too.
+ * Only one block's toolbar is ever visible, and .editable's hover border says
+ * which block that is.
  *
  * Mailcoach's preflight sets `* { position: relative }`, so this resolves
  * against its direct parent, the .group wrapper.
@@ -108,7 +117,6 @@
     top: 0;
     right: 0;
     z-index: 30;
-    transform: translateY(calc(-100% - 2px));
     display: flex;
     align-items: center;
     opacity: 0;

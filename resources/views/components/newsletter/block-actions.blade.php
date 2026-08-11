@@ -1,23 +1,26 @@
-@props(['blockId', 'index', 'first', 'last'])
+@props(['blockId', 'first', 'last'])
 
-<div
-    wire:key="{{ $blockId }}-{{ $index }}-actions"
-    class="block-actions absolute right-10 opacity-0 group-hover:opacity-100 transition h-full top-0 flex items-center" style="right: -200px"
->
-    <div
-        class="bg-gray-200 rounded border border-gray-600 flex"
-        wire:key="{{ $blockId }}-{{ $index }}-actions-inner"
-    >
+{{--
+    Positioned by .block-actions into the seam above the block, which needs no
+    room beside the email column. It used to hang off a negative offset, which
+    overlapped the block's own inputs by 47px at every width and escaped the
+    card on anything narrower than ~1440px.
+--}}
+<div wire:key="{{ $blockId }}-actions" class="block-actions">
+    <div class="block-actions-bar" wire:key="{{ $blockId }}-actions-inner">
         {{--
             Dragging is restricted to this handle so that text selection inside
             the block's inputs and textareas still works. The up/down chevrons
             stay: Sortable has no keyboard support, so they are the only
             keyboard route to reordering.
+
+            Deliberately not a <button>: a focusable handle competes with
+            Sortable's own mousedown handling, and it is not a keyboard
+            affordance anyway — the chevrons are.
         --}}
         <div
-            class="border-gray-600 py-1 px-2 hover:bg-gray-400/10"
-            style="border-right-width: 1px; cursor: grab"
-            wire:key="{{ $blockId }}-{{ $index }}-actions-drag"
+            class="block-action block-action--drag"
+            wire:key="{{ $blockId }}-actions-drag"
             wire:sort:handle
             x-tooltip="'{{ __mc('Drag to reorder') }}'"
         >
@@ -27,59 +30,69 @@
                 <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
             </svg>
         </div>
-        <div
-            class="border-gray-600 py-1 px-2 @if($first) text-gray-400 @else hover:bg-gray-400/10 @endif"
-            style="border-right-width: 1px; @if($first) cursor: not-allowed @endif"
-            @unless($first) wire:click="moveBlock('{{ $blockId }}', 'up')" @endunless
-            wire:key="{{ $blockId }}-{{ $index }}-actions-up"
+
+        <button
+            type="button"
+            class="block-action @if($first) block-action--disabled @endif"
+            wire:key="{{ $blockId }}-actions-up"
+            @unless($first)
+                wire:click="moveBlock('{{ $blockId }}', 'up')"
+                x-tooltip="'{{ __mc('Move block up') }}'"
+            @endunless
+            @disabled($first)
+            aria-label="{{ __mc('Move block up') }}"
         >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-            </svg>
-        </div>
-        <div
-            class="border-gray-600 py-1 px-2 @if($last) text-gray-400 @else hover:bg-gray-400/10 @endif"
-            style="border-right-width: 1px; @if($last) cursor: not-allowed @endif"
-            @unless($last) wire:click="moveBlock('{{ $blockId }}', 'down')" @endunless
-            wire:key="{{ $blockId }}-{{ $index }}-actions-down"
+            <x-heroicon-o-chevron-up class="w-6 h-6" />
+        </button>
+
+        <button
+            type="button"
+            class="block-action @if($last) block-action--disabled @endif"
+            wire:key="{{ $blockId }}-actions-down"
+            @unless($last)
+                wire:click="moveBlock('{{ $blockId }}', 'down')"
+                x-tooltip="'{{ __mc('Move block down') }}'"
+            @endunless
+            @disabled($last)
+            aria-label="{{ __mc('Move block down') }}"
         >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-        </div>
-        <div
-            class="border-gray-600 py-1 px-2 hover:bg-gray-400/10 cursor-pointer" style="border-right-width: 1px"
-            wire:key="{{ $blockId }}-{{ $index }}-actions-duplicate"
+            <x-heroicon-o-chevron-down class="w-6 h-6" />
+        </button>
+
+        <button
+            type="button"
+            class="block-action"
+            wire:key="{{ $blockId }}-actions-duplicate"
             wire:click="duplicateBlock('{{ $blockId }}')"
             x-tooltip="'{{ __mc('Duplicate block') }}'"
+            aria-label="{{ __mc('Duplicate block') }}"
         >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
-            </svg>
-        </div>
+            <x-heroicon-o-document-duplicate class="w-6 h-6" />
+        </button>
+
         {{-- There is no undo in this editor, and a block can hold three components. --}}
         <x-mailcoach::confirm-button
-            class="border-gray-600 py-1 px-2 hover:bg-gray-400/10 cursor-pointer"
-            style="border-right-width: 1px"
+            class="block-action"
             danger
             :confirm-text="__mc('Delete this block and everything in it?')"
             :confirm-label="__mc('Delete block')"
             on-confirm="() => $wire.deleteBlock('{{ $blockId }}')"
-            wire:key="{{ $blockId }}-{{ $index }}-actions-delete"
+            wire:key="{{ $blockId }}-actions-delete"
             x-tooltip="'{{ __mc('Delete block') }}'"
         >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-            </svg>
+            <x-heroicon-o-trash class="w-6 h-6" />
+            <span class="visually-hidden">{{ __mc('Delete block') }}</span>
         </x-mailcoach::confirm-button>
-        <div
-            class="py-1 px-2 hover:bg-gray-400/10"
-            wire:key="{{ $blockId }}-{{ $index }}-actions-add"
+
+        <button
+            type="button"
+            class="block-action"
+            wire:key="{{ $blockId }}-actions-add"
             x-on:click="window._addBlockBelow='{{ $blockId }}'; $dispatch('open-modal', { id: 'add-block' })"
+            x-tooltip="'{{ __mc('Add a block below') }}'"
+            aria-label="{{ __mc('Add a block below') }}"
         >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-        </div>
+            <x-heroicon-o-plus class="w-6 h-6" />
+        </button>
     </div>
 </div>

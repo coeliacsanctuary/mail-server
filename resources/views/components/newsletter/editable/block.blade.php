@@ -1,13 +1,5 @@
 @props(['block', 'first', 'last'])
 
-@php
-    $components = match($block['block']) {
-        'triple' => 3,
-        'double' => 2,
-        default => 1,
-    }
-@endphp
-
 {{--
     wire:sort:item is used VERBATIM as a string, not evaluated as JavaScript.
     supportWireSort binds it through Alpine.bind() with a function value, so
@@ -15,8 +7,8 @@
     content. Wrapping it in @js() makes the surrounding quotes part of the id,
     and the drop then fails with "No block ['<uuid>']".
 --}}
-<div wire:key="{{ $block['id'] }}-outer" wire:sort:item="{{ $block['id'] }}">
-    <div class="group relative" >
+<div class="newsletter-block" wire:key="{{ $block['id'] }}-outer" wire:sort:item="{{ $block['id'] }}">
+    <div class="group relative">
         <div wire:key="{{ $block['id'] }}-inner" class="flex w-full">
             @foreach($block['properties'] as $index => $properties)
                 <div
@@ -32,18 +24,16 @@
                             placeholder, which is also how a component gets
                             swapped for a different one.
                         --}}
-                        <div class="absolute" style="top: 0; right: 0; z-index: 20" x-show="hovered" x-cloak>
+                        <div class="component-remove" x-show="hovered" x-cloak>
                             <x-mailcoach::confirm-button
-                                class="bg-gray-200 rounded border border-gray-600 p-1 hover:bg-gray-400/10 cursor-pointer"
                                 danger
                                 :confirm-text="__mc('Remove this component? Its content will be lost.')"
                                 :confirm-label="__mc('Remove component')"
                                 on-confirm="() => $wire.removeComponent('{{ $block['id'] }}', {{ $index }})"
                                 x-tooltip="'{{ __mc('Remove component') }}'"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                </svg>
+                                <x-heroicon-o-x-mark class="w-4 h-4" />
+                                <span class="visually-hidden">{{ __mc('Remove component') }}</span>
                             </x-mailcoach::confirm-button>
                         </div>
 
@@ -67,7 +57,6 @@
             @endforeach
         </div>
 
-        <x-newsletter.block-actions :block-id="$block['id']" :index="$index" :first="$first" :last="$last" />
+        <x-newsletter.block-actions :block-id="$block['id']" :first="$first" :last="$last" />
     </div>
 </div>
-

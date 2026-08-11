@@ -1,75 +1,34 @@
-<x-mailcoach::modal name="add-block" :dismissable="true">
+@php
+    $layouts = [
+        ['title' => 'Single Column', 'block' => 'single', 'columns' => 1],
+        ['title' => 'Double Column', 'block' => 'double', 'columns' => 2],
+        ['title' => 'Triple Column', 'block' => 'triple', 'columns' => 3],
+    ];
+@endphp
+
+<x-mailcoach::modal name="add-block" :title="__mc('Add a block')" :dismissable="true">
     <div class="grid grid-cols-3 w-full gap-2" x-data>
-        <div class="w-1/4 rounded p-2 bg-gray-200 flex flex-col justify-center items-center"
-             x-on:click="$dispatch('add-block', ['single', window._addBlockBelow]); $dispatch('close-modal', {id:'add-block'})"
-        >
-            <div class="flex">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                     stroke="currentColor" class="w-12 h-12"
-                >
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"
-                    />
-                </svg>
-            </div>
+        @foreach($layouts as $layout)
+            <button
+                type="button"
+                class="editor-picker-tile"
+                x-on:click="$dispatch('add-block', ['{{ $layout['block'] }}', window._addBlockBelow]); $dispatch('close-modal', {id:'add-block'})"
+            >
+                <span class="flex">
+                    {{--
+                        One plain square per column, so the glyph shows the
+                        count. The old markup drew these by hand and sized the
+                        single-column one with w-12 against w-8 for the other
+                        two — a class that does not exist in the compiled CSS,
+                        so it rendered at its intrinsic size instead.
+                    --}}
+                    @for($column = 0; $column < $layout['columns']; $column++)
+                        <x-heroicon-o-stop class="w-8 h-8" />
+                    @endfor
+                </span>
 
-            Single Column
-        </div>
-
-        <div class="w-1/4 rounded p-2 bg-gray-200 flex flex-col justify-center items-center"
-             x-on:click="$dispatch('add-block', ['double', window._addBlockBelow]); $dispatch('close-modal', {id:'add-block'})"
-        >
-            <div class="flex">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                     stroke="currentColor" class="w-12 h-12"
-                >
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"
-                    />
-                </svg>
-
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                     stroke="currentColor" class="w-12 h-12"
-                >
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"
-                    />
-                </svg>
-            </div>
-
-            Double Column
-        </div>
-
-        <div class="w-1/4 rounded p-2 bg-gray-200 flex flex-col justify-center items-center"
-             x-on:click="$dispatch('add-block', ['triple', window._addBlockBelow]); $dispatch('close-modal', {id:'add-block'})"
-        >
-            <div class="flex">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                     stroke="currentColor" class="w-8 h-8"
-                >
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"
-                    />
-                </svg>
-
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                     stroke="currentColor" class="w-8 h-8"
-                >
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"
-                    />
-                </svg>
-
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                     stroke="currentColor" class="w-8 h-8"
-                >
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"
-                    />
-                </svg>
-            </div>
-
-            Triple Column
-        </div>
+                <span>{{ $layout['title'] }}</span>
+            </button>
+        @endforeach
     </div>
 </x-mailcoach::modal>

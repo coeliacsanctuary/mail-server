@@ -7,6 +7,7 @@ namespace App\Livewire\Newsletter\Editable\Components;
 use App\Dto\ApiResult;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 /**
@@ -34,6 +35,19 @@ abstract class SearchableApiComponent extends NewsletterComponent
 
     /** Plural noun for the search placeholder and empty state ("blogs"). */
     abstract protected function label(): string;
+
+    /**
+     * The name shown above the column, matching the label every other component
+     * renders.
+     *
+     * Derived rather than abstract: the three subclasses are named after exactly
+     * what they are, so a stub per subclass would only repeat the class name.
+     * Override if that stops being true.
+     */
+    protected function heading(): string
+    {
+        return Str::headline(class_basename(static::class));
+    }
 
     public function mount(): void
     {
@@ -93,6 +107,7 @@ abstract class SearchableApiComponent extends NewsletterComponent
     {
         return view('livewire.newsletter.editable.components.searchable-api', [
             'label' => $this->label(),
+            'heading' => $this->heading(),
             'meta' => $this->selected instanceof ApiResult ? $this->meta($this->selected) : '',
         ]);
     }

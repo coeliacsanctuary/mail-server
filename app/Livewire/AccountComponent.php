@@ -12,6 +12,7 @@ use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Laravel\Sanctum\PersonalAccessToken;
 use Livewire\Component;
 
 class AccountComponent extends Component implements HasForms, HasActions
@@ -102,7 +103,7 @@ class AccountComponent extends Component implements HasForms, HasActions
             ->action(function (array $arguments): void {
                 $token = Auth::user()->personalAccessTokens->find($arguments['token']);
 
-                abort_unless($token, 404);
+                abort_unless($token instanceof PersonalAccessToken, 404);
 
                 $token->delete();
 

@@ -36,7 +36,7 @@ class UsersComponent extends TableComponent
     public function deleteUser(User $user): void
     {
         if ($user->id === Auth::user()->id) {
-            $this->flashError(__mc('You cannot delete yourself!'));
+            notify(__mc('You cannot delete yourself!'), 'error');
 
             return;
         }

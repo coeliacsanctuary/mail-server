@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9ff4a4134c5588eee3fc69ebecc25fa6",
+    "content-hash": "5ce423605ba40cc3c49c9a427740ce43",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -368,16 +368,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.391.2",
+            "version": "3.395.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "50e1ed57a0b75921efcbcabe2f8702e7508c501c"
+                "reference": "0756c511a913b57ab5415db6136d8c0c250ace15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/50e1ed57a0b75921efcbcabe2f8702e7508c501c",
-                "reference": "50e1ed57a0b75921efcbcabe2f8702e7508c501c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0756c511a913b57ab5415db6136d8c0c250ace15",
+                "reference": "0756c511a913b57ab5415db6136d8c0c250ace15",
                 "shasum": ""
             },
             "require": {
@@ -459,9 +459,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.391.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.395.4"
             },
-            "time": "2026-08-10T18:12:09+00:00"
+            "time": "2026-09-16T18:39:53+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",

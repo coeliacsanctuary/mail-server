@@ -1,6 +1,5 @@
 @props(['properties'])
 
-{{-- filled(), not isset(): a link that was typed and then cleared is stored as '', and isset('') is true. --}}
 <mj-column>
     <mj-text mj-class="inner" css-class="blue-links">
         <h3>

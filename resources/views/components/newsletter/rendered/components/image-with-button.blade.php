@@ -4,8 +4,8 @@
     <mj-image href="{{ trim($properties['link'] ?? '') }}" src="{{ $properties['content'] ?? '' }}" alt="{{ $properties['alt'] ?? '' }}" fluid-on-width="true"></mj-image>
 
     @if(isset($properties['label']) && $properties['label'] !== '')
-        <mj-button href="{{ trim($properties['link'] ?? '') }}" padding="10px 0" @if($block === 'single') border-radius="6px" font-size="20px" @endif>
+        <x-newsletter.rendered.button :href="trim($properties['link'] ?? '')" :block="$block" padding="10px 0">
             {{ $properties['label'] }}
-        </mj-button>
+        </x-newsletter.rendered.button>
     @endif
 </mj-column>

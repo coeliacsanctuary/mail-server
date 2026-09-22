@@ -1,6 +1,5 @@
 @props(['properties', 'block', 'position'])
 
-{{-- Nothing selected: render nothing, rather than an empty husk with a button. --}}
 @if(filled($properties['content'] ?? null))
     <x-newsletter.rendered.column :block="$block" :position="$position">
         @if($block === 'single')
@@ -23,9 +22,8 @@
             {!! $properties['description'] ?? '' !!}
         </mj-text>
 
-        <mj-button href="{{ $properties['link'] ?? '' }}" padding="10px 0" @if($block === 'single') border-radius="6px"
-                   font-size="20px" @endif>
+        <x-newsletter.rendered.button :href="$properties['link'] ?? ''" :block="$block" padding="10px 0">
             Read more
-        </mj-button>
+        </x-newsletter.rendered.button>
     </x-newsletter.rendered.column>
 @endif

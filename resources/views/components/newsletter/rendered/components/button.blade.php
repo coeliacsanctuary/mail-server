@@ -1,7 +1,7 @@
 @props(['properties', 'block'])
 
 <mj-column>
-    <mj-button href="{{ trim($properties['link'] ?? '') }}" @if($block === 'single') border-radius="6px" font-size="20px" @endif>
+    <x-newsletter.rendered.button :href="trim($properties['link'] ?? '')" :block="$block">
         {{ $properties['content'] ?? '' }}
-    </mj-button>
+    </x-newsletter.rendered.button>
 </mj-column>

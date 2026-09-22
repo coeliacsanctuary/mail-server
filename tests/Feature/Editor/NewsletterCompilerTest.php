@@ -11,16 +11,6 @@ use Tests\Support\ComponentData;
 use Tests\Support\NewsletterBuilder;
 use Tests\TestCase;
 
-/**
- * Characterisation tests: these pin the MJML the editor produces TODAY,
- * including its oddities. They are the safety net for the refactor, not a
- * statement that the current output is ideal.
- *
- * The assertion target is MJML, not compiled HTML. MJML is the artefact these
- * Blade components own; compiled HTML is a lossy, noisy encoding that would go
- * red on an mjml version bump while being less sensitive to the changes that
- * actually matter here.
- */
 class NewsletterCompilerTest extends TestCase
 {
     private function mjmlFor(NewsletterBuilder $builder): string
@@ -37,7 +27,6 @@ class NewsletterCompilerTest extends TestCase
         $this->assertMjmlContains('<a href="::unsubscribeUrl::">click here</a>', $mjml);
         $this->assertMjmlContains('::subscriber.email::', $mjml);
 
-        // Header and footer only.
         $this->assertSame(2, mb_substr_count($mjml, '<mj-wrapper>'));
     }
 
@@ -51,11 +40,25 @@ class NewsletterCompilerTest extends TestCase
         );
     }
 
-    /**
-     * Without these the fluid-img class on blog and recipe images is inert,
-     * and those images stay at their desktop column width on phones whose
-     * client ignores media queries.
-     */
+    public function test_the_head_shrinks_the_single_block_button_on_mobile(): void
+    {
+        $mjml = (new NewsletterCompiler(new ContentItem()))->renderMjml();
+
+        $this->assertMjmlContains(
+            '.mobile-button a { font-size: 16px!important; padding: 12px 20px!important; }',
+            $mjml,
+        );
+    }
+
+    public function test_only_single_block_buttons_carry_the_mobile_hook(): void
+    {
+        $mjml = $this->mjmlFor(
+            NewsletterBuilder::make()->double()->with('button', ComponentData::button())
+        );
+
+        $this->assertMjmlNotContains('css-class="mobile-button"', $mjml);
+    }
+
     public function test_the_head_carries_the_media_query_free_fluid_image_rules(): void
     {
         $mjml = (new NewsletterCompiler(new ContentItem()))->renderMjml();
@@ -77,12 +80,6 @@ class NewsletterCompilerTest extends TestCase
         $this->assertSame(2, mb_substr_count($mjml, '<mj-wrapper>'));
     }
 
-    /**
-     * Pins a genuine defect: editor/rendered.blade.php opens an <mj-column>
-     * and every component partial opens its own, so every component sits
-     * inside a nested column. Invalid MJML that survives only because the
-     * default validation level is Soft.
-     */
     public function test_every_component_is_wrapped_in_a_nested_mj_column(): void
     {
         $mjml = $this->mjmlFor(NewsletterBuilder::make()->single()->with('hr'));
@@ -130,10 +127,6 @@ class NewsletterCompilerTest extends TestCase
         $this->assertMjmlContains('<mj-column css-class="full">', $mjml);
     }
 
-    /**
-     * A half-filled double block silently shifts the layout rather than
-     * collapsing to one column.
-     */
     public function test_an_empty_column_still_emits_an_empty_mj_column(): void
     {
         $mjml = $this->mjmlFor(
@@ -174,7 +167,6 @@ class NewsletterCompilerTest extends TestCase
                 '<mj-divider border-width="2px" border-color="#80CCFC"></mj-divider>',
             ],
 
-            // A single-column blog gets an extra h2 heading and a larger button.
             'blog in a single block has a heading' => [
                 'blog', 'single', ComponentData::blog(),
                 '<mj-text mj-class="inner blue-links"> <h2 class="blue-links"> '
@@ -182,18 +174,12 @@ class NewsletterCompilerTest extends TestCase
             ],
             'blog in a single block has a large button' => [
                 'blog', 'single', ComponentData::blog(),
-                'padding="10px 0" border-radius="6px" font-size="20px" > Read more </mj-button>',
+                'padding="10px 0" border-radius="6px" font-size="20px" css-class="mobile-button" > Read more </mj-button>',
             ],
             'blog in a double block has no heading' => [
                 'blog', 'double', ComponentData::blog(),
                 '<mj-column css-class="double-0"> <mj-image href="https://coeliac.invalid/blog/a-gluten-free-blog"',
             ],
-            /**
-             * mj-image bakes the computed column width onto the image's own
-             * <td>, and fluid-on-mobile only lifts it behind a media query.
-             * The fluid-img class carries rules that do the same job with no
-             * media query, for clients that ignore them. Both must be present.
-             */
             'blog image carries the fluid-img class' => [
                 'blog', 'double', ComponentData::blog(),
                 'css-class="fluid-img" fluid-on-mobile="true"',
@@ -288,10 +274,35 @@ class NewsletterCompilerTest extends TestCase
                 '<mj-image src="https://coeliac.invalid/images/upload.jpg" alt="" fluid-on-mobile="true">',
             ],
 
-            // Note fluid-on-width here, where image uses fluid-on-mobile.
             'image with button' => [
                 'image-with-button', 'single', ComponentData::imageWithButton(),
                 '<mj-image href="https://coeliac.invalid/blog" src="https://coeliac.invalid/images/upload.jpg" alt="" fluid-on-width="true">',
+            ],
+            'image with button has a large button' => [
+                'image-with-button', 'single', ComponentData::imageWithButton(),
+                '<mj-button href="https://coeliac.invalid/blog" padding="10px 0" border-radius="6px" '
+                . 'font-size="20px" css-class="mobile-button" > Read more </mj-button>',
+            ],
+            'text with button has a large button' => [
+                'text-with-button', 'single', ComponentData::textWithButton(),
+                '<mj-button href="https://coeliac.invalid/blog" padding="10px 0" border-radius="6px" '
+                . 'font-size="20px" css-class="mobile-button" > Read more </mj-button>',
+            ],
+            'recipe in a single block has a large button' => [
+                'recipe', 'single', ComponentData::recipe(),
+                'padding="10px 0" border-radius="6px" font-size="20px" css-class="mobile-button" > Read more </mj-button>',
+            ],
+            'product in a single block has a large button' => [
+                'product', 'single', ComponentData::product(),
+                'padding="10px 0" border-radius="6px" font-size="20px" css-class="mobile-button" > View Product </mj-button>',
+            ],
+            'a button in a double block stays small and unhooked' => [
+                'button', 'double', ComponentData::button(),
+                '<mj-button href="https://coeliac.invalid/blog" > Read more </mj-button>',
+            ],
+            'blog in a double block has a small unhooked button' => [
+                'blog', 'double', ComponentData::blog(),
+                '<mj-button href="https://coeliac.invalid/blog/a-gluten-free-blog" padding="10px 0" > Read more </mj-button>',
             ],
             'image with button hides the button when the label is empty' => [
                 'image-with-button', 'single', ComponentData::imageWithButton(['label' => '']),
@@ -300,7 +311,7 @@ class NewsletterCompilerTest extends TestCase
 
             'button' => [
                 'button', 'single', ComponentData::button(),
-                '<mj-button href="https://coeliac.invalid/blog" border-radius="6px" font-size="20px" > Read more </mj-button>',
+                '<mj-button href="https://coeliac.invalid/blog" border-radius="6px" font-size="20px" css-class="mobile-button" > Read more </mj-button>',
             ],
 
             'text with button' => [
@@ -310,10 +321,6 @@ class NewsletterCompilerTest extends TestCase
         ];
     }
 
-    /**
-     * The executable spec for collapsing Blog and Recipe onto one shared view:
-     * given the same properties they must already produce identical MJML.
-     */
     public function test_blog_and_recipe_render_identically_for_the_same_properties(): void
     {
         $properties = ComponentData::blog();
@@ -324,10 +331,6 @@ class NewsletterCompilerTest extends TestCase
         $this->assertMjmlSame($blog, $recipe);
     }
 
-    /**
-     * And the exact delta Product carries, which becomes the parameter list for
-     * that shared view.
-     */
     public function test_product_differs_from_blog_only_in_its_known_ways(): void
     {
         $properties = ComponentData::product();
@@ -337,19 +340,15 @@ class NewsletterCompilerTest extends TestCase
 
         $this->assertNotSame($blog, $product);
 
-        // 1. The single-column heading loses the blue-links class.
         $this->assertStringContainsString('<mj-text mj-class="inner blue-links">', $blog);
         $this->assertStringContainsString('<mj-text mj-class="inner">', $product);
 
-        // 2. The description gains padding-bottom.
         $this->assertStringContainsString('<mj-text css-class="blue-links"> The short product description.', $blog);
         $this->assertStringContainsString('<mj-text css-class="blue-links" padding-bottom="10px"> The short product description.', $product);
 
-        // 3. Product adds a price block.
         $this->assertStringNotContainsString('£4.99', $blog);
         $this->assertStringContainsString('<h1> £4.99 </h1>', $product);
 
-        // 4. Different button label.
         $this->assertStringContainsString('Read more', $blog);
         $this->assertStringContainsString('View Product', $product);
     }

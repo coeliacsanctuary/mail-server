@@ -49,6 +49,10 @@
             .triple-1 {
                 padding-top: 5px!important;
             }
+            .mobile-button a {
+                font-size: 16px!important;
+                padding: 12px 20px!important;
+            }
         }
 
         @media screen and (min-width:480px) {

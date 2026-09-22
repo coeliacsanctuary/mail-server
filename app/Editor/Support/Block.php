@@ -43,8 +43,24 @@ final class Block
                     "{$id}-{$columnIndex}-{$position}",
                 );
 
-                if ($component instanceof BlockComponent) {
+                if ( ! $component instanceof BlockComponent) {
+                    continue;
+                }
+
+                $expanded = BundledComponent::expand($component->name, $component->properties);
+
+                if ($expanded === null) {
                     $components[] = $component;
+
+                    continue;
+                }
+
+                foreach ($expanded as $offset => $part) {
+                    $components[] = new BlockComponent(
+                        $part['name'],
+                        $part['properties'],
+                        "{$component->id}-{$offset}",
+                    );
                 }
             }
 

@@ -130,13 +130,17 @@
 .component-props {
     display: flex;
     gap: 0.75rem;
-    margin-top: 0.5rem;
+    margin-top: 0;
+    max-height: 0;
+    overflow: hidden;
     opacity: 0;
-    transition: opacity 150ms ease;
+    transition: opacity 150ms ease, max-height 150ms ease, margin-top 150ms ease;
 }
 
 .button-editor:hover .component-props,
 .component-props:focus-within {
+    margin-top: 0.5rem;
+    max-height: 3rem;
     opacity: 1;
 }
 

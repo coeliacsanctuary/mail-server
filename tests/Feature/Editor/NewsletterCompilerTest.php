@@ -312,15 +312,23 @@ class NewsletterCompilerTest extends TestCase
                 'image-with-button', 'single', ComponentData::imageWithButton(),
                 '<mj-image href="https://coeliac.invalid/blog" src="https://coeliac.invalid/images/upload.jpg" alt="" fluid-on-mobile="true">',
             ],
-            'image with button has a large button' => [
+            'image with button expands into an image and a button' => [
                 'image-with-button', 'single', ComponentData::imageWithButton(),
-                '<mj-button href="https://coeliac.invalid/blog" padding="10px 0" border-radius="6px" '
+                'fluid-on-mobile="true"></mj-image> <mj-spacer height="15px"></mj-spacer> '
+                . '<mj-button href="https://coeliac.invalid/blog" border-radius="6px" '
                 . 'font-size="16px" line-height="115%" inner-padding="8px 25px" css-class="single-button" > Read more </mj-button>',
             ],
-            'text with button has a large button' => [
+            'text with button expands into text and a button' => [
                 'text-with-button', 'single', ComponentData::textWithButton(),
-                '<mj-button href="https://coeliac.invalid/blog" padding="10px 0" border-radius="6px" '
+                '<mj-text mj-class="inner" css-class="blue-links">Second line.</mj-text> '
+                . '<mj-spacer height="15px"></mj-spacer> '
+                . '<mj-button href="https://coeliac.invalid/blog" border-radius="6px" '
                 . 'font-size="16px" line-height="115%" inner-padding="8px 25px" css-class="single-button" > Read more </mj-button>',
+            ],
+            'title with text expands into a title and text' => [
+                'title-with-text', 'single', ComponentData::titleWithText(),
+                '<h1> A Newsletter Title </h1> </mj-text> <mj-spacer height="15px"></mj-spacer> '
+                . '<mj-text mj-class="inner" css-class="blue-links">First line.</mj-text>',
             ],
             'recipe in a single block has a large button' => [
                 'recipe', 'single', ComponentData::recipe(),

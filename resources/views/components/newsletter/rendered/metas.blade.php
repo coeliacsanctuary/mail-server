@@ -49,10 +49,6 @@
             .triple-1 {
                 padding-top: 5px!important;
             }
-            .mobile-button a {
-                font-size: 16px!important;
-                padding: 12px 20px!important;
-            }
         }
 
         @media screen and (min-width:480px) {
@@ -67,6 +63,11 @@
                 padding-right: 5px!important;
                 padding-left: 5px!important;
                 padding-top: 0!important;
+            }
+            .single-button a {
+                font-size: 20px!important;
+                line-height: 120%!important;
+                padding: 10px 25px!important;
             }
         }
     </mj-style>

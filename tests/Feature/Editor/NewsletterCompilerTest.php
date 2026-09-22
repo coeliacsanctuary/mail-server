@@ -40,23 +40,14 @@ class NewsletterCompilerTest extends TestCase
         );
     }
 
-    public function test_the_head_shrinks_the_single_block_button_on_mobile(): void
+    public function test_the_head_restores_the_large_button_on_wide_screens(): void
     {
         $mjml = (new NewsletterCompiler(new ContentItem()))->renderMjml();
 
         $this->assertMjmlContains(
-            '.mobile-button a { font-size: 16px!important; padding: 12px 20px!important; }',
+            '.single-button a { font-size: 20px!important; line-height: 120%!important; padding: 10px 25px!important; }',
             $mjml,
         );
-    }
-
-    public function test_only_single_block_buttons_carry_the_mobile_hook(): void
-    {
-        $mjml = $this->mjmlFor(
-            NewsletterBuilder::make()->double()->with('button', ComponentData::button())
-        );
-
-        $this->assertMjmlNotContains('css-class="mobile-button"', $mjml);
     }
 
     public function test_the_head_carries_the_media_query_free_fluid_image_rules(): void
@@ -174,7 +165,7 @@ class NewsletterCompilerTest extends TestCase
             ],
             'blog in a single block has a large button' => [
                 'blog', 'single', ComponentData::blog(),
-                'padding="10px 0" border-radius="6px" font-size="20px" css-class="mobile-button" > Read more </mj-button>',
+                'padding="10px 0" border-radius="6px" font-size="16px" line-height="115%" inner-padding="8px 25px" css-class="single-button" > Read more </mj-button>',
             ],
             'blog in a double block has no heading' => [
                 'blog', 'double', ComponentData::blog(),
@@ -276,25 +267,25 @@ class NewsletterCompilerTest extends TestCase
 
             'image with button' => [
                 'image-with-button', 'single', ComponentData::imageWithButton(),
-                '<mj-image href="https://coeliac.invalid/blog" src="https://coeliac.invalid/images/upload.jpg" alt="" fluid-on-width="true">',
+                '<mj-image href="https://coeliac.invalid/blog" src="https://coeliac.invalid/images/upload.jpg" alt="" fluid-on-mobile="true">',
             ],
             'image with button has a large button' => [
                 'image-with-button', 'single', ComponentData::imageWithButton(),
                 '<mj-button href="https://coeliac.invalid/blog" padding="10px 0" border-radius="6px" '
-                . 'font-size="20px" css-class="mobile-button" > Read more </mj-button>',
+                . 'font-size="16px" line-height="115%" inner-padding="8px 25px" css-class="single-button" > Read more </mj-button>',
             ],
             'text with button has a large button' => [
                 'text-with-button', 'single', ComponentData::textWithButton(),
                 '<mj-button href="https://coeliac.invalid/blog" padding="10px 0" border-radius="6px" '
-                . 'font-size="20px" css-class="mobile-button" > Read more </mj-button>',
+                . 'font-size="16px" line-height="115%" inner-padding="8px 25px" css-class="single-button" > Read more </mj-button>',
             ],
             'recipe in a single block has a large button' => [
                 'recipe', 'single', ComponentData::recipe(),
-                'padding="10px 0" border-radius="6px" font-size="20px" css-class="mobile-button" > Read more </mj-button>',
+                'padding="10px 0" border-radius="6px" font-size="16px" line-height="115%" inner-padding="8px 25px" css-class="single-button" > Read more </mj-button>',
             ],
             'product in a single block has a large button' => [
                 'product', 'single', ComponentData::product(),
-                'padding="10px 0" border-radius="6px" font-size="20px" css-class="mobile-button" > View Product </mj-button>',
+                'padding="10px 0" border-radius="6px" font-size="16px" line-height="115%" inner-padding="8px 25px" css-class="single-button" > View Product </mj-button>',
             ],
             'a button in a double block stays small and unhooked' => [
                 'button', 'double', ComponentData::button(),
@@ -306,12 +297,13 @@ class NewsletterCompilerTest extends TestCase
             ],
             'image with button hides the button when the label is empty' => [
                 'image-with-button', 'single', ComponentData::imageWithButton(['label' => '']),
-                '<mj-image href="https://coeliac.invalid/blog" src="https://coeliac.invalid/images/upload.jpg" alt="" fluid-on-width="true"></mj-image> </mj-column>',
+                '<mj-image href="https://coeliac.invalid/blog" src="https://coeliac.invalid/images/upload.jpg" alt="" fluid-on-mobile="true"></mj-image> </mj-column>',
             ],
 
             'button' => [
                 'button', 'single', ComponentData::button(),
-                '<mj-button href="https://coeliac.invalid/blog" border-radius="6px" font-size="20px" css-class="mobile-button" > Read more </mj-button>',
+                '<mj-button href="https://coeliac.invalid/blog" border-radius="6px" font-size="16px" '
+                . 'line-height="115%" inner-padding="8px 25px" css-class="single-button" > Read more </mj-button>',
             ],
 
             'text with button' => [

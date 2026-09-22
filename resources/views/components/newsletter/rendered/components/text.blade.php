@@ -6,8 +6,6 @@ if(!is_array($properties['content'] ?? '')) {
 }
 @endphp
 
-<mj-column css-class="blue-links">
-    @foreach($properties['content'] as $line)
-        <mj-text mj-class="inner">{!! $line !!}</mj-text>
-    @endforeach
-</mj-column>
+@foreach($properties['content'] as $line)
+    <mj-text mj-class="inner" css-class="blue-links">{!! $line !!}</mj-text>
+@endforeach

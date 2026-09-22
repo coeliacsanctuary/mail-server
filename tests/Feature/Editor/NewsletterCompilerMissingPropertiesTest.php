@@ -86,7 +86,7 @@ class NewsletterCompilerMissingPropertiesTest extends TestCase
         $mjml = $this->compile('image', 'single', []);
 
         $this->assertSame(1, mb_substr_count($mjml, '<mj-image'));
-        $this->assertMjmlContains('<mj-section> <mj-column> </mj-column> </mj-section>', $mjml);
+        $this->assertMjmlContains('<mj-section> <mj-column css-class="full"> </mj-column> </mj-section>', $mjml);
     }
 
     public function test_title_with_no_properties_renders_a_visible_placeholder(): void

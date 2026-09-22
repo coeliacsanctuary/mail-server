@@ -52,6 +52,9 @@
         }
 
         @media screen and (min-width:480px) {
+            .double-0, .double-1, .triple-0, .triple-1, .triple-2 {
+                box-sizing: border-box!important;
+            }
             .double-0, .triple-0 {
                 padding-right: 5px!important;
             }

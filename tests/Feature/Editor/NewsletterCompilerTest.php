@@ -40,6 +40,16 @@ class NewsletterCompilerTest extends TestCase
         );
     }
 
+    public function test_the_head_makes_the_gutter_columns_border_box(): void
+    {
+        $mjml = (new NewsletterCompiler(new ContentItem()))->renderMjml();
+
+        $this->assertMjmlContains(
+            '.double-0, .double-1, .triple-0, .triple-1, .triple-2 { box-sizing: border-box!important; }',
+            $mjml,
+        );
+    }
+
     public function test_the_head_restores_the_large_button_on_wide_screens(): void
     {
         $mjml = (new NewsletterCompiler(new ContentItem()))->renderMjml();
@@ -71,14 +81,14 @@ class NewsletterCompilerTest extends TestCase
         $this->assertSame(2, mb_substr_count($mjml, '<mj-wrapper>'));
     }
 
-    public function test_every_component_is_wrapped_in_a_nested_mj_column(): void
+    public function test_a_component_sits_directly_in_its_column(): void
     {
         $mjml = $this->mjmlFor(NewsletterBuilder::make()->single()->with('hr'));
 
         $this->assertMjmlContains(
-            '<mj-wrapper> <mj-section> <mj-column> <mj-column> '
+            '<mj-wrapper> <mj-section> <mj-column css-class="full"> '
             . '<mj-divider border-width="2px" border-color="#80CCFC"></mj-divider> '
-            . '</mj-column> </mj-column> </mj-section> </mj-wrapper>',
+            . '</mj-column> </mj-section> </mj-wrapper>',
             $mjml,
         );
     }
@@ -124,14 +134,14 @@ class NewsletterCompilerTest extends TestCase
             NewsletterBuilder::make()->double()->with('hr')->empty(),
         );
 
-        $this->assertMjmlContains('</mj-column> <mj-column> </mj-column> </mj-section>', $mjml);
+        $this->assertMjmlContains('</mj-column> <mj-column css-class="double-1"> </mj-column> </mj-section>', $mjml);
     }
 
     public function test_an_unknown_component_name_is_skipped_without_error(): void
     {
         $mjml = $this->mjmlFor(NewsletterBuilder::make()->single()->with('does-not-exist'));
 
-        $this->assertMjmlContains('<mj-column> </mj-column>', $mjml);
+        $this->assertMjmlContains('<mj-column css-class="full"> </mj-column>', $mjml);
         $this->assertMjmlNotContains('does-not-exist', $mjml);
     }
 
@@ -232,20 +242,22 @@ class NewsletterCompilerTest extends TestCase
 
             'text splits on newlines' => [
                 'text', 'single', ComponentData::text(),
-                '<mj-text mj-class="inner">First line.</mj-text> <mj-text mj-class="inner">Second line.</mj-text>',
+                '<mj-text mj-class="inner" css-class="blue-links">First line.</mj-text> '
+                . '<mj-text mj-class="inner" css-class="blue-links">Second line.</mj-text>',
             ],
             'text accepts the legacy array shape' => [
                 'text', 'single', ['content' => ['Only line.']],
-                '<mj-text mj-class="inner">Only line.</mj-text>',
+                '<mj-text mj-class="inner" css-class="blue-links">Only line.</mj-text>',
             ],
             'text with no content emits one empty line' => [
                 'text', 'single', [],
-                '<mj-column css-class="blue-links"> <mj-text mj-class="inner"></mj-text> </mj-column>',
+                '<mj-column css-class="full"> <mj-text mj-class="inner" css-class="blue-links"></mj-text> </mj-column>',
             ],
 
             'title with text splits the body on newlines' => [
                 'title-with-text', 'single', ComponentData::titleWithText(),
-                '<mj-text mj-class="inner">First line.</mj-text> <mj-text mj-class="inner">Second line.</mj-text>',
+                '<mj-text mj-class="inner" css-class="blue-links">First line.</mj-text> '
+                . '<mj-text mj-class="inner" css-class="blue-links">Second line.</mj-text>',
             ],
 
             'image' => [

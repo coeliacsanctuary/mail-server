@@ -14,7 +14,7 @@
             <mj-wrapper>
                 <mj-section>
                     @foreach($block['properties'] as $index => $properties)
-                        <mj-column>
+                        <x-newsletter.rendered.column :block="$block['block']" :position="$index">
                             @php
                                 $component = data_get($properties, 'component.name')
                             @endphp
@@ -23,10 +23,9 @@
                                     component="newsletter.rendered.components.{{ $properties['component']['name'] }}"
                                     :properties="$properties['component']['properties']"
                                     :block="$block['block']"
-                                    :position="$index"
                                 />
                            @endif
-                        </mj-column>
+                        </x-newsletter.rendered.column>
                     @endforeach
                 </mj-section>
             </mj-wrapper>

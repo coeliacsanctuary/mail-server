@@ -94,6 +94,12 @@
     border-color: var(--gray-400, #a1a1aa);
 }
 
+.component-stack-item + .component-stack-item {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed var(--gray-300, #d4d4d8);
+}
+
 /*
  * The per-block toolbar.
  *

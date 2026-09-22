@@ -8,12 +8,12 @@
                     wire:key="{{ $block['id'] }}-{{ $index }}-wrapper"
                     class="editable w-full relative"
                 >
-                    <div wire:sort.ghost="reorderComponent">
+                    <div class="component-stack" wire:sort.ghost="reorderComponent">
                         @foreach($properties['components'] ?? [] as $blockComponent)
                             <div
                                 wire:key="{{ $blockComponent['id'] }}-wrapper"
                                 wire:sort:item="{{ $blockComponent['id'] }}"
-                                class="relative"
+                                class="component-stack-item relative"
                                 x-data="{ hovered: false }"
                                 x-on:mouseenter="hovered = true"
                                 x-on:mouseleave="hovered = false"

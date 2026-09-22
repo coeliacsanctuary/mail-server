@@ -81,6 +81,26 @@ class NewsletterCompilerTest extends TestCase
         $this->assertSame(2, mb_substr_count($mjml, '<mj-wrapper>'));
     }
 
+    public function test_stacked_components_are_separated_by_a_spacer(): void
+    {
+        $mjml = $this->mjmlFor(
+            NewsletterBuilder::make()->single()->stack('image', ComponentData::image())->and('hr'),
+        );
+
+        $this->assertMjmlContains(
+            'fluid-on-mobile="true"></mj-image> <mj-spacer height="15px"></mj-spacer> '
+            . '<mj-divider border-width="2px" border-color="#80CCFC"></mj-divider>',
+            $mjml,
+        );
+    }
+
+    public function test_a_lone_component_gets_no_spacer(): void
+    {
+        $mjml = $this->mjmlFor(NewsletterBuilder::make()->single()->with('hr'));
+
+        $this->assertMjmlNotContains('mj-spacer', $mjml);
+    }
+
     public function test_a_component_sits_directly_in_its_column(): void
     {
         $mjml = $this->mjmlFor(NewsletterBuilder::make()->single()->with('hr'));

@@ -17,6 +17,9 @@
                         <x-newsletter.rendered.column :block="$block['block']" :position="$index">
                             @foreach($properties['components'] ?? [] as $blockComponent)
                                 @if(\Illuminate\Support\Facades\View::exists("components.newsletter.rendered.components.{$blockComponent['name']}"))
+                                    @unless($loop->first)
+                                        <mj-spacer height="15px"></mj-spacer>
+                                    @endunless
                                     <x-dynamic-component
                                         component="newsletter.rendered.components.{{ $blockComponent['name'] }}"
                                         :properties="$blockComponent['properties']"

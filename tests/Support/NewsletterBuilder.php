@@ -50,6 +50,20 @@ final class NewsletterBuilder
         return $this;
     }
 
+    /** @param array<string, mixed> $properties */
+    public function stack(string $component, array $properties = []): self
+    {
+        return $this->with($component, $properties);
+    }
+
+    /** @param array<string, mixed> $properties */
+    public function and(string $component, array $properties = []): self
+    {
+        $this->cursor--;
+
+        return $this->with($component, $properties);
+    }
+
     public function empty(): self
     {
         $this->cursor++;

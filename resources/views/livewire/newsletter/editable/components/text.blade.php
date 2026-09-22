@@ -5,6 +5,10 @@
         wire:model.live.blur="content"
         placeholder="Type your content..."
         class="editable-body"
-        style="min-height: 100px;"
+        style="min-height: 100px; text-align: {{ $align }};"
     />
+
+    <x-newsletter.editable.component-props>
+        <x-newsletter.editable.alignment-buttons :component-id="$componentId" :selected="$align" />
+    </x-newsletter.editable.component-props>
 </div>

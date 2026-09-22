@@ -76,6 +76,7 @@ final class ComponentData
         return [
             'content' => 'A Newsletter Title',
             'link' => null,
+            'align' => 'center',
             ...$overrides,
         ];
     }
@@ -85,6 +86,7 @@ final class ComponentData
         return [
             'content' => 'A Newsletter Subtitle',
             'link' => null,
+            'align' => 'left',
             ...$overrides,
         ];
     }
@@ -96,6 +98,7 @@ final class ComponentData
             'link' => null,
             'content' => "First line.\nSecond line.",
             ...$overrides,
+            'align' => 'left',
         ];
     }
 
@@ -103,6 +106,7 @@ final class ComponentData
     {
         return [
             'content' => "First line.\nSecond line.",
+            'align' => 'left',
             ...$overrides,
         ];
     }

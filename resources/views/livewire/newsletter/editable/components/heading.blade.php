@@ -1,7 +1,11 @@
 <div class="component-editor">
     <div class="text-xs uppercase font-semibold mb-2">{{ $label }}</div>
 
-    <input type="text" wire:model.live.blur="content" placeholder="{{ $label }}..." class="{{ $inputClass }} w-full"/>
+    <input type="text" wire:model.live.blur="content" placeholder="{{ $label }}..." class="{{ $inputClass }} w-full" style="text-align: {{ $align }};"/>
+
+    <x-newsletter.editable.component-props>
+        <x-newsletter.editable.alignment-buttons :component-id="$componentId" :selected="$align" />
+    </x-newsletter.editable.component-props>
 
     <div class="mt-2 text-base w-full flex items-center space-x-2">
         <x-heroicon-o-link class="w-6 h-6" />

@@ -338,6 +338,30 @@ class NewsletterCompilerTest extends TestCase
                 'product', 'single', ComponentData::product(),
                 'padding="10px 0" border-radius="6px" font-size="16px" line-height="115%" inner-padding="8px 25px" css-class="single-button" > View Product </mj-button>',
             ],
+            'a title is centred by default' => [
+                'title', 'single', ComponentData::title(),
+                '<mj-text align="center" css-class="blue-links">',
+            ],
+            'a title can be left aligned' => [
+                'title', 'single', ComponentData::title(['align' => 'left']),
+                '<mj-text align="left" css-class="blue-links">',
+            ],
+            'a subtitle stays left by default and emits no align' => [
+                'subtitle', 'single', ComponentData::subtitle(),
+                '<mj-text mj-class="inner" css-class="blue-links"> <h3>',
+            ],
+            'a subtitle can be centred' => [
+                'subtitle', 'single', ComponentData::subtitle(['align' => 'center']),
+                '<mj-text mj-class="inner" css-class="blue-links" align="center"> <h3>',
+            ],
+            'text stays left by default and emits no align' => [
+                'text', 'single', ComponentData::text(),
+                '<mj-text mj-class="inner" css-class="blue-links">First line.</mj-text>',
+            ],
+            'text can be centred' => [
+                'text', 'single', ComponentData::text(['align' => 'center']),
+                '<mj-text mj-class="inner" css-class="blue-links" align="center">First line.</mj-text>',
+            ],
             'an hr keeps its blue by default' => [
                 'hr', 'single', [],
                 '<mj-divider border-width="2px" border-color="#80CCFC"></mj-divider>',

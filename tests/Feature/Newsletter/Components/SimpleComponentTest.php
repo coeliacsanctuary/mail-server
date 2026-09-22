@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Newsletter\Components;
 
+use App\Editor\Support\Alignment;
 use App\Editor\Support\BrandColour;
 use App\Livewire\Newsletter\Editable\Components\Button;
 use App\Livewire\Newsletter\Editable\Components\Hr;
@@ -37,19 +38,19 @@ class SimpleComponentTest extends TestCase
                 'class' => Title::class,
                 'properties' => ComponentData::title(),
                 'field' => 'content',
-                'keys' => ['content', 'link'],
+                'keys' => ['content', 'link', 'align'],
             ]],
             'subtitle' => [[
                 'class' => Subtitle::class,
                 'properties' => ComponentData::subtitle(),
                 'field' => 'content',
-                'keys' => ['content', 'link'],
+                'keys' => ['content', 'link', 'align'],
             ]],
             'text' => [[
                 'class' => Text::class,
                 'properties' => ComponentData::text(),
                 'field' => 'content',
-                'keys' => ['content'],
+                'keys' => ['content', 'align'],
             ]],
             'button' => [[
                 'class' => Button::class,
@@ -131,8 +132,8 @@ class SimpleComponentTest extends TestCase
             $this->assertStringContainsString("setBackground('{$colour->value}')", $html);
         }
 
-        foreach (Button::ALIGNMENTS as $alignment) {
-            $this->assertStringContainsString("setTextAlign('{$alignment}')", $html);
+        foreach (Alignment::cases() as $alignment) {
+            $this->assertStringContainsString("setTextAlign('{$alignment->value}')", $html);
         }
     }
 

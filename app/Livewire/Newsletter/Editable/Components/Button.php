@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace App\Livewire\Newsletter\Editable\Components;
 
+use App\Editor\Support\Alignment;
 use App\Editor\Support\BrandColour;
 use Illuminate\View\View;
 
 class Button extends NewsletterComponent
 {
-    public const ALIGNMENTS = ['left', 'center', 'right'];
-
-    public const DEFAULT_ALIGNMENT = 'left';
-
     public string $label;
 
     public string $link;
@@ -25,7 +22,7 @@ class Button extends NewsletterComponent
     {
         $this->label = $this->properties['content'] ?? '';
         $this->link = $this->properties['link'] ?? '';
-        $this->textAlign = $this->alignmentOr($this->properties['text_align'] ?? null);
+        $this->textAlign = Alignment::fromName($this->properties['text_align'] ?? null)->value;
         $this->background = BrandColour::fromName($this->properties['background'] ?? null)->value;
     }
 
@@ -45,7 +42,7 @@ class Button extends NewsletterComponent
 
     public function setTextAlign(string $textAlign): void
     {
-        $this->textAlign = $this->alignmentOr($textAlign);
+        $this->textAlign = Alignment::fromName($textAlign)->value;
 
         $this->syncProperties();
     }
@@ -69,12 +66,5 @@ class Button extends NewsletterComponent
             'text_align' => $this->textAlign,
             'background' => $this->background,
         ];
-    }
-
-    private function alignmentOr(?string $alignment): string
-    {
-        return in_array($alignment, self::ALIGNMENTS, true)
-            ? $alignment
-            : self::DEFAULT_ALIGNMENT;
     }
 }

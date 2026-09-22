@@ -338,6 +338,18 @@ class NewsletterCompilerTest extends TestCase
                 'product', 'single', ComponentData::product(),
                 'padding="10px 0" border-radius="6px" font-size="16px" line-height="115%" inner-padding="8px 25px" css-class="single-button" > View Product </mj-button>',
             ],
+            'an hr keeps its blue by default' => [
+                'hr', 'single', [],
+                '<mj-divider border-width="2px" border-color="#80CCFC"></mj-divider>',
+            ],
+            'an hr can be recoloured' => [
+                'hr', 'single', ComponentData::hr(['colour' => 'primary-dark']),
+                '<mj-divider border-width="2px" border-color="#29719f"></mj-divider>',
+            ],
+            'an unknown hr colour falls back to blue' => [
+                'hr', 'single', ComponentData::hr(['colour' => 'chartreuse']),
+                '<mj-divider border-width="2px" border-color="#80CCFC"></mj-divider>',
+            ],
             'a default button emits no colour or alignment' => [
                 'button', 'single', ComponentData::button(),
                 '<mj-button href="https://coeliac.invalid/blog" border-radius="6px" font-size="16px" '

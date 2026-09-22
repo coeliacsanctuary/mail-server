@@ -137,7 +137,7 @@
     transition: opacity 150ms ease, max-height 150ms ease, margin-top 150ms ease;
 }
 
-.button-editor:hover .component-props,
+.component-editor:hover .component-props,
 .component-props:focus-within {
     margin-top: 0.5rem;
     max-height: 3rem;

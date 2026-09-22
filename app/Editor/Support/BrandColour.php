@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Editor\Support;
 
-enum ButtonColour: string
+enum BrandColour: string
 {
     case Secondary = 'secondary';
     case Primary = 'primary';
@@ -16,9 +16,9 @@ enum ButtonColour: string
         return self::Secondary;
     }
 
-    public static function fromName(?string $name): self
+    public static function fromName(?string $name, ?self $fallback = null): self
     {
-        return self::tryFrom((string) $name) ?? self::default();
+        return self::tryFrom((string) $name) ?? $fallback ?? self::default();
     }
 
     public function background(): string

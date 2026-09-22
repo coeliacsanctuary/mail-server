@@ -62,6 +62,15 @@ final class ComponentData
         ];
     }
 
+    /** @param array<string, mixed> $overrides */
+    public static function hr(array $overrides = []): array
+    {
+        return [
+            'colour' => 'primary',
+            ...$overrides,
+        ];
+    }
+
     public static function title(array $overrides = []): array
     {
         return [

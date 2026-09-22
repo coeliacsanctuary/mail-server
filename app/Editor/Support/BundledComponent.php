@@ -100,7 +100,7 @@ final class BundledComponent
                 'content' => $properties['label'] ?? '',
                 'link' => $properties['link'] ?? '',
                 'text_align' => 'left',
-                'background' => ButtonColour::default()->value,
+                'background' => BrandColour::default()->value,
             ],
         ];
     }

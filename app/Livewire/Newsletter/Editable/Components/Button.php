@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Newsletter\Editable\Components;
 
-use App\Editor\Support\ButtonColour;
+use App\Editor\Support\BrandColour;
 use Illuminate\View\View;
 
 class Button extends NewsletterComponent
@@ -26,7 +26,7 @@ class Button extends NewsletterComponent
         $this->label = $this->properties['content'] ?? '';
         $this->link = $this->properties['link'] ?? '';
         $this->textAlign = $this->alignmentOr($this->properties['text_align'] ?? null);
-        $this->background = ButtonColour::fromName($this->properties['background'] ?? null)->value;
+        $this->background = BrandColour::fromName($this->properties['background'] ?? null)->value;
     }
 
     public function updated(): void
@@ -38,7 +38,7 @@ class Button extends NewsletterComponent
 
     public function setBackground(string $background): void
     {
-        $this->background = ButtonColour::fromName($background)->value;
+        $this->background = BrandColour::fromName($background)->value;
 
         $this->syncProperties();
     }
@@ -50,9 +50,9 @@ class Button extends NewsletterComponent
         $this->syncProperties();
     }
 
-    public function colour(): ButtonColour
+    public function colour(): BrandColour
     {
-        return ButtonColour::fromName($this->background);
+        return BrandColour::fromName($this->background);
     }
 
     public function render(): View

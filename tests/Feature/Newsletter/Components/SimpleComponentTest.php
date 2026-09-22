@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Newsletter\Components;
 
-use App\Editor\Support\ButtonColour;
+use App\Editor\Support\BrandColour;
 use App\Livewire\Newsletter\Editable\Components\Button;
 use App\Livewire\Newsletter\Editable\Components\Hr;
 use App\Livewire\Newsletter\Editable\Components\Subtitle;
@@ -127,13 +127,26 @@ class SimpleComponentTest extends TestCase
     {
         $html = html_entity_decode($this->mountComponent(Button::class, ComponentData::button())->html());
 
-        foreach (ButtonColour::cases() as $colour) {
+        foreach (BrandColour::cases() as $colour) {
             $this->assertStringContainsString("setBackground('{$colour->value}')", $html);
         }
 
         foreach (Button::ALIGNMENTS as $alignment) {
             $this->assertStringContainsString("setTextAlign('{$alignment}')", $html);
         }
+    }
+
+    public function test_an_hr_defaults_to_blue_and_persists_a_choice(): void
+    {
+        $component = $this->mountComponent(Hr::class);
+
+        $this->assertSame('primary', $component->get('colour'));
+
+        $component->call('setColour', 'primary-dark')
+            ->assertDispatched(
+                'component-updated',
+                fn ($event, $params) => $params[1] === ['colour' => 'primary-dark'],
+            );
     }
 
     public function test_a_button_with_no_properties_defaults_its_styling(): void

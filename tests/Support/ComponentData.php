@@ -113,7 +113,7 @@ final class ComponentData
         return [
             'content' => 'Read more',
             'link' => 'https://coeliac.invalid/blog',
-            'text_align' => 'center',
+            'text_align' => 'left',
             'background' => 'secondary',
             ...$overrides,
         ];

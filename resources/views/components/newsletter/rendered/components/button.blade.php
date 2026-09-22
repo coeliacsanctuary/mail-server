@@ -9,7 +9,7 @@
     :href="trim($properties['link'] ?? '')"
     :block="$block"
     :colour="$colour === \App\Editor\Support\ButtonColour::default() ? null : $colour"
-    :text-align="in_array($textAlign, ['left', 'right'], true) ? $textAlign : null"
+    :text-align="in_array($textAlign, ['center', 'right'], true) ? $textAlign : null"
 >
     {{ $properties['content'] ?? '' }}
 </x-newsletter.rendered.button>

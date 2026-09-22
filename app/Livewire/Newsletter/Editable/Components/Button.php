@@ -11,7 +11,7 @@ class Button extends NewsletterComponent
 {
     public const ALIGNMENTS = ['left', 'center', 'right'];
 
-    public const DEFAULT_ALIGNMENT = 'center';
+    public const DEFAULT_ALIGNMENT = 'left';
 
     public string $label;
 

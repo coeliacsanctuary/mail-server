@@ -55,7 +55,7 @@ class NewsletterCompilerTest extends TestCase
         $mjml = (new NewsletterCompiler(new ContentItem()))->renderMjml();
 
         $this->assertMjmlContains(
-            '<mj-button background-color="#DBBC25" color="#222222" text-align="center" '
+            '<mj-button background-color="#DBBC25" color="#222222" '
             . 'padding="0px" font-size="15px" font-weight="bold">',
             $mjml,
         );
@@ -344,8 +344,8 @@ class NewsletterCompilerTest extends TestCase
                 '<mj-button href="https://coeliac.invalid/blog" background-color="#80CCFC" color="#222222" ',
             ],
             'a non default alignment is emitted' => [
-                'button', 'single', ComponentData::button(['text_align' => 'left']),
-                'text-align="left" border-radius="6px"',
+                'button', 'single', ComponentData::button(['text_align' => 'center']),
+                'text-align="center" border-radius="6px"',
             ],
             'an unknown colour falls back to the default and emits nothing' => [
                 'button', 'single', ComponentData::button(['background' => 'chartreuse']),

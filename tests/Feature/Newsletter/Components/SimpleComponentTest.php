@@ -114,13 +114,13 @@ class SimpleComponentTest extends TestCase
     {
         $html = $this->mountComponent(Button::class, ComponentData::button([
             'background' => 'primary-dark',
-            'text_align' => 'left',
+            'text_align' => 'right',
         ]))->html();
 
         $this->assertStringContainsString('button-mockup', $html);
         $this->assertStringContainsString('background-color: #29719f', $html);
         $this->assertStringContainsString('color: #ffffff', $html);
-        $this->assertStringContainsString('text-align: left', $html);
+        $this->assertStringContainsString('text-align: right', $html);
     }
 
     public function test_the_button_editor_offers_every_colour_and_alignment(): void
@@ -140,7 +140,7 @@ class SimpleComponentTest extends TestCase
     {
         $component = $this->mountComponent(Button::class);
 
-        $this->assertSame('center', $component->get('textAlign'));
+        $this->assertSame('left', $component->get('textAlign'));
         $this->assertSame('secondary', $component->get('background'));
     }
 
@@ -151,7 +151,7 @@ class SimpleComponentTest extends TestCase
             'background' => 'chartreuse',
         ]));
 
-        $this->assertSame('center', $component->get('textAlign'));
+        $this->assertSame('left', $component->get('textAlign'));
         $this->assertSame('secondary', $component->get('background'));
     }
 

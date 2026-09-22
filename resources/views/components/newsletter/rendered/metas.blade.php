@@ -32,7 +32,7 @@
         <mj-text align="left" color="#555" font-size="16px" padding="0px"></mj-text>
         <mj-section background-color="#fff" padding="10px"></mj-section>
         <mj-column padding="0px"></mj-column>
-        <mj-button background-color="#DBBC25" color="#222222" text-align="center" padding="0px" font-size="15px" font-weight="bold"></mj-button>
+        <mj-button background-color="#DBBC25" color="#222222" padding="0px" font-size="15px" font-weight="bold"></mj-button>
         <mj-table font-size="15px"></mj-table>
         <mj-class name="blue" background-color="#80CCFC"></mj-class>
         <mj-class name="yellow" background-color="#DBBC25"></mj-class>

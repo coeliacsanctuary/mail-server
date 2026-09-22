@@ -1,4 +1,4 @@
-<div>
+<div class="component-editor">
     <div class="text-xs uppercase font-semibold mb-2">{{ $label }}</div>
 
     <input type="text" wire:model.live.blur="content" placeholder="{{ $label }}..." class="{{ $inputClass }} w-full"/>

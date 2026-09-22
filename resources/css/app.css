@@ -94,6 +94,45 @@
     border-color: var(--gray-400, #a1a1aa);
 }
 
+.editable-heading,
+.editable-body {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    font-family: "Raleway";
+    color: #555;
+}
+
+.editable-heading::placeholder,
+.editable-body::placeholder {
+    opacity: 0.45;
+}
+
+.editable-heading:focus,
+.editable-body:focus,
+.button-mockup-input:focus {
+    outline: 2px solid var(--gray-400, #a1a1aa);
+    outline-offset: 4px;
+}
+
+.editable-heading--title {
+    font-size: 30px;
+    font-weight: 600;
+    text-align: center;
+    color: #000;
+}
+
+.editable-heading--subtitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+}
+
+.editable-body {
+    font-size: 16px;
+    line-height: 1.4;
+}
+
 .button-mockup {
     padding: 10px 25px;
     border-radius: 6px;
@@ -115,11 +154,6 @@
     font: inherit;
     color: inherit;
     text-align: inherit;
-}
-
-.button-mockup-input:focus {
-    outline: 2px solid currentColor;
-    outline-offset: 4px;
 }
 
 .button-mockup-input::placeholder {

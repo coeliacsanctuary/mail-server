@@ -136,6 +136,15 @@ class SimpleComponentTest extends TestCase
         }
     }
 
+    public function test_a_heading_input_is_styled_as_the_heading_it_renders(): void
+    {
+        $title = $this->mountComponent(Title::class, ComponentData::title())->html();
+        $subtitle = $this->mountComponent(Subtitle::class, ComponentData::subtitle())->html();
+
+        $this->assertStringContainsString('editable-heading--title', $title);
+        $this->assertStringContainsString('editable-heading--subtitle', $subtitle);
+    }
+
     public function test_an_hr_defaults_to_blue_and_persists_a_choice(): void
     {
         $component = $this->mountComponent(Hr::class);

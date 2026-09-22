@@ -40,7 +40,7 @@ abstract class HeadingComponent extends NewsletterComponent
 
     protected function inputClass(): string
     {
-        return 'text-2xl';
+        return 'editable-heading editable-heading--title';
     }
 
     /** @return array<string, mixed> */

@@ -13,6 +13,6 @@ class Subtitle extends HeadingComponent
 
     protected function inputClass(): string
     {
-        return 'text-xl';
+        return 'editable-heading editable-heading--subtitle';
     }
 }

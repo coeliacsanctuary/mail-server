@@ -94,6 +94,99 @@
     border-color: var(--gray-400, #a1a1aa);
 }
 
+.button-mockup {
+    padding: 10px 25px;
+    border-radius: 6px;
+    font-family: "Raleway";
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.button-mockup--large {
+    font-size: 20px;
+    line-height: 120%;
+}
+
+.button-mockup-input {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
+}
+
+.button-mockup-input:focus {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+}
+
+.button-mockup-input::placeholder {
+    color: inherit;
+    opacity: 0.6;
+}
+
+.component-props {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    opacity: 0;
+    transition: opacity 150ms ease;
+}
+
+.button-editor:hover .component-props,
+.component-props:focus-within {
+    opacity: 1;
+}
+
+.component-props-set {
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.125rem;
+    background-color: var(--gray-200, #e4e4e7);
+    border: 1px solid var(--gray-400, #a1a1aa);
+    border-radius: 0.25rem;
+}
+
+.component-swatch {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid transparent;
+    border-radius: 0.125rem;
+    cursor: pointer;
+}
+
+.component-swatch--on {
+    border-color: var(--gray-700, #3f3f46);
+}
+
+.component-prop {
+    display: flex;
+    align-items: center;
+    padding: 0.125rem 0.25rem;
+    background: transparent;
+    border: 0;
+    border-radius: 0.125rem;
+    color: inherit;
+    cursor: pointer;
+    transition: background-color 150ms ease;
+}
+
+.component-prop:hover {
+    background-color: rgb(0 0 0 / 6%);
+}
+
+.component-prop--on {
+    background-color: var(--gray-400, #a1a1aa);
+}
+
+.component-swatch:focus-visible,
+.component-prop:focus-visible {
+    outline: 2px solid var(--gray-600, #52525b);
+    outline-offset: -2px;
+}
+
 .component-stack-item + .component-stack-item {
     margin-top: 1.25rem;
     padding-top: 1.25rem;

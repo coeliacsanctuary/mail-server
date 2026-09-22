@@ -4,18 +4,29 @@ declare(strict_types=1);
 
 namespace App\Livewire\Newsletter\Editable\Components;
 
+use App\Editor\Support\ButtonColour;
 use Illuminate\View\View;
 
 class Button extends NewsletterComponent
 {
+    public const ALIGNMENTS = ['left', 'center', 'right'];
+
+    public const DEFAULT_ALIGNMENT = 'center';
+
     public string $label;
 
     public string $link;
+
+    public string $textAlign;
+
+    public string $background;
 
     public function mount(): void
     {
         $this->label = $this->properties['content'] ?? '';
         $this->link = $this->properties['link'] ?? '';
+        $this->textAlign = $this->alignmentOr($this->properties['text_align'] ?? null);
+        $this->background = ButtonColour::fromName($this->properties['background'] ?? null)->value;
     }
 
     public function updated(): void
@@ -23,6 +34,25 @@ class Button extends NewsletterComponent
         $this->syncProperties();
 
         $this->skipRender();
+    }
+
+    public function setBackground(string $background): void
+    {
+        $this->background = ButtonColour::fromName($background)->value;
+
+        $this->syncProperties();
+    }
+
+    public function setTextAlign(string $textAlign): void
+    {
+        $this->textAlign = $this->alignmentOr($textAlign);
+
+        $this->syncProperties();
+    }
+
+    public function colour(): ButtonColour
+    {
+        return ButtonColour::fromName($this->background);
     }
 
     public function render(): View
@@ -36,6 +66,15 @@ class Button extends NewsletterComponent
         return [
             'content' => $this->label,
             'link' => $this->link,
+            'text_align' => $this->textAlign,
+            'background' => $this->background,
         ];
+    }
+
+    private function alignmentOr(?string $alignment): string
+    {
+        return in_array($alignment, self::ALIGNMENTS, true)
+            ? $alignment
+            : self::DEFAULT_ALIGNMENT;
     }
 }

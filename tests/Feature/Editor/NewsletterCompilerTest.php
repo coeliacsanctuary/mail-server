@@ -50,6 +50,17 @@ class NewsletterCompilerTest extends TestCase
         );
     }
 
+    public function test_the_head_pairs_the_default_button_text_with_its_background(): void
+    {
+        $mjml = (new NewsletterCompiler(new ContentItem()))->renderMjml();
+
+        $this->assertMjmlContains(
+            '<mj-button background-color="#DBBC25" color="#222222" text-align="center" '
+            . 'padding="0px" font-size="15px" font-weight="bold">',
+            $mjml,
+        );
+    }
+
     public function test_the_head_restores_the_large_button_on_wide_screens(): void
     {
         $mjml = (new NewsletterCompiler(new ContentItem()))->renderMjml();
@@ -318,6 +329,27 @@ class NewsletterCompilerTest extends TestCase
             'product in a single block has a large button' => [
                 'product', 'single', ComponentData::product(),
                 'padding="10px 0" border-radius="6px" font-size="16px" line-height="115%" inner-padding="8px 25px" css-class="single-button" > View Product </mj-button>',
+            ],
+            'a default button emits no colour or alignment' => [
+                'button', 'single', ComponentData::button(),
+                '<mj-button href="https://coeliac.invalid/blog" border-radius="6px" font-size="16px" '
+                . 'line-height="115%" inner-padding="8px 25px" css-class="single-button" > Read more </mj-button>',
+            ],
+            'a dark button pairs white text with its background' => [
+                'button', 'single', ComponentData::button(['background' => 'primary-dark']),
+                '<mj-button href="https://coeliac.invalid/blog" background-color="#29719f" color="#ffffff" ',
+            ],
+            'a light button pairs dark text with its background' => [
+                'button', 'single', ComponentData::button(['background' => 'primary']),
+                '<mj-button href="https://coeliac.invalid/blog" background-color="#80CCFC" color="#222222" ',
+            ],
+            'a non default alignment is emitted' => [
+                'button', 'single', ComponentData::button(['text_align' => 'left']),
+                'text-align="left" border-radius="6px"',
+            ],
+            'an unknown colour falls back to the default and emits nothing' => [
+                'button', 'single', ComponentData::button(['background' => 'chartreuse']),
+                '<mj-button href="https://coeliac.invalid/blog" border-radius="6px"',
             ],
             'a button in a double block stays small and unhooked' => [
                 'button', 'double', ComponentData::button(),

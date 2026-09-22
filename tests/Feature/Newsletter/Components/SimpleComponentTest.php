@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Newsletter\Components;
 
+use App\Editor\Support\ButtonColour;
 use App\Livewire\Newsletter\Editable\Components\Button;
 use App\Livewire\Newsletter\Editable\Components\Hr;
 use App\Livewire\Newsletter\Editable\Components\Subtitle;
@@ -54,7 +55,7 @@ class SimpleComponentTest extends TestCase
                 'class' => Button::class,
                 'properties' => ComponentData::button(),
                 'field' => 'label',
-                'keys' => ['content', 'link'],
+                'keys' => ['content', 'link', 'text_align', 'background'],
             ]],
             'text with button' => [[
                 'class' => TextWithButton::class,
@@ -107,6 +108,71 @@ class SimpleComponentTest extends TestCase
     {
         $this->mountComponent(Title::class)->assertSet('link', null);
         $this->mountComponent(Subtitle::class)->assertSet('link', null);
+    }
+
+    public function test_the_button_editor_renders_a_mockup_carrying_its_own_colours(): void
+    {
+        $html = $this->mountComponent(Button::class, ComponentData::button([
+            'background' => 'primary-dark',
+            'text_align' => 'left',
+        ]))->html();
+
+        $this->assertStringContainsString('button-mockup', $html);
+        $this->assertStringContainsString('background-color: #29719f', $html);
+        $this->assertStringContainsString('color: #ffffff', $html);
+        $this->assertStringContainsString('text-align: left', $html);
+    }
+
+    public function test_the_button_editor_offers_every_colour_and_alignment(): void
+    {
+        $html = html_entity_decode($this->mountComponent(Button::class, ComponentData::button())->html());
+
+        foreach (ButtonColour::cases() as $colour) {
+            $this->assertStringContainsString("setBackground('{$colour->value}')", $html);
+        }
+
+        foreach (Button::ALIGNMENTS as $alignment) {
+            $this->assertStringContainsString("setTextAlign('{$alignment}')", $html);
+        }
+    }
+
+    public function test_a_button_with_no_properties_defaults_its_styling(): void
+    {
+        $component = $this->mountComponent(Button::class);
+
+        $this->assertSame('center', $component->get('textAlign'));
+        $this->assertSame('secondary', $component->get('background'));
+    }
+
+    public function test_an_unknown_colour_or_alignment_falls_back_to_the_default(): void
+    {
+        $component = $this->mountComponent(Button::class, ComponentData::button([
+            'text_align' => 'diagonal',
+            'background' => 'chartreuse',
+        ]));
+
+        $this->assertSame('center', $component->get('textAlign'));
+        $this->assertSame('secondary', $component->get('background'));
+    }
+
+    public function test_choosing_a_colour_persists_it(): void
+    {
+        $this->mountComponent(Button::class, ComponentData::button())
+            ->call('setBackground', 'primary-dark')
+            ->assertDispatched(
+                'component-updated',
+                fn ($event, $params) => $params[1]['background'] === 'primary-dark',
+            );
+    }
+
+    public function test_choosing_an_alignment_persists_it(): void
+    {
+        $this->mountComponent(Button::class, ComponentData::button())
+            ->call('setTextAlign', 'right')
+            ->assertDispatched(
+                'component-updated',
+                fn ($event, $params) => $params[1]['text_align'] === 'right',
+            );
     }
 
     public function test_button_and_text_with_button_default_their_link_to_an_empty_string(): void

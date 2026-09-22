@@ -51,6 +51,23 @@ class NewsletterCompilerTest extends TestCase
         );
     }
 
+    /**
+     * Without these the fluid-img class on blog and recipe images is inert,
+     * and those images stay at their desktop column width on phones whose
+     * client ignores media queries.
+     */
+    public function test_the_head_carries_the_media_query_free_fluid_image_rules(): void
+    {
+        $mjml = (new NewsletterCompiler(new ContentItem()))->renderMjml();
+
+        $this->assertMjmlContains('<mj-style>.fluid-img table { width: 100% !important; }</mj-style>', $mjml);
+        $this->assertMjmlContains('<mj-style>.fluid-img td { width: 100% !important; }</mj-style>', $mjml);
+        $this->assertMjmlContains(
+            '<mj-style>.fluid-img img { width: 100% !important; max-width: 100% !important; }</mj-style>',
+            $mjml,
+        );
+    }
+
     public function test_structured_html_that_is_not_json_renders_as_empty(): void
     {
         $contentItem = new ContentItem(['structured_html' => 'not json at all']);
@@ -171,6 +188,21 @@ class NewsletterCompilerTest extends TestCase
                 'blog', 'double', ComponentData::blog(),
                 '<mj-column css-class="double-0"> <mj-image href="https://coeliac.invalid/blog/a-gluten-free-blog"',
             ],
+            /**
+             * mj-image bakes the computed column width onto the image's own
+             * <td>, and fluid-on-mobile only lifts it behind a media query.
+             * The fluid-img class carries rules that do the same job with no
+             * media query, for clients that ignore them. Both must be present.
+             */
+            'blog image carries the fluid-img class' => [
+                'blog', 'double', ComponentData::blog(),
+                'css-class="fluid-img" fluid-on-mobile="true"',
+            ],
+            'recipe image carries the fluid-img class' => [
+                'recipe', 'double', ComponentData::recipe(),
+                'css-class="fluid-img" fluid-on-mobile="true"',
+            ],
+
             'blog description is rendered unescaped' => [
                 'blog', 'single', ComponentData::blog(['description' => '<em>Emphasised</em>']),
                 '<mj-text css-class="blue-links"> <em>Emphasised</em> </mj-text>',

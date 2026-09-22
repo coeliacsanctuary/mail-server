@@ -22,6 +22,9 @@
     <mj-style>.wrapper h1 { font-size:30px; text-align:center; margin:10px 0 0; padding:0; color:#000 }</mj-style>
     <mj-style>.wrapper h2, h3 { margin:0; padding:0; }</mj-style>
     <mj-style>.blue-links a { color: #29719f !important; }</mj-style>
+    <mj-style>.fluid-img table { width: 100% !important; }</mj-style>
+    <mj-style>.fluid-img td { width: 100% !important; }</mj-style>
+    <mj-style>.fluid-img img { width: 100% !important; max-width: 100% !important; }</mj-style>
     <mj-style>.blue-links * a { color: #29719f !important; }</mj-style>
     <mj-style>.wrapper { background-color: #f7f7f7 !important; }</mj-style>
     <mj-attributes>

@@ -11,7 +11,7 @@
             </mj-text>
         @endif
 
-        <mj-image href="{{ $properties['link'] ?? '' }}" src="{{ $properties['image'] ?? '' }}" fluid-on-mobile="true"></mj-image>
+        <mj-image href="{{ $properties['link'] ?? '' }}" src="{{ $properties['image'] ?? '' }}" css-class="fluid-img" fluid-on-mobile="true"></mj-image>
 
         <mj-text css-class="blue-links" padding="10px 0">
             <h3>

@@ -110,32 +110,46 @@ class Editor extends EditorComponent
         $this->persist($blocks);
     }
 
+    /** @param list<string> $components */
     #[On('add-component-remote')]
-    public function addComponent(string $blockId, string $component, int $index): void
+    public function addComponent(string $blockId, array $components, int $index): void
     {
         $blocks = $this->blocks();
 
-        $blocks->find($blockId)->putComponent($index, new BlockComponent($component));
+        $block = $blocks->find($blockId);
+
+        foreach ($components as $component) {
+            $block->appendComponent($index, new BlockComponent($component));
+        }
 
         $this->persist($blocks);
     }
 
-    public function removeComponent(string $blockId, int $index): void
+    public function removeComponent(string $componentId): void
     {
         $blocks = $this->blocks();
 
-        $blocks->find($blockId)->removeComponent($index);
+        $blocks->removeComponent($componentId);
+
+        $this->persist($blocks);
+    }
+
+    public function reorderComponent(string $componentId, int $position): void
+    {
+        $blocks = $this->blocks();
+
+        $blocks->moveComponentTo($componentId, $position);
 
         $this->persist($blocks);
     }
 
     /** @param array<string, mixed> $properties */
     #[On('component-updated')]
-    public function saveComponent(string $blockId, array $properties, int $index): void
+    public function saveComponent(string $componentId, array $properties): void
     {
         $blocks = $this->blocks();
 
-        $blocks->find($blockId)->updateComponentProperties($index, $properties);
+        $blocks->updateComponentProperties($componentId, $properties);
 
         $this->persist($blocks);
 

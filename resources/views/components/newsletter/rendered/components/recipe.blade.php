@@ -1,29 +1,27 @@
-@props(['properties', 'block', 'position'])
+@props(['properties', 'block'])
 
 @if(filled($properties['content'] ?? null))
-    <x-newsletter.rendered.column :block="$block" :position="$position">
-        @if($block === 'single')
-            <mj-text mj-class="inner blue-links">
-                <h2 class="blue-links">
-                    <a href="{{ $properties['link'] ?? '' }}">{{ $properties['title'] ?? '' }}</a>
-                </h2>
-            </mj-text>
-        @endif
-
-        <mj-image href="{{ $properties['link'] ?? '' }}" src="{{ $properties['image'] ?? '' }}" css-class="fluid-img" fluid-on-mobile="true"></mj-image>
-
-        <mj-text css-class="blue-links" padding="10px 0">
-            <h3>
+    @if($block === 'single')
+        <mj-text mj-class="inner blue-links">
+            <h2 class="blue-links">
                 <a href="{{ $properties['link'] ?? '' }}">{{ $properties['title'] ?? '' }}</a>
-            </h3>
+            </h2>
         </mj-text>
+    @endif
 
-        <mj-text css-class="blue-links">
-            {!! $properties['description'] ?? '' !!}
-        </mj-text>
+    <mj-image href="{{ $properties['link'] ?? '' }}" src="{{ $properties['image'] ?? '' }}" css-class="fluid-img" fluid-on-mobile="true"></mj-image>
 
-        <x-newsletter.rendered.button :href="$properties['link'] ?? ''" :block="$block" padding="10px 0">
-            Read more
-        </x-newsletter.rendered.button>
-    </x-newsletter.rendered.column>
+    <mj-text css-class="blue-links" padding="10px 0">
+        <h3>
+            <a href="{{ $properties['link'] ?? '' }}">{{ $properties['title'] ?? '' }}</a>
+        </h3>
+    </mj-text>
+
+    <mj-text css-class="blue-links">
+        {!! $properties['description'] ?? '' !!}
+    </mj-text>
+
+    <x-newsletter.rendered.button :href="$properties['link'] ?? ''" :block="$block" padding="10px 0">
+        Read more
+    </x-newsletter.rendered.button>
 @endif

@@ -40,6 +40,27 @@ class NewsletterCompilerTest extends TestCase
         );
     }
 
+    public function test_the_head_makes_the_gutter_columns_border_box(): void
+    {
+        $mjml = (new NewsletterCompiler(new ContentItem()))->renderMjml();
+
+        $this->assertMjmlContains(
+            '.double-0, .double-1, .triple-0, .triple-1, .triple-2 { box-sizing: border-box!important; }',
+            $mjml,
+        );
+    }
+
+    public function test_the_head_pairs_the_default_button_text_with_its_background(): void
+    {
+        $mjml = (new NewsletterCompiler(new ContentItem()))->renderMjml();
+
+        $this->assertMjmlContains(
+            '<mj-button background-color="#DBBC25" color="#222222" '
+            . 'padding="0px" font-size="15px" font-weight="bold">',
+            $mjml,
+        );
+    }
+
     public function test_the_head_restores_the_large_button_on_wide_screens(): void
     {
         $mjml = (new NewsletterCompiler(new ContentItem()))->renderMjml();
@@ -71,14 +92,34 @@ class NewsletterCompilerTest extends TestCase
         $this->assertSame(2, mb_substr_count($mjml, '<mj-wrapper>'));
     }
 
-    public function test_every_component_is_wrapped_in_a_nested_mj_column(): void
+    public function test_stacked_components_are_separated_by_a_spacer(): void
+    {
+        $mjml = $this->mjmlFor(
+            NewsletterBuilder::make()->single()->stack('image', ComponentData::image())->and('hr'),
+        );
+
+        $this->assertMjmlContains(
+            'fluid-on-mobile="true"></mj-image> <mj-spacer height="15px"></mj-spacer> '
+            . '<mj-divider border-width="2px" border-color="#80CCFC"></mj-divider>',
+            $mjml,
+        );
+    }
+
+    public function test_a_lone_component_gets_no_spacer(): void
+    {
+        $mjml = $this->mjmlFor(NewsletterBuilder::make()->single()->with('hr'));
+
+        $this->assertMjmlNotContains('mj-spacer', $mjml);
+    }
+
+    public function test_a_component_sits_directly_in_its_column(): void
     {
         $mjml = $this->mjmlFor(NewsletterBuilder::make()->single()->with('hr'));
 
         $this->assertMjmlContains(
-            '<mj-wrapper> <mj-section> <mj-column> <mj-column> '
+            '<mj-wrapper> <mj-section> <mj-column css-class="full"> '
             . '<mj-divider border-width="2px" border-color="#80CCFC"></mj-divider> '
-            . '</mj-column> </mj-column> </mj-section> </mj-wrapper>',
+            . '</mj-column> </mj-section> </mj-wrapper>',
             $mjml,
         );
     }
@@ -124,14 +165,14 @@ class NewsletterCompilerTest extends TestCase
             NewsletterBuilder::make()->double()->with('hr')->empty(),
         );
 
-        $this->assertMjmlContains('</mj-column> <mj-column> </mj-column> </mj-section>', $mjml);
+        $this->assertMjmlContains('</mj-column> <mj-column css-class="double-1"> </mj-column> </mj-section>', $mjml);
     }
 
     public function test_an_unknown_component_name_is_skipped_without_error(): void
     {
         $mjml = $this->mjmlFor(NewsletterBuilder::make()->single()->with('does-not-exist'));
 
-        $this->assertMjmlContains('<mj-column> </mj-column>', $mjml);
+        $this->assertMjmlContains('<mj-column css-class="full"> </mj-column>', $mjml);
         $this->assertMjmlNotContains('does-not-exist', $mjml);
     }
 
@@ -232,20 +273,22 @@ class NewsletterCompilerTest extends TestCase
 
             'text splits on newlines' => [
                 'text', 'single', ComponentData::text(),
-                '<mj-text mj-class="inner">First line.</mj-text> <mj-text mj-class="inner">Second line.</mj-text>',
+                '<mj-text mj-class="inner" css-class="blue-links">First line.</mj-text> '
+                . '<mj-text mj-class="inner" css-class="blue-links">Second line.</mj-text>',
             ],
             'text accepts the legacy array shape' => [
                 'text', 'single', ['content' => ['Only line.']],
-                '<mj-text mj-class="inner">Only line.</mj-text>',
+                '<mj-text mj-class="inner" css-class="blue-links">Only line.</mj-text>',
             ],
             'text with no content emits one empty line' => [
                 'text', 'single', [],
-                '<mj-column css-class="blue-links"> <mj-text mj-class="inner"></mj-text> </mj-column>',
+                '<mj-column css-class="full"> <mj-text mj-class="inner" css-class="blue-links"></mj-text> </mj-column>',
             ],
 
             'title with text splits the body on newlines' => [
                 'title-with-text', 'single', ComponentData::titleWithText(),
-                '<mj-text mj-class="inner">First line.</mj-text> <mj-text mj-class="inner">Second line.</mj-text>',
+                '<mj-text mj-class="inner" css-class="blue-links">First line.</mj-text> '
+                . '<mj-text mj-class="inner" css-class="blue-links">Second line.</mj-text>',
             ],
 
             'image' => [
@@ -269,15 +312,23 @@ class NewsletterCompilerTest extends TestCase
                 'image-with-button', 'single', ComponentData::imageWithButton(),
                 '<mj-image href="https://coeliac.invalid/blog" src="https://coeliac.invalid/images/upload.jpg" alt="" fluid-on-mobile="true">',
             ],
-            'image with button has a large button' => [
+            'image with button expands into an image and a button' => [
                 'image-with-button', 'single', ComponentData::imageWithButton(),
-                '<mj-button href="https://coeliac.invalid/blog" padding="10px 0" border-radius="6px" '
+                'fluid-on-mobile="true"></mj-image> <mj-spacer height="15px"></mj-spacer> '
+                . '<mj-button href="https://coeliac.invalid/blog" border-radius="6px" '
                 . 'font-size="16px" line-height="115%" inner-padding="8px 25px" css-class="single-button" > Read more </mj-button>',
             ],
-            'text with button has a large button' => [
+            'text with button expands into text and a button' => [
                 'text-with-button', 'single', ComponentData::textWithButton(),
-                '<mj-button href="https://coeliac.invalid/blog" padding="10px 0" border-radius="6px" '
+                '<mj-text mj-class="inner" css-class="blue-links">Second line.</mj-text> '
+                . '<mj-spacer height="15px"></mj-spacer> '
+                . '<mj-button href="https://coeliac.invalid/blog" border-radius="6px" '
                 . 'font-size="16px" line-height="115%" inner-padding="8px 25px" css-class="single-button" > Read more </mj-button>',
+            ],
+            'title with text expands into a title and text' => [
+                'title-with-text', 'single', ComponentData::titleWithText(),
+                '<h1> A Newsletter Title </h1> </mj-text> <mj-spacer height="15px"></mj-spacer> '
+                . '<mj-text mj-class="inner" css-class="blue-links">First line.</mj-text>',
             ],
             'recipe in a single block has a large button' => [
                 'recipe', 'single', ComponentData::recipe(),
@@ -286,6 +337,63 @@ class NewsletterCompilerTest extends TestCase
             'product in a single block has a large button' => [
                 'product', 'single', ComponentData::product(),
                 'padding="10px 0" border-radius="6px" font-size="16px" line-height="115%" inner-padding="8px 25px" css-class="single-button" > View Product </mj-button>',
+            ],
+            'a title is centred by default' => [
+                'title', 'single', ComponentData::title(),
+                '<mj-text align="center" css-class="blue-links">',
+            ],
+            'a title can be left aligned' => [
+                'title', 'single', ComponentData::title(['align' => 'left']),
+                '<mj-text align="left" css-class="blue-links">',
+            ],
+            'a subtitle stays left by default and emits no align' => [
+                'subtitle', 'single', ComponentData::subtitle(),
+                '<mj-text mj-class="inner" css-class="blue-links"> <h3>',
+            ],
+            'a subtitle can be centred' => [
+                'subtitle', 'single', ComponentData::subtitle(['align' => 'center']),
+                '<mj-text mj-class="inner" css-class="blue-links" align="center"> <h3>',
+            ],
+            'text stays left by default and emits no align' => [
+                'text', 'single', ComponentData::text(),
+                '<mj-text mj-class="inner" css-class="blue-links">First line.</mj-text>',
+            ],
+            'text can be centred' => [
+                'text', 'single', ComponentData::text(['align' => 'center']),
+                '<mj-text mj-class="inner" css-class="blue-links" align="center">First line.</mj-text>',
+            ],
+            'an hr keeps its blue by default' => [
+                'hr', 'single', [],
+                '<mj-divider border-width="2px" border-color="#80CCFC"></mj-divider>',
+            ],
+            'an hr can be recoloured' => [
+                'hr', 'single', ComponentData::hr(['colour' => 'primary-dark']),
+                '<mj-divider border-width="2px" border-color="#29719f"></mj-divider>',
+            ],
+            'an unknown hr colour falls back to blue' => [
+                'hr', 'single', ComponentData::hr(['colour' => 'chartreuse']),
+                '<mj-divider border-width="2px" border-color="#80CCFC"></mj-divider>',
+            ],
+            'a default button emits no colour or alignment' => [
+                'button', 'single', ComponentData::button(),
+                '<mj-button href="https://coeliac.invalid/blog" border-radius="6px" font-size="16px" '
+                . 'line-height="115%" inner-padding="8px 25px" css-class="single-button" > Read more </mj-button>',
+            ],
+            'a dark button pairs white text with its background' => [
+                'button', 'single', ComponentData::button(['background' => 'primary-dark']),
+                '<mj-button href="https://coeliac.invalid/blog" background-color="#29719f" color="#ffffff" ',
+            ],
+            'a light button pairs dark text with its background' => [
+                'button', 'single', ComponentData::button(['background' => 'primary']),
+                '<mj-button href="https://coeliac.invalid/blog" background-color="#80CCFC" color="#222222" ',
+            ],
+            'a non default alignment is emitted' => [
+                'button', 'single', ComponentData::button(['text_align' => 'center']),
+                'text-align="center" border-radius="6px"',
+            ],
+            'an unknown colour falls back to the default and emits nothing' => [
+                'button', 'single', ComponentData::button(['background' => 'chartreuse']),
+                '<mj-button href="https://coeliac.invalid/blog" border-radius="6px"',
             ],
             'a button in a double block stays small and unhooked' => [
                 'button', 'double', ComponentData::button(),

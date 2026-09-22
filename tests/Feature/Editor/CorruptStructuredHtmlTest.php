@@ -46,8 +46,7 @@ class CorruptStructuredHtmlTest extends TestCase
         $methods = [
             'moveBlock' => ['block-1', 'up'],
             'deleteBlock' => ['block-1'],
-            'addComponent' => ['block-1', 'hr', 0],
-            'saveComponent' => ['block-1', [], 0],
+            'addComponent' => ['block-1', ['hr'], 0],
         ];
 
         $cases = [];
@@ -59,6 +58,18 @@ class CorruptStructuredHtmlTest extends TestCase
         }
 
         return $cases;
+    }
+
+    #[DataProvider('documentProvider')]
+    public function test_component_mutations_tolerate_a_broken_document(?string $structuredHtml): void
+    {
+        $contentItem = $this->contentItemWith($structuredHtml);
+
+        Livewire::test(Editor::class, ['model' => $contentItem])
+            ->call('saveComponent', 'nope', [])
+            ->call('removeComponent', 'nope')
+            ->call('reorderComponent', 'nope', 0)
+            ->assertOk();
     }
 
     #[DataProvider('documentProvider')]

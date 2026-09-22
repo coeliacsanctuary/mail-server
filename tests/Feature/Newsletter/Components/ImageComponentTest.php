@@ -29,7 +29,7 @@ class ImageComponentTest extends TestCase
         return Livewire::test($class, [
             'blockId' => 'block-1',
             'block' => 'single',
-            'index' => 0,
+            'componentId' => 'component-1',
             'properties' => $properties,
         ]);
     }
@@ -127,4 +127,34 @@ class ImageComponentTest extends TestCase
                     && $params[1]['label'] === 'Buy now',
             );
     }
+    public function test_an_empty_image_offers_a_placeholder_to_click(): void
+    {
+        $html = $this->mountComponent(Image::class)->html();
+
+        $this->assertStringContainsString('Choose an image', $html);
+        $this->assertStringNotContainsString('image-picker-preview', $html);
+        $this->assertStringContainsString('visually-hidden', $html);
+    }
+
+    public function test_a_filled_image_is_itself_the_picker(): void
+    {
+        $html = $this->mountComponent(Image::class, [
+            'content' => 'https://coeliac.invalid/a.jpg',
+            'link' => 'https://coeliac.invalid/blog',
+            'alt' => 'A loaf',
+        ])->html();
+
+        $this->assertStringContainsString('image-picker-preview', $html);
+        $this->assertStringContainsString('Replace', $html);
+        $this->assertStringNotContainsString('Choose an image', $html);
+    }
+
+    public function test_the_link_and_alt_fields_live_in_the_props_row(): void
+    {
+        $html = $this->mountComponent(Image::class, ['content' => 'https://coeliac.invalid/a.jpg'])->html();
+
+        $this->assertStringContainsString('component-props--stacked', $html);
+        $this->assertStringContainsString('wire:model.live.blur="alt"', html_entity_decode($html));
+    }
+
 }

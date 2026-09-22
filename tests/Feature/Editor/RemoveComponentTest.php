@@ -6,7 +6,6 @@ namespace Tests\Feature\Editor;
 
 use App\Editor\Editor;
 use Livewire\Livewire;
-use RuntimeException;
 use Tests\Support\ComponentData;
 use Tests\Support\Concerns\ReadsStructuredHtml;
 use Tests\Support\NewsletterBuilder;
@@ -23,7 +22,7 @@ class RemoveComponentTest extends TestCase
             ->create();
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('removeComponent', 'block-1', 0);
+            ->call('removeComponent', 'title-0');
 
         $this->assertNull($this->componentAt($contentItem, 0, 0));
     }
@@ -37,7 +36,7 @@ class RemoveComponentTest extends TestCase
             ->create();
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('removeComponent', 'block-1', 0);
+            ->call('removeComponent', 'title-0');
 
         $this->assertNull($this->componentAt($contentItem, 0, 0));
         $this->assertSame('hr', $this->componentAt($contentItem, 0, 1)['name']);
@@ -50,7 +49,7 @@ class RemoveComponentTest extends TestCase
             ->create();
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('removeComponent', 'block-1', 0);
+            ->call('removeComponent', 'title-0');
 
         $block = $this->blocks($contentItem)[0];
 
@@ -66,22 +65,22 @@ class RemoveComponentTest extends TestCase
 
         $component = Livewire::test(Editor::class, ['model' => $contentItem]);
 
-        $component->call('removeComponent', 'block-1', 0)
+        $component->call('removeComponent', 'title-0')
             ->assertSee('Add Component');
 
-        $component->call('addComponent', 'block-1', 'hr', 0);
+        $component->call('addComponent', 'block-1', ['hr'], 0);
 
         $this->assertSame('hr', $this->componentAt($contentItem, 0, 0)['name']);
     }
 
-    public function test_an_out_of_range_index_is_ignored(): void
+    public function test_an_unknown_component_id_is_ignored(): void
     {
         $contentItem = NewsletterBuilder::make()
             ->single()->with('title', ComponentData::title())
             ->create();
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('removeComponent', 'block-1', 2);
+            ->call('removeComponent', 'nope');
 
         $this->assertSame('title', $this->componentAt($contentItem, 0, 0)['name']);
     }
@@ -91,7 +90,7 @@ class RemoveComponentTest extends TestCase
         $contentItem = NewsletterBuilder::make()->single()->empty()->create();
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('removeComponent', 'block-1', 0)
+            ->call('removeComponent', 'nope')
             ->assertOk();
 
         $this->assertNull($this->componentAt($contentItem, 0, 0));
@@ -105,7 +104,7 @@ class RemoveComponentTest extends TestCase
 
         $html = html_entity_decode(Livewire::test(Editor::class, ['model' => $contentItem])->html());
 
-        $this->assertStringContainsString("removeComponent('block-1', 0)", $html);
+        $this->assertStringContainsString("removeComponent('title-0')", $html);
     }
 
     public function test_an_empty_column_renders_no_remove_control(): void
@@ -118,14 +117,14 @@ class RemoveComponentTest extends TestCase
         $this->assertStringContainsString('Add Component', $html);
     }
 
-    public function test_it_throws_when_the_block_does_not_exist(): void
+    public function test_removing_an_unknown_component_does_not_throw(): void
     {
         $contentItem = NewsletterBuilder::make()->single()->with('hr')->create();
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('No block');
-
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('removeComponent', 'nope', 0);
+            ->call('removeComponent', 'nope')
+            ->assertOk();
+
+        $this->assertSame('hr', $this->componentAt($contentItem, 0, 0)['name']);
     }
 }

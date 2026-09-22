@@ -32,7 +32,7 @@
         <mj-text align="left" color="#555" font-size="16px" padding="0px"></mj-text>
         <mj-section background-color="#fff" padding="10px"></mj-section>
         <mj-column padding="0px"></mj-column>
-        <mj-button background-color="#DBBC25" padding="0px" font-size="15px" font-weight="bold"></mj-button>
+        <mj-button background-color="#DBBC25" color="#222222" padding="0px" font-size="15px" font-weight="bold"></mj-button>
         <mj-table font-size="15px"></mj-table>
         <mj-class name="blue" background-color="#80CCFC"></mj-class>
         <mj-class name="yellow" background-color="#DBBC25"></mj-class>
@@ -52,6 +52,9 @@
         }
 
         @media screen and (min-width:480px) {
+            .double-0, .double-1, .triple-0, .triple-1, .triple-2 {
+                box-sizing: border-box!important;
+            }
             .double-0, .triple-0 {
                 padding-right: 5px!important;
             }

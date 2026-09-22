@@ -63,7 +63,7 @@ class SaveQuietlyTest extends TestCase
 
         $component = Livewire::test(Editor::class, ['model' => $contentItem]);
 
-        $component->call('addComponent', 'block-1', 'button', 0);
+        $component->call('addComponent', 'block-1', ['button'], 0);
         $component->call('saveQuietly')->assertDispatched('editorSavedQuietly');
 
         $this->assertStringContainsString('<mj-body', $contentItem->refresh()->html);

@@ -6,7 +6,6 @@ namespace Tests\Feature\Editor;
 
 use App\Editor\Editor;
 use Livewire\Livewire;
-use RuntimeException;
 use Tests\Support\ComponentData;
 use Tests\Support\Concerns\ReadsStructuredHtml;
 use Tests\Support\NewsletterBuilder;
@@ -23,7 +22,7 @@ class SaveComponentTest extends TestCase
         $properties = ComponentData::title(['content' => 'Updated']);
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('saveComponent', 'block-1', $properties, 0);
+            ->call('saveComponent', 'title-0', $properties);
 
         $this->assertEquals(
             ['name' => 'title', 'properties' => $properties],
@@ -36,7 +35,7 @@ class SaveComponentTest extends TestCase
         $contentItem = NewsletterBuilder::make()->single()->with('title')->create();
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('saveComponent', 'block-1', ComponentData::title(), 0)
+            ->call('saveComponent', 'title-0', ComponentData::title())
             ->assertDispatched('editorUpdated');
     }
 
@@ -48,7 +47,7 @@ class SaveComponentTest extends TestCase
 
         $compiledOnMount = $this->mjml->timesCompiled();
 
-        $component->call('saveComponent', 'block-1', ComponentData::title(['content' => 'Brand New Title']), 0);
+        $component->call('saveComponent', 'title-0', ComponentData::title(['content' => 'Brand New Title']));
 
         $this->assertSame($compiledOnMount, $this->mjml->timesCompiled());
         $this->assertStringNotContainsString('Brand New Title', $this->mjml->lastInput());
@@ -59,10 +58,10 @@ class SaveComponentTest extends TestCase
         $contentItem = NewsletterBuilder::make()->single()->empty()->create();
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('saveComponent', 'block-1', ComponentData::title(), 0)
+            ->call('saveComponent', 'title-0', ComponentData::title())
             ->assertOk();
 
-        $this->assertNull($this->componentAt($contentItem, 0, 0));
+        $this->assertSame([], $this->componentsAt($contentItem, 0, 0));
     }
 
     public function test_a_legacy_nameless_component_is_treated_as_an_empty_column(): void
@@ -82,14 +81,17 @@ class SaveComponentTest extends TestCase
             ->assertSee('Add Component');
     }
 
-    public function test_it_throws_when_the_block_does_not_exist(): void
+    public function test_saving_an_unknown_component_is_ignored(): void
     {
-        $contentItem = NewsletterBuilder::make()->single()->with('title')->create();
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('No block');
+        $contentItem = NewsletterBuilder::make()->single()->with('title', ComponentData::title())->create();
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('saveComponent', 'nope', ComponentData::title(), 0);
+            ->call('saveComponent', 'nope', ComponentData::title(['content' => 'Changed']))
+            ->assertOk();
+
+        $this->assertSame(
+            'A Newsletter Title',
+            $this->componentAt($contentItem, 0, 0)['properties']['content'],
+        );
     }
 }

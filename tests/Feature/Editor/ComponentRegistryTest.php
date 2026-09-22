@@ -15,14 +15,32 @@ class ComponentRegistryTest extends TestCase
             resource_path('views/components/modals/add-component.blade.php'),
         );
 
-        preg_match_all("/'component' => '([a-z-]+)'/", (string) $modal, $matches);
+        preg_match_all("/'components' => \[([^\]]+)\]/", (string) $modal, $matches);
 
-        return $matches[1];
+        $names = [];
+
+        foreach ($matches[1] as $group) {
+            preg_match_all("/'([a-z-]+)'/", $group, $inner);
+
+            $names = [...$names, ...$inner[1]];
+        }
+
+        return array_values(array_unique($names));
     }
 
     public function test_the_modal_offers_every_component(): void
     {
-        $this->assertCount(13, $this->registeredComponentNames());
+        $this->assertCount(10, $this->registeredComponentNames());
+    }
+
+    public function test_the_retired_bundles_are_no_longer_offered(): void
+    {
+        $offered = $this->registeredComponentNames();
+
+        foreach (['image-with-button', 'text-with-button', 'title-with-text'] as $bundle) {
+            $this->assertNotContains($bundle, $offered);
+            $this->assertTrue(View::exists("components.newsletter.rendered.components.{$bundle}"));
+        }
     }
 
     public function test_every_offered_component_has_an_editable_livewire_component(): void

@@ -21,7 +21,7 @@ class AddComponentTest extends TestCase
         $contentItem = NewsletterBuilder::make()->double()->empty()->empty()->create();
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('addComponent', 'block-1', 'title', 1);
+            ->call('addComponent', 'block-1', ['title'], 1);
 
         $this->assertNull($this->componentAt($contentItem, 0, 0));
         $this->assertSame(
@@ -38,7 +38,7 @@ class AddComponentTest extends TestCase
             ->create();
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('addComponent', 'block-2', 'hr', 0);
+            ->call('addComponent', 'block-2', ['hr'], 0);
 
         $this->assertEquals(
             ['name' => 'title', 'properties' => ComponentData::title()],
@@ -46,19 +46,45 @@ class AddComponentTest extends TestCase
         );
     }
 
-    public function test_it_overwrites_an_existing_component_destructively(): void
+    public function test_it_appends_below_an_existing_component(): void
     {
         $contentItem = NewsletterBuilder::make()
             ->single()->with('title', ComponentData::title())
             ->create();
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('addComponent', 'block-1', 'hr', 0);
+            ->call('addComponent', 'block-1', ['hr'], 0);
 
         $this->assertSame(
-            ['name' => 'hr', 'properties' => []],
-            $this->componentAt($contentItem, 0, 0),
+            ['title', 'hr'],
+            array_column($this->componentsAt($contentItem, 0, 0), 'name'),
         );
+    }
+
+    public function test_a_group_inserts_every_component_in_order(): void
+    {
+        $contentItem = NewsletterBuilder::make()->single()->empty()->create();
+
+        Livewire::test(Editor::class, ['model' => $contentItem])
+            ->call('addComponent', 'block-1', ['image', 'button'], 0);
+
+        $this->assertSame(
+            ['image', 'button'],
+            array_column($this->componentsAt($contentItem, 0, 0), 'name'),
+        );
+    }
+
+    public function test_every_added_component_gets_its_own_id(): void
+    {
+        $contentItem = NewsletterBuilder::make()->single()->empty()->create();
+
+        Livewire::test(Editor::class, ['model' => $contentItem])
+            ->call('addComponent', 'block-1', ['image', 'button'], 0);
+
+        $ids = array_column($this->componentsAt($contentItem, 0, 0), 'id');
+
+        $this->assertCount(2, array_unique($ids));
+        $this->assertNotContains('', $ids);
     }
 
     public function test_an_out_of_range_index_is_ignored(): void
@@ -66,7 +92,7 @@ class AddComponentTest extends TestCase
         $contentItem = NewsletterBuilder::make()->single()->empty()->create();
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('addComponent', 'block-1', 'hr', 2);
+            ->call('addComponent', 'block-1', ['hr'], 2);
 
         $properties = $this->blocks($contentItem)[0]['properties'];
 
@@ -82,7 +108,7 @@ class AddComponentTest extends TestCase
         $this->expectExceptionMessage('No block');
 
         Livewire::test(Editor::class, ['model' => $contentItem])
-            ->call('addComponent', 'nope', 'hr', 0);
+            ->call('addComponent', 'nope', ['hr'], 0);
     }
 
     public function test_adding_a_component_does_not_refresh_the_preview(): void
@@ -93,7 +119,7 @@ class AddComponentTest extends TestCase
 
         $compiledOnMount = $this->mjml->timesCompiled();
 
-        $component->call('addComponent', 'block-1', 'hr', 0)
+        $component->call('addComponent', 'block-1', ['hr'], 0)
             ->assertNotDispatched('editorUpdated');
 
         $this->assertSame($compiledOnMount, $this->mjml->timesCompiled());

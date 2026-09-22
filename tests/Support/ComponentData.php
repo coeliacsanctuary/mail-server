@@ -62,11 +62,21 @@ final class ComponentData
         ];
     }
 
+    /** @param array<string, mixed> $overrides */
+    public static function hr(array $overrides = []): array
+    {
+        return [
+            'colour' => 'primary',
+            ...$overrides,
+        ];
+    }
+
     public static function title(array $overrides = []): array
     {
         return [
             'content' => 'A Newsletter Title',
             'link' => null,
+            'align' => 'center',
             ...$overrides,
         ];
     }
@@ -76,6 +86,7 @@ final class ComponentData
         return [
             'content' => 'A Newsletter Subtitle',
             'link' => null,
+            'align' => 'left',
             ...$overrides,
         ];
     }
@@ -87,6 +98,7 @@ final class ComponentData
             'link' => null,
             'content' => "First line.\nSecond line.",
             ...$overrides,
+            'align' => 'left',
         ];
     }
 
@@ -94,6 +106,7 @@ final class ComponentData
     {
         return [
             'content' => "First line.\nSecond line.",
+            'align' => 'left',
             ...$overrides,
         ];
     }
@@ -113,6 +126,8 @@ final class ComponentData
         return [
             'content' => 'Read more',
             'link' => 'https://coeliac.invalid/blog',
+            'text_align' => 'left',
+            'background' => 'secondary',
             ...$overrides,
         ];
     }

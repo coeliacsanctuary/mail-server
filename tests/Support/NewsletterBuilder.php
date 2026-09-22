@@ -39,14 +39,29 @@ final class NewsletterBuilder
     {
         $block = array_key_last($this->blocks);
 
-        $this->blocks[$block]['properties'][$this->cursor]['component'] = [
+        $this->blocks[$block]['properties'][$this->cursor]['components'][] = [
             'name' => $component,
             'properties' => $properties,
+            'id' => $component . '-' . count($this->blocks[$block]['properties'][$this->cursor]['components'] ?? []),
         ];
 
         $this->cursor++;
 
         return $this;
+    }
+
+    /** @param array<string, mixed> $properties */
+    public function stack(string $component, array $properties = []): self
+    {
+        return $this->with($component, $properties);
+    }
+
+    /** @param array<string, mixed> $properties */
+    public function and(string $component, array $properties = []): self
+    {
+        $this->cursor--;
+
+        return $this->with($component, $properties);
     }
 
     public function empty(): self
@@ -99,7 +114,7 @@ final class NewsletterBuilder
         $this->blocks[] = [
             'id' => $id ?? 'block-' . (count($this->blocks) + 1),
             'block' => $type,
-            'properties' => array_fill(0, $columns, ['component' => null]),
+            'properties' => array_fill(0, $columns, ['components' => []]),
         ];
 
         $this->cursor = 0;

@@ -14,19 +14,20 @@
             <mj-wrapper>
                 <mj-section>
                     @foreach($block['properties'] as $index => $properties)
-                        <mj-column>
-                            @php
-                                $component = data_get($properties, 'component.name')
-                            @endphp
-                            @if($component && \Illuminate\Support\Facades\View::exists("components.newsletter.rendered.components.{$component}"))
-                                <x-dynamic-component
-                                    component="newsletter.rendered.components.{{ $properties['component']['name'] }}"
-                                    :properties="$properties['component']['properties']"
-                                    :block="$block['block']"
-                                    :position="$index"
-                                />
-                           @endif
-                        </mj-column>
+                        <x-newsletter.rendered.column :block="$block['block']" :position="$index">
+                            @foreach($properties['components'] ?? [] as $blockComponent)
+                                @if(\Illuminate\Support\Facades\View::exists("components.newsletter.rendered.components.{$blockComponent['name']}"))
+                                    @unless($loop->first)
+                                        <mj-spacer height="15px"></mj-spacer>
+                                    @endunless
+                                    <x-dynamic-component
+                                        component="newsletter.rendered.components.{{ $blockComponent['name'] }}"
+                                        :properties="$blockComponent['properties']"
+                                        :block="$block['block']"
+                                    />
+                                @endif
+                            @endforeach
+                        </x-newsletter.rendered.column>
                     @endforeach
                 </mj-section>
             </mj-wrapper>

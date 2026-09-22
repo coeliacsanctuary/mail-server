@@ -1,4 +1,4 @@
-@props(['blockId', 'index'])
+@props(['blockId', 'index', 'filled' => false])
 
 <div>
     <div class="flex items-center justify-center py-2"
@@ -8,9 +8,9 @@
                     return;
                 }
 
-                const component = event.detail[0];
+                const components = event.detail[0];
 
-                this.$dispatch('add-component-remote', ['{{ $blockId }}', component, {{ $index }}]);
+                this.$dispatch('add-component-remote', ['{{ $blockId }}', components, {{ $index }}]);
                 this.$dispatch('close-modal', { id: 'add-component' })
             }
          }"
@@ -19,13 +19,13 @@
     >
         <button
             type="button"
-            class="editor-tile editor-tile--stacked"
+            class="{{ $filled ? 'editor-tile editor-tile--compact' : 'editor-tile editor-tile--stacked' }}"
             x-on:click="$dispatch('open-modal', { id: 'add-component' });window.activeBlock = '{{ $blockId }}';window.activeIndex = {{ $index }};"
             wire:key="{{ $blockId }}-{{ $index }}-add-content"
         >
             <x-heroicon-o-squares-plus class="w-6 h-6" />
 
-            <span class="text-sm text-center">Add Component</span>
+            <span class="text-sm text-center">{{ $filled ? __mc('Add another') : __mc('Add Component') }}</span>
         </button>
     </div>
 </div>

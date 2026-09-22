@@ -23,7 +23,10 @@ class BlockCollectionTest extends TestCase
         return [
             'id' => $id,
             'block' => $layout,
-            'properties' => array_map(fn ($component) => ['component' => $component], $columns),
+            'properties' => array_map(
+                fn ($components) => ['components' => array_values(array_filter((array) $components))],
+                $columns,
+            ),
         ];
     }
 
@@ -31,7 +34,7 @@ class BlockCollectionTest extends TestCase
     {
         $json = $this->json([
             $this->block('block-1', 'double', [
-                ['name' => 'title', 'properties' => ['content' => 'Hello']],
+                [['name' => 'title', 'properties' => ['content' => 'Hello'], 'id' => 'c1']],
                 null,
             ]),
         ]);
@@ -70,11 +73,40 @@ class BlockCollectionTest extends TestCase
 
     public function test_a_component_without_a_name_is_read_as_an_empty_column(): void
     {
-        $json = $this->json([$this->block('block-1', 'single', [['properties' => ['content' => 'Orphaned']]])]);
+        $json = $this->json([$this->block('block-1', 'single', [[['properties' => ['content' => 'Orphaned']]]])]);
 
         $blocks = BlockCollection::fromJson($json);
 
-        $this->assertNull($blocks->find('block-1')->columns[0]);
+        $this->assertSame([], $blocks->find('block-1')->columns[0]);
+    }
+
+    public function test_it_reads_the_legacy_single_component_column_shape(): void
+    {
+        $json = json_encode(['blocks' => [[
+            'id' => 'block-1',
+            'block' => 'single',
+            'properties' => [['component' => ['name' => 'title', 'properties' => ['content' => 'Hello']]]],
+        ]]], JSON_THROW_ON_ERROR);
+
+        $column = BlockCollection::fromJson($json)->find('block-1')->columns[0];
+
+        $this->assertCount(1, $column);
+        $this->assertSame('title', $column[0]->name);
+        $this->assertSame(['content' => 'Hello'], $column[0]->properties);
+    }
+
+    public function test_a_legacy_component_gets_a_stable_id_derived_from_its_position(): void
+    {
+        $json = json_encode(['blocks' => [[
+            'id' => 'block-1',
+            'block' => 'single',
+            'properties' => [['component' => ['name' => 'title', 'properties' => []]]],
+        ]]], JSON_THROW_ON_ERROR);
+
+        $this->assertSame(
+            BlockCollection::fromJson($json)->find('block-1')->columns[0][0]->id,
+            BlockCollection::fromJson($json)->find('block-1')->columns[0][0]->id,
+        );
     }
 
     public function test_it_reports_a_missing_block_by_id(): void
@@ -150,29 +182,29 @@ class BlockCollectionTest extends TestCase
     {
         $block = Block::make('single', 'block-1');
 
-        $block->putComponent(2, new BlockComponent('hr'));
+        $block->appendComponent(2, new BlockComponent('hr'));
 
         $this->assertCount(1, $block->columns);
-        $this->assertNull($block->columns[0]);
+        $this->assertSame([], $block->columns[0]);
     }
 
     public function test_properties_cannot_be_saved_into_an_empty_column(): void
     {
         $block = Block::make('single', 'block-1');
 
-        $block->updateComponentProperties(0, ['content' => 'Nowhere to go']);
+        $block->updateComponentProperties('nope', ['content' => 'Nowhere to go']);
 
-        $this->assertNull($block->columns[0]);
+        $this->assertSame([], $block->columns[0]);
     }
 
     public function test_properties_are_saved_onto_an_existing_component(): void
     {
         $block = Block::make('single', 'block-1');
-        $block->putComponent(0, new BlockComponent('title'));
+        $block->appendComponent(0, $component = new BlockComponent('title'));
 
-        $block->updateComponentProperties(0, ['content' => 'Saved']);
+        $block->updateComponentProperties($component->id, ['content' => 'Saved']);
 
-        $this->assertSame(['content' => 'Saved'], $block->columns[0]->properties);
+        $this->assertSame(['content' => 'Saved'], $block->columns[0][0]->properties);
     }
 
     private function threeBlocks(): BlockCollection
@@ -225,13 +257,13 @@ class BlockCollectionTest extends TestCase
     public function test_a_moved_block_carries_its_components_with_it(): void
     {
         $blocks = BlockCollection::fromJson($this->json([
-            $this->block('block-1', 'single', [['name' => 'title', 'properties' => ['content' => 'Kept']]]),
+            $this->block('block-1', 'single', [[['name' => 'title', 'properties' => ['content' => 'Kept']]]]),
             $this->block('block-2'),
         ]));
 
         $blocks->moveTo('block-1', 1);
 
-        $moved = $blocks->find('block-1')->columns[0];
+        $moved = $blocks->find('block-1')->columns[0][0];
 
         $this->assertSame('title', $moved->name);
         $this->assertSame(['content' => 'Kept'], $moved->properties);
@@ -313,7 +345,7 @@ class BlockCollectionTest extends TestCase
     {
         $blocks = BlockCollection::fromJson($this->json([
             $this->block('block-1', 'double', [
-                ['name' => 'title', 'properties' => ['content' => 'Original']],
+                [['name' => 'title', 'properties' => ['content' => 'Original']]],
                 null,
             ]),
         ]));
@@ -323,9 +355,13 @@ class BlockCollectionTest extends TestCase
         $copy = $blocks->toArray()[1];
 
         $this->assertSame('double', $copy['block']);
-        $this->assertSame('title', $copy['properties'][0]['component']['name']);
-        $this->assertSame(['content' => 'Original'], $copy['properties'][0]['component']['properties']);
-        $this->assertNull($copy['properties'][1]['component']);
+        $this->assertSame('title', $copy['properties'][0]['components'][0]['name']);
+        $this->assertSame(['content' => 'Original'], $copy['properties'][0]['components'][0]['properties']);
+        $this->assertSame([], $copy['properties'][1]['components']);
+        $this->assertNotSame(
+            $blocks->toArray()[0]['properties'][0]['components'][0]['id'],
+            $copy['properties'][0]['components'][0]['id'],
+        );
     }
 
     /**
@@ -335,16 +371,17 @@ class BlockCollectionTest extends TestCase
     public function test_editing_a_duplicate_does_not_change_the_original(): void
     {
         $blocks = BlockCollection::fromJson($this->json([
-            $this->block('block-1', 'single', [['name' => 'title', 'properties' => ['content' => 'Original']]]),
+            $this->block('block-1', 'single', [[['name' => 'title', 'properties' => ['content' => 'Original']]]]),
         ]));
 
         $blocks->duplicate('block-1');
 
         $copyId = array_column($blocks->toArray(), 'id')[1];
-        $blocks->find($copyId)->updateComponentProperties(0, ['content' => 'Changed']);
+        $copy = $blocks->find($copyId);
+        $copy->updateComponentProperties($copy->columns[0][0]->id, ['content' => 'Changed']);
 
-        $this->assertSame(['content' => 'Original'], $blocks->find('block-1')->columns[0]->properties);
-        $this->assertSame(['content' => 'Changed'], $blocks->find($copyId)->columns[0]->properties);
+        $this->assertSame(['content' => 'Original'], $blocks->find('block-1')->columns[0][0]->properties);
+        $this->assertSame(['content' => 'Changed'], $copy->columns[0][0]->properties);
     }
 
     public function test_it_reports_a_missing_block_when_duplicating(): void
@@ -357,33 +394,33 @@ class BlockCollectionTest extends TestCase
     public function test_removing_a_component_empties_the_column(): void
     {
         $block = Block::make('double', 'block-1');
-        $block->putComponent(0, new BlockComponent('title'));
-        $block->putComponent(1, new BlockComponent('hr'));
+        $block->appendComponent(0, $title = new BlockComponent('title'));
+        $block->appendComponent(1, new BlockComponent('hr'));
 
-        $block->removeComponent(0);
+        $block->removeComponent($title->id);
 
-        $this->assertNull($block->columns[0]);
-        $this->assertSame('hr', $block->columns[1]->name);
+        $this->assertSame([], $block->columns[0]);
+        $this->assertSame('hr', $block->columns[1][0]->name);
     }
 
     public function test_removing_an_out_of_range_component_is_ignored(): void
     {
         $block = Block::make('single', 'block-1');
-        $block->putComponent(0, new BlockComponent('title'));
+        $block->appendComponent(0, new BlockComponent('title'));
 
-        $block->removeComponent(2);
+        $block->removeComponent('nope');
 
         $this->assertCount(1, $block->columns);
-        $this->assertSame('title', $block->columns[0]->name);
+        $this->assertSame('title', $block->columns[0][0]->name);
     }
 
     public function test_removing_a_component_from_an_already_empty_column_is_harmless(): void
     {
         $block = Block::make('single', 'block-1');
 
-        $block->removeComponent(0);
+        $block->removeComponent('nope');
 
-        $this->assertNull($block->columns[0]);
+        $this->assertSame([], $block->columns[0]);
     }
 
     public function test_a_document_with_no_preheader_key_reads_as_empty(): void

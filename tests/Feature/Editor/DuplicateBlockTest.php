@@ -49,11 +49,12 @@ class DuplicateBlockTest extends TestCase
         $copy = $this->blocks($contentItem)[1];
 
         $this->assertSame('double', $copy['block']);
+        $this->assertSame('title', $copy['properties'][0]['components'][0]['name']);
         $this->assertEquals(
-            ['name' => 'title', 'properties' => ComponentData::title()],
-            $copy['properties'][0]['component'],
+            ComponentData::title(),
+            $copy['properties'][0]['components'][0]['properties'],
         );
-        $this->assertNull($copy['properties'][1]['component']);
+        $this->assertSame([], $copy['properties'][1]['components']);
     }
 
     public function test_editing_the_copy_leaves_the_original_alone(): void
@@ -65,9 +66,9 @@ class DuplicateBlockTest extends TestCase
         $component = Livewire::test(Editor::class, ['model' => $contentItem]);
         $component->call('duplicateBlock', 'block-1');
 
-        $copyId = $this->blockIds($contentItem)[1];
+        $copyComponentId = $this->componentsAt($contentItem, 1, 0)[0]['id'];
 
-        $component->call('saveComponent', $copyId, ComponentData::title(['content' => 'Changed']), 0);
+        $component->call('saveComponent', $copyComponentId, ComponentData::title(['content' => 'Changed']));
 
         $this->assertSame('A Newsletter Title', $this->componentAt($contentItem, 0, 0)['properties']['content']);
         $this->assertSame('Changed', $this->componentAt($contentItem, 1, 0)['properties']['content']);

@@ -39,9 +39,10 @@ final class NewsletterBuilder
     {
         $block = array_key_last($this->blocks);
 
-        $this->blocks[$block]['properties'][$this->cursor]['component'] = [
+        $this->blocks[$block]['properties'][$this->cursor]['components'][] = [
             'name' => $component,
             'properties' => $properties,
+            'id' => $component . '-' . count($this->blocks[$block]['properties'][$this->cursor]['components'] ?? []),
         ];
 
         $this->cursor++;
@@ -99,7 +100,7 @@ final class NewsletterBuilder
         $this->blocks[] = [
             'id' => $id ?? 'block-' . (count($this->blocks) + 1),
             'block' => $type,
-            'properties' => array_fill(0, $columns, ['component' => null]),
+            'properties' => array_fill(0, $columns, ['components' => []]),
         ];
 
         $this->cursor = 0;

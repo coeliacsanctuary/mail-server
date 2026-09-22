@@ -243,6 +243,18 @@
     gap: 0.25rem;
 }
 
+.editor-tile--compact {
+    width: 100%;
+    height: auto;
+    padding: 0.375rem 0.5rem;
+    opacity: 0;
+}
+
+.editable:hover .editor-tile--compact,
+.editor-tile--compact:focus-visible {
+    opacity: 1;
+}
+
 /* One choice in the add-block / add-component modals. */
 .editor-picker-tile {
     display: flex;

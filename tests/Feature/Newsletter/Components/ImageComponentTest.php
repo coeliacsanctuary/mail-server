@@ -29,7 +29,7 @@ class ImageComponentTest extends TestCase
         return Livewire::test($class, [
             'blockId' => 'block-1',
             'block' => 'single',
-            'index' => 0,
+            'componentId' => 'component-1',
             'properties' => $properties,
         ]);
     }

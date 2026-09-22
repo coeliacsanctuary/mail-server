@@ -54,7 +54,7 @@ class SearchableComponentTest extends TestCase
         return Livewire::test($class, [
             'blockId' => 'block-1',
             'block' => $block,
-            'index' => 0,
+            'componentId' => 'component-1',
             'properties' => $properties,
         ]);
     }
@@ -146,8 +146,7 @@ class SearchableComponentTest extends TestCase
             ->set('description', 'A new description.')
             ->assertDispatched(
                 'component-updated',
-                fn ($event, $params) => $params[0] === 'block-1'
-                    && $params[2] === 0
+                fn ($event, $params) => $params[0] === 'component-1'
                     && $params[1]['description'] === 'A new description.'
                     && $params[1]['title'] === $component['properties']['title'],
             );

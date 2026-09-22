@@ -25,7 +25,7 @@ class EateryComponentTest extends TestCase
         return Livewire::test(Eatery::class, [
             'blockId' => 'block-1',
             'block' => 'single',
-            'index' => 0,
+            'componentId' => 'component-1',
             'properties' => $properties,
         ]);
     }

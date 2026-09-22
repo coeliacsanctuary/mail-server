@@ -13,7 +13,7 @@ abstract class NewsletterComponent extends Component
 
     public string $block;
 
-    public int $index;
+    public string $componentId;
 
     /** @var array<string, mixed> */
     public array $properties = [];
@@ -30,6 +30,6 @@ abstract class NewsletterComponent extends Component
     {
         $this->properties = $this->savedProperties();
 
-        $this->dispatch('component-updated', $this->blockId, $this->properties, $this->index);
+        $this->dispatch('component-updated', $this->componentId, $this->properties);
     }
 }

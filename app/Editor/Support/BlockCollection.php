@@ -103,6 +103,28 @@ final class BlockCollection
         array_splice($this->blocks, $index + 1, 0, [$this->blocks[$index]->copy()]);
     }
 
+    public function removeComponent(string $componentId): void
+    {
+        foreach ($this->blocks as $block) {
+            $block->removeComponent($componentId);
+        }
+    }
+
+    /** @param array<string, mixed> $properties */
+    public function updateComponentProperties(string $componentId, array $properties): void
+    {
+        foreach ($this->blocks as $block) {
+            $block->updateComponentProperties($componentId, $properties);
+        }
+    }
+
+    public function moveComponentTo(string $componentId, int $position): void
+    {
+        foreach ($this->blocks as $block) {
+            $block->moveComponentTo($componentId, $position);
+        }
+    }
+
     public function remove(string $id): void
     {
         array_splice($this->blocks, $this->indexOf($id), 1);

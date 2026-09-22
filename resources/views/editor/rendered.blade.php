@@ -15,16 +15,15 @@
                 <mj-section>
                     @foreach($block['properties'] as $index => $properties)
                         <x-newsletter.rendered.column :block="$block['block']" :position="$index">
-                            @php
-                                $component = data_get($properties, 'component.name')
-                            @endphp
-                            @if($component && \Illuminate\Support\Facades\View::exists("components.newsletter.rendered.components.{$component}"))
-                                <x-dynamic-component
-                                    component="newsletter.rendered.components.{{ $properties['component']['name'] }}"
-                                    :properties="$properties['component']['properties']"
-                                    :block="$block['block']"
-                                />
-                           @endif
+                            @foreach($properties['components'] ?? [] as $blockComponent)
+                                @if(\Illuminate\Support\Facades\View::exists("components.newsletter.rendered.components.{$blockComponent['name']}"))
+                                    <x-dynamic-component
+                                        component="newsletter.rendered.components.{{ $blockComponent['name'] }}"
+                                        :properties="$blockComponent['properties']"
+                                        :block="$block['block']"
+                                    />
+                                @endif
+                            @endforeach
                         </x-newsletter.rendered.column>
                     @endforeach
                 </mj-section>

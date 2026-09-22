@@ -23,8 +23,22 @@ trait ReadsStructuredHtml
         return array_column($this->blocks($contentItem), 'id');
     }
 
-    protected function componentAt(ContentItem $contentItem, int $block, int $column): ?array
+    protected function componentAt(ContentItem $contentItem, int $block, int $column, int $position = 0): ?array
     {
-        return $this->blocks($contentItem)[$block]['properties'][$column]['component'];
+        $component = $this->componentsAt($contentItem, $block, $column)[$position] ?? null;
+
+        if ($component === null) {
+            return null;
+        }
+
+        unset($component['id']);
+
+        return $component;
+    }
+
+    /** @return list<array<string, mixed>> */
+    protected function componentsAt(ContentItem $contentItem, int $block, int $column): array
+    {
+        return $this->blocks($contentItem)[$block]['properties'][$column]['components'] ?? [];
     }
 }

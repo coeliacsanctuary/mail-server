@@ -32,7 +32,7 @@ class AddBlockTest extends TestCase
 
         $this->assertCount(1, $blocks);
         $this->assertSame('single', $blocks[0]['block']);
-        $this->assertEquals([['component' => null]], $blocks[0]['properties']);
+        $this->assertEquals([['components' => []]], $blocks[0]['properties']);
     }
 
     public function test_it_adds_a_double_column_block(): void

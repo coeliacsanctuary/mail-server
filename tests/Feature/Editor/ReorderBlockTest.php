@@ -172,9 +172,8 @@ class ReorderBlockTest extends TestCase
         $this->assertStringContainsString('wire:sort.ghost="reorderBlock"', $html);
         $this->assertStringContainsString('wire:sort:handle', $html);
 
-        $this->assertSame(3, mb_substr_count($html, 'wire:sort:item='));
         foreach (['block-1', 'block-2', 'block-3'] as $id) {
-            $this->assertStringContainsString("wire:sort:item=\"{$id}\"", $html);
+            $this->assertSame(1, mb_substr_count($html, "wire:sort:item=\"{$id}\""));
         }
         $this->assertStringNotContainsString('wire:sort:item="\'', $html);
 

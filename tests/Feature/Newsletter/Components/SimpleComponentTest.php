@@ -24,7 +24,7 @@ class SimpleComponentTest extends TestCase
         return Livewire::test($class, [
             'blockId' => 'block-1',
             'block' => 'single',
-            'index' => 0,
+            'componentId' => 'component-1',
             'properties' => $properties,
         ]);
     }
@@ -79,8 +79,7 @@ class SimpleComponentTest extends TestCase
             ->assertDispatched(
                 'component-updated',
                 fn ($event, $params) => array_keys($params[1]) === $component['keys']
-                    && $params[0] === 'block-1'
-                    && $params[2] === 0,
+                    && $params[0] === 'component-1',
             );
     }
 

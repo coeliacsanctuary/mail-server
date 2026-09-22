@@ -15,7 +15,6 @@ class Text extends NewsletterComponent
         $this->content = '';
 
         if (isset($this->properties['content'])) {
-            /** Legacy data: content used to be stored as an array of lines. */
             $this->content = is_array($this->properties['content'])
                 ? $this->properties['content'][0]
                 : $this->properties['content'];

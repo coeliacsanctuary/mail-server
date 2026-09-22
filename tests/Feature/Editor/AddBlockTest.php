@@ -15,7 +15,6 @@ use Tests\TestCase;
 
 class AddBlockTest extends TestCase
 {
-    /** @return array<int, array<string, mixed>> */
     private function blocks(ContentItem $contentItem): array
     {
         return json_decode($contentItem->refresh()->structured_html, true)['blocks'];
@@ -107,10 +106,6 @@ class AddBlockTest extends TestCase
         $this->assertSame('block-3', $blocks[3]['id']);
     }
 
-    /**
-     * addBlock is the only mutation that tolerates a missing document - the
-     * others assume $data['blocks'] exists. See CorruptStructuredHtmlTest.
-     */
     public function test_it_creates_the_blocks_key_when_structured_html_is_null(): void
     {
         $contentItem = NewsletterBuilder::make()->create();
@@ -121,10 +116,6 @@ class AddBlockTest extends TestCase
         $this->assertCount(1, $this->blocks($contentItem));
     }
 
-    /**
-     * Mailcoach stores its own templateValues alongside our blocks. A mutation
-     * that rewrote the whole document would silently drop them.
-     */
     public function test_it_preserves_other_top_level_keys(): void
     {
         $contentItem = NewsletterBuilder::make()

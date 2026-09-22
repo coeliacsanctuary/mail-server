@@ -1,4 +1,3 @@
-{{-- Shared by Title and Subtitle - see HeadingComponent. --}}
 <div>
     <div class="text-xs uppercase font-semibold mb-2">{{ $label }}</div>
 

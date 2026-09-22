@@ -6,21 +6,12 @@ namespace App\Livewire\Newsletter\Editable\Components;
 
 use Illuminate\View\View;
 
-/**
- * Title and Subtitle are the same component at two sizes - both persist their
- * text under "content" and an optional link.
- *
- * TitleWithText deliberately stays out: it stores its heading under "title"
- * and uses "content" for the body, so folding it in would need a data
- * migration or a per-subclass key indirection.
- */
 abstract class HeadingComponent extends NewsletterComponent
 {
     public string $content;
 
     public ?string $link = null;
 
-    /** Shown as the field label and in the placeholder. */
     abstract protected function label(): string;
 
     public function mount(): void

@@ -56,7 +56,6 @@ class DuplicateBlockTest extends TestCase
         $this->assertNull($copy['properties'][1]['component']);
     }
 
-    /** The copy must be independent: editing one must not change the other. */
     public function test_editing_the_copy_leaves_the_original_alone(): void
     {
         $contentItem = NewsletterBuilder::make()
@@ -91,13 +90,10 @@ class DuplicateBlockTest extends TestCase
     {
         $contentItem = NewsletterBuilder::make()->single()->with('hr')->create();
 
-        // Entities decoded: Blade escapes the on-confirm attribute, and the
-        // browser un-escapes it again when parsing the attribute value.
         $html = html_entity_decode(Livewire::test(Editor::class, ['model' => $contentItem])->html());
 
         $this->assertStringContainsString("duplicateBlock('block-1')", $html);
 
-        // Deletion goes through the confirm modal, not a bare wire:click.
         $this->assertStringContainsString("deleteBlock('block-1')", $html);
         $this->assertStringNotContainsString('wire:click="deleteBlock', $html);
     }

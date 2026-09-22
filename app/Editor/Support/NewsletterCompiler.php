@@ -17,24 +17,10 @@ class NewsletterCompiler
         protected HasHtmlContent $campaign,
         ?Mjml $mjml = null,
     ) {
-        /**
-         * Resolved through Mailcoach's action rather than hardcoding
-         * Mjml::new()->sidecar(). In production that returns exactly the same
-         * sidecar instance (config/sidecar.php lists MjmlFunction), but it also
-         * falls back to local node on a machine without AWS credentials, and it
-         * gives tests a single container binding to swap.
-         */
         $this->mjml = $mjml
             ?? Mailcoach::getSharedActionClass('initialize_mjml', InitializeMjmlAction::class)->execute();
     }
 
-    /**
-     * The MJML document for this newsletter, before compilation.
-     *
-     * Kept separate from render() so it can be asserted against without any
-     * MJML infrastructure - this is the artefact the rendered Blade components
-     * actually produce.
-     */
     public function renderMjml(): string
     {
         $document = $this->document();

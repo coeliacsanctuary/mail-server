@@ -20,7 +20,6 @@ class EateryComponentTest extends TestCase
         $this->fakeCoeliacApi();
     }
 
-    /** @param array<string, mixed> $properties */
     private function mountComponent(array $properties = []): Testable
     {
         return Livewire::test(Eatery::class, [
@@ -31,11 +30,6 @@ class EateryComponentTest extends TestCase
         ]);
     }
 
-    /**
-     * Pins something significant: an eatery with nothing stored randomises on
-     * mount AND immediately persists the result, so merely opening a campaign
-     * in the editor mutates the newsletter.
-     */
     public function test_an_empty_eatery_randomises_and_persists_on_mount(): void
     {
         $this->mountComponent()
@@ -54,18 +48,6 @@ class EateryComponentTest extends TestCase
         Http::assertNotSent(fn ($request) => str_contains($request->url(), 'random'));
     }
 
-    /**
-     * Eatery is the only component whose API field names differ from
-     * ApiResult's, so it translates twice: name -> title -> name,
-     * info -> description -> info, full_location -> meta_description ->
-     * location. created_at and main_image are forced to empty strings because
-     * the DTO requires them.
-     */
-    /**
-     * The contrast with the randomise path above: a stored eatery is fetched
-     * but not re-persisted, so opening the editor only mutates the newsletter
-     * when the component was empty.
-     */
     public function test_a_stored_eatery_does_not_persist_on_mount(): void
     {
         $this->mountComponent(ComponentData::eatery())

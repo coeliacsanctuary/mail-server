@@ -52,11 +52,6 @@ class EditorMountTest extends TestCase
         $this->assertSame(2, mb_substr_count($rendered, 'Add Component'));
     }
 
-    /**
-     * Every API-backed component fetches in mount(), so opening a newsletter
-     * issues one request per component - re-fetching data that is already
-     * duplicated into structured_html.
-     */
     public function test_mounting_a_newsletter_with_three_blogs_calls_the_api_three_times(): void
     {
         $this->fakeCoeliacApi();

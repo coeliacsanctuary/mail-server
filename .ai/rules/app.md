@@ -20,5 +20,7 @@ User-facing strings go through Mailcoach's `__mc()` helper, not Laravel's `__()`
 ## Auth facade, not the auth() helper
 Reach the authenticated user through the `Auth` facade — `Auth::user()` — not the `auth()` helper.
 
-## Docblocks record why, not what
-Where a decision is non-obvious or load-bearing, the docblock says why the code is that way and what breaks if it changes — not what it does. Keep writing them, and update the reason when it changes rather than deleting the block.
+## No comments — the code says it
+Code is self-documenting through naming and structure. Do not add explanatory comments or docblocks, and do not reintroduce ones that have been removed: a comment that feels necessary is a signal to rename or restructure, not to write prose. If the reasoning genuinely cannot live in the code, it belongs in these rule files or in the commit message, where it stays out of the reader's way.
+
+The sole exception is a PHPDoc type declaration PHP's own syntax cannot express — generics, array shapes, `@param list<Foo>`. Those are types, not prose, and `composer stan` runs at level 5 over `app/` with `checkModelProperties`, so removing them fails the build.

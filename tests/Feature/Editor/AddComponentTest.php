@@ -46,10 +46,6 @@ class AddComponentTest extends TestCase
         );
     }
 
-    /**
-     * Pins that adding a component over an existing one discards its
-     * properties without warning.
-     */
     public function test_it_overwrites_an_existing_component_destructively(): void
     {
         $contentItem = NewsletterBuilder::make()
@@ -65,10 +61,6 @@ class AddComponentTest extends TestCase
         );
     }
 
-    /**
-     * The index comes from the browser. An out-of-range one used to grow the
-     * block a sparse extra column; it is now ignored.
-     */
     public function test_an_out_of_range_index_is_ignored(): void
     {
         $contentItem = NewsletterBuilder::make()->single()->empty()->create();

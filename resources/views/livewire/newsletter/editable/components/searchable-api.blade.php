@@ -1,4 +1,3 @@
-{{-- Shared by Blog, Recipe and Product - see SearchableApiComponent. --}}
 <div>
     <div class="text-xs uppercase font-semibold mb-2">{{ $heading }}</div>
 
@@ -17,11 +16,6 @@
                         class="border p-1 mt-2"
                     />
 
-                    {{--
-                        Only clears the selection - the component stays. The X in
-                        the corner of the column is the one that removes the
-                        component itself, and "Remove..." read like both.
-                    --}}
                     <button type="button" class="text-sm cursor-pointer underline" wire:click="remove">
                         Choose a different {{ strtolower($heading) }}
                     </button>
@@ -36,12 +30,6 @@
                     class="text-2xl w-full"
                 />
 
-                {{--
-                    Searching reaches out to coeliacsanctuary.co.uk, so without
-                    this the box sits there looking broken. Targets the property
-                    rather than an action because the search is a wire:model
-                    update.
-                --}}
                 <span wire:loading wire:target="search" class="shrink-0">
                     <x-heroicon-o-arrow-path class="w-5 h-5 animate-spin" />
                     <span class="visually-hidden">Searching...</span>

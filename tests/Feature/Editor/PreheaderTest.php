@@ -11,12 +11,6 @@ use Tests\Support\Concerns\ReadsStructuredHtml;
 use Tests\Support\NewsletterBuilder;
 use Tests\TestCase;
 
-/**
- * The snippet inboxes show next to the subject line.
- *
- * Without it, Gmail and Outlook fall back to the top of the body — which for
- * these newsletters reads "Having trouble viewing this email? View Online".
- */
 class PreheaderTest extends TestCase
 {
     use ReadsStructuredHtml;
@@ -42,11 +36,6 @@ class PreheaderTest extends TestCase
         $this->assertMjmlContains('display:none', $mjml);
     }
 
-    /**
-     * It carries an id because Mailcoach's Campaign::websiteSummary() reads
-     * getElementById('preheader') to build the public archive blurb. MJML's
-     * own <mj-preview> cannot carry one, which is why this is hand-written.
-     */
     public function test_it_uses_an_id_rather_than_the_mj_preview_tag(): void
     {
         $mjml = $this->mjmlFor('Summary text');
@@ -124,7 +113,6 @@ class PreheaderTest extends TestCase
         $this->assertSame(['block-1', 'block-2'], $this->blockIds($contentItem));
     }
 
-    /** It is invisible, so recompiling the preview for it would be pure cost. */
     public function test_updating_the_preheader_does_not_recompile_the_preview(): void
     {
         $contentItem = NewsletterBuilder::make()->single()->with('hr')->create();

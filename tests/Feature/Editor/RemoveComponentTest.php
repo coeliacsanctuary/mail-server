@@ -12,11 +12,6 @@ use Tests\Support\Concerns\ReadsStructuredHtml;
 use Tests\Support\NewsletterBuilder;
 use Tests\TestCase;
 
-/**
- * Emptying a column restores the "Add Component" placeholder, which is also
- * how you swap one component for another. Before this existed the only way to
- * change your mind was to delete the whole block and rebuild it.
- */
 class RemoveComponentTest extends TestCase
 {
     use ReadsStructuredHtml;
@@ -102,13 +97,6 @@ class RemoveComponentTest extends TestCase
         $this->assertNull($this->componentAt($contentItem, 0, 0));
     }
 
-    /**
-     * The control is a confirm-button, which is easy to lose silently in a
-     * Blade edit. Assert the wiring is actually in the rendered output.
-     *
-     * Entities are decoded first: Blade escapes the on-confirm attribute, and
-     * the browser un-escapes it again when parsing the attribute value.
-     */
     public function test_a_filled_column_renders_a_remove_control(): void
     {
         $contentItem = NewsletterBuilder::make()

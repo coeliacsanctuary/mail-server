@@ -8,14 +8,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\WithFileUploads;
 
-/**
- * Shared upload handling for Image and ImageWithButton.
- *
- * Only the PHP is shared. The two rendered views differ in ways that change
- * what subscribers see (fluid-on-mobile vs fluid-on-width, and whether the
- * output is guarded on having any content at all), so unifying those is a
- * deliberate decision with a test send, not a refactor.
- */
 abstract class ImageComponent extends NewsletterComponent
 {
     use WithFileUploads;
@@ -25,7 +17,6 @@ abstract class ImageComponent extends NewsletterComponent
 
     public string $link = '';
 
-    /** Read out by screen readers, and shown when a client blocks images. */
     public string $alt = '';
 
     public function mount(): void
@@ -41,7 +32,6 @@ abstract class ImageComponent extends NewsletterComponent
 
         $this->syncProperties();
 
-        /** No skipRender: the view has to re-render to show the new image. */
     }
 
     public function updatedLink(): void
@@ -69,12 +59,7 @@ abstract class ImageComponent extends NewsletterComponent
         $this->properties['content'] = Storage::disk('s3')->url($upload);
     }
 
-    /**
-     * "alt" is appended rather than slotted in: key order is stored data, and
-     * existing campaigns have no alt key at all.
-     *
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     protected function savedProperties(): array
     {
         return [

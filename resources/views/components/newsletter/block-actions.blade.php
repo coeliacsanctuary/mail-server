@@ -1,23 +1,7 @@
 @props(['blockId', 'first', 'last'])
 
-{{--
-    Positioned by .block-actions into the seam above the block, which needs no
-    room beside the email column. It used to hang off a negative offset, which
-    overlapped the block's own inputs by 47px at every width and escaped the
-    card on anything narrower than ~1440px.
---}}
 <div wire:key="{{ $blockId }}-actions" class="block-actions">
     <div class="block-actions-bar" wire:key="{{ $blockId }}-actions-inner">
-        {{--
-            Dragging is restricted to this handle so that text selection inside
-            the block's inputs and textareas still works. The up/down chevrons
-            stay: Sortable has no keyboard support, so they are the only
-            keyboard route to reordering.
-
-            Deliberately not a <button>: a focusable handle competes with
-            Sortable's own mousedown handling, and it is not a keyboard
-            affordance anyway — the chevrons are.
-        --}}
         <div
             class="block-action block-action--drag"
             wire:key="{{ $blockId }}-actions-drag"
@@ -70,7 +54,6 @@
             <x-heroicon-o-document-duplicate class="w-6 h-6" />
         </button>
 
-        {{-- There is no undo in this editor, and a block can hold three components. --}}
         <x-mailcoach::confirm-button
             class="block-action"
             danger

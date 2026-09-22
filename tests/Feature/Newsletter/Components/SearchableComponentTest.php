@@ -16,11 +16,6 @@ use Tests\Support\ComponentData;
 use Tests\Support\NewsletterBuilder;
 use Tests\TestCase;
 
-/**
- * Blog, Recipe and Product are three copies of the same component. Testing
- * them through one data provider states that up front - and once they share a
- * base class this provider should collapse to little more than a class list.
- */
 class SearchableComponentTest extends TestCase
 {
     protected function setUp(): void
@@ -30,13 +25,6 @@ class SearchableComponentTest extends TestCase
         $this->fakeCoeliacApi();
     }
 
-    /**
-     * Since these three collapsed onto SearchableApiComponent the only things
-     * that differ are the class, its endpoint and its fixture data - the
-     * property and method names are shared.
-     *
-     * @return array<string, array{array<string, mixed>}>
-     */
     public static function searchableComponentProvider(): array
     {
         return [
@@ -54,7 +42,6 @@ class SearchableComponentTest extends TestCase
             ]],
             'product' => [[
                 'class' => Product::class,
-                // The odd one out: a flat "data" envelope, not "data.data".
                 'indexEndpoint' => 'api/shop/products',
                 'showEndpoint' => 'api/shop/products/3',
                 'properties' => ComponentData::product(),
@@ -62,7 +49,6 @@ class SearchableComponentTest extends TestCase
         ];
     }
 
-    /** @param array<string, mixed> $properties */
     private function mountComponent(string $class, array $properties = [], string $block = 'single'): Testable
     {
         return Livewire::test($class, [
@@ -92,10 +78,6 @@ class SearchableComponentTest extends TestCase
         );
     }
 
-    /**
-     * A single-column block shows the long description; a double or triple
-     * shows the short one, because there is less room.
-     */
     #[DataProvider('searchableComponentProvider')]
     public function test_a_single_block_uses_the_long_description(array $component): void
     {
@@ -126,11 +108,6 @@ class SearchableComponentTest extends TestCase
             ->assertSet('description', 'Hand written by the editor.');
     }
 
-    /**
-     * Pins the envelope inconsistency: blogs and recipes are paginated
-     * ("data.data"), products are not ("data"). Make it explicit before
-     * unifying these three.
-     */
     #[DataProvider('searchableComponentProvider')]
     public function test_searching_maps_the_response_into_results(array $component): void
     {
@@ -143,10 +120,6 @@ class SearchableComponentTest extends TestCase
         );
     }
 
-    /**
-     * The early return in updated() is why typing in the search box does not
-     * overwrite the saved block. Any refactor of that method must keep it.
-     */
     #[DataProvider('searchableComponentProvider')]
     public function test_searching_does_not_persist_anything(array $component): void
     {
@@ -180,14 +153,6 @@ class SearchableComponentTest extends TestCase
             );
     }
 
-    /**
-     * remove() clears the DTO as well as the id, so nothing of the old item
-     * survives into the persisted properties.
-     *
-     * It used to null only the id while rebuilding the property bag from a
-     * still-populated DTO, leaving the old title, image, created_at and link
-     * behind.
-     */
     #[DataProvider('searchableComponentProvider')]
     public function test_remove_clears_the_persisted_properties(array $component): void
     {
@@ -202,7 +167,6 @@ class SearchableComponentTest extends TestCase
             );
     }
 
-    /** And the consequence that matters: the removed item leaves the email. */
     public function test_a_removed_blog_no_longer_renders_in_the_email(): void
     {
         $removed = [];

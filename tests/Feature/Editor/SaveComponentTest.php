@@ -40,12 +40,6 @@ class SaveComponentTest extends TestCase
             ->assertDispatched('editorUpdated');
     }
 
-    /**
-     * Pins the stale preview: saveComponent dispatches editorUpdated with
-     * previewHtml(), but never calls renderFullHtml() first. The HTML sent to
-     * the preview pane is therefore whatever was last compiled - it does not
-     * include the edit that just happened.
-     */
     public function test_the_dispatched_preview_does_not_include_the_new_content(): void
     {
         $contentItem = NewsletterBuilder::make()->single()->with('title', ComponentData::title())->create();
@@ -56,19 +50,10 @@ class SaveComponentTest extends TestCase
 
         $component->call('saveComponent', 'block-1', ComponentData::title(['content' => 'Brand New Title']), 0);
 
-        // Nothing was recompiled, so the preview cannot contain the new title.
         $this->assertSame($compiledOnMount, $this->mjml->timesCompiled());
         $this->assertStringNotContainsString('Brand New Title', $this->mjml->lastInput());
     }
 
-    /**
-     * Saving into a column that holds no component is ignored.
-     *
-     * This used to auto-vivify an array with a "properties" key but no "name",
-     * which the renderer skipped (it keys off component.name) while
-     * editable/block.blade.php read that key unguarded - so the editor page
-     * itself broke, with no way to recover through the UI.
-     */
     public function test_saving_into_an_empty_column_is_ignored(): void
     {
         $contentItem = NewsletterBuilder::make()->single()->empty()->create();
@@ -80,7 +65,6 @@ class SaveComponentTest extends TestCase
         $this->assertNull($this->componentAt($contentItem, 0, 0));
     }
 
-    /** A document that already contains a nameless component still renders. */
     public function test_a_legacy_nameless_component_is_treated_as_an_empty_column(): void
     {
         $contentItem = NewsletterBuilder::make()->single()->empty()->create();

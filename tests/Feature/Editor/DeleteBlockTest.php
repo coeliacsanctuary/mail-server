@@ -42,10 +42,6 @@ class DeleteBlockTest extends TestCase
         $this->assertSame([0], array_keys($this->blocks($contentItem)));
     }
 
-    /**
-     * Without the array_values() call this would encode as {"0":…} rather than
-     * [{…}], and the @foreach in editor.blade.php would break.
-     */
     public function test_deleting_the_only_block_leaves_a_json_array(): void
     {
         $contentItem = NewsletterBuilder::make()->single()->with('hr')->create();
@@ -67,7 +63,6 @@ class DeleteBlockTest extends TestCase
             ->call('deleteBlock', 'nope');
     }
 
-    /** Same stale-preview behaviour as moveBlock. */
     public function test_deleting_a_block_does_not_refresh_the_preview(): void
     {
         $contentItem = NewsletterBuilder::make()

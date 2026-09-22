@@ -83,12 +83,6 @@ class MoveBlockTest extends TestCase
         $this->assertSame(['block-2', 'block-1'], $this->blockIds($contentItem));
     }
 
-    /**
-     * Moving past either end is a no-op. This used to read out of bounds:
-     * moveItemUp() did array_slice($array, 0, -1) for index 0 - everything but
-     * the LAST element - and then read $array[-1]. The UI hides the button at
-     * the boundary, but moveBlock is a public Livewire method.
-     */
     public function test_moving_the_first_block_up_does_nothing(): void
     {
         $contentItem = $this->threeBlocks();
@@ -120,13 +114,6 @@ class MoveBlockTest extends TestCase
             ->call('moveBlock', 'nope', 'up');
     }
 
-    /**
-     * The chevrons have always relied on child components surviving a parent
-     * re-render — Blog fetches from the API in mount(), so a move that
-     * re-mounted them would fire one request per API-backed block. That was
-     * never actually asserted. See ReorderBlockTest for the same guard on the
-     * drag-and-drop path.
-     */
     public function test_moving_a_block_does_not_remount_the_api_backed_components(): void
     {
         $this->fakeCoeliacApi();
@@ -145,11 +132,6 @@ class MoveBlockTest extends TestCase
         Http::assertSentCount(2);
     }
 
-    /**
-     * Pins that moving a block leaves the preview pane stale - it neither
-     * recompiles nor dispatches editorUpdated. Adding a dispatch later should
-     * be a visible decision, not an accident.
-     */
     public function test_moving_a_block_does_not_refresh_the_preview(): void
     {
         $contentItem = $this->threeBlocks();

@@ -10,18 +10,8 @@ use Tests\Support\ComponentData;
 use Tests\Support\NewsletterBuilder;
 use Tests\TestCase;
 
-/**
- * Every component must survive being rendered with no properties at all -
- * the state Editor::addComponent() creates when you pick a component from the
- * modal and never touch its fields.
- *
- * These cases used to throw. button, text-with-button, product, and recipe in
- * single-column blocks each read an array key with no fallback, so choosing a
- * component and hitting save without filling it in produced a 500.
- */
 class NewsletterCompilerMissingPropertiesTest extends TestCase
 {
-    /** @param array<string, mixed> $properties */
     private function compile(string $component, string $block, array $properties): string
     {
         $builder = NewsletterBuilder::make();
@@ -40,7 +30,6 @@ class NewsletterCompilerMissingPropertiesTest extends TestCase
         }
     }
 
-    /** Every name the add-component modal offers. */
     public static function everyComponentProvider(): array
     {
         return array_map(
@@ -73,17 +62,11 @@ class NewsletterCompilerMissingPropertiesTest extends TestCase
         ];
     }
 
-    /**
-     * The searchable components render nothing at all when no item is
-     * selected, rather than an image with an empty src and a button pointing
-     * nowhere. This is what makes Remove actually remove things.
-     */
     #[DataProvider('searchableComponentProvider')]
     public function test_a_searchable_component_with_nothing_selected_renders_nothing(string $component): void
     {
         $mjml = $this->compile($component, 'single', ['content' => null]);
 
-        // Only the header logo remains.
         $this->assertSame(1, mb_substr_count($mjml, '<mj-image'));
         $this->assertMjmlNotContains('Read more', $mjml);
         $this->assertMjmlNotContains('View Product', $mjml);
@@ -106,21 +89,12 @@ class NewsletterCompilerMissingPropertiesTest extends TestCase
         $this->assertMjmlContains('<mj-section> <mj-column> </mj-column> </mj-section>', $mjml);
     }
 
-    /**
-     * Title, subtitle and title-with-text are guarded, but with a placeholder
-     * that would ship to subscribers rather than an empty string.
-     */
     public function test_title_with_no_properties_renders_a_visible_placeholder(): void
     {
         $this->assertMjmlContains('[MISSING TITLE]', $this->compile('title', 'single', []));
         $this->assertMjmlContains('[MISSING SUBTITLE]', $this->compile('subtitle', 'single', []));
     }
 
-    /**
-     * A link that was typed and then cleared is stored as '', and isset('') is
-     * true - which used to wrap the heading in <a href="">. An empty href
-     * resolves to the current URL in most mail clients.
-     */
     public function test_an_empty_link_does_not_render_an_anchor(): void
     {
         $mjml = $this->compile('title', 'single', ComponentData::title(['link' => '']));

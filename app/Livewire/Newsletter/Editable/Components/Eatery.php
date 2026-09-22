@@ -8,11 +8,6 @@ use App\Dto\ApiResult;
 use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 
-/**
- * Not folded in with Blog/Recipe/Product: no search, and it is the only
- * component whose API field names differ from ApiResult's, so it translates
- * name/info/full_location in both directions.
- */
 class Eatery extends NewsletterComponent
 {
     public ?int $eateryId = null;

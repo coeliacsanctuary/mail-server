@@ -17,14 +17,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Support\ComponentData;
 use Tests\TestCase;
 
-/**
- * The components with no external dependencies. What matters here is the exact
- * key set each persists - those keys are stored data, so the refactor must not
- * change them.
- */
 class SimpleComponentTest extends TestCase
 {
-    /** @param array<string, mixed> $properties */
     private function mountComponent(string $class, array $properties = []): Testable
     {
         return Livewire::test($class, [
@@ -35,7 +29,6 @@ class SimpleComponentTest extends TestCase
         ]);
     }
 
-    /** @return array<string, array{array<string, mixed>}> */
     public static function simpleComponentProvider(): array
     {
         return [
@@ -69,7 +62,6 @@ class SimpleComponentTest extends TestCase
                 'field' => 'content',
                 'keys' => ['content', 'label', 'link'],
             ]],
-            // The odd one out: stores its heading under "title", not "content".
             'title with text' => [[
                 'class' => TitleWithText::class,
                 'properties' => ComponentData::titleWithText(),
@@ -112,11 +104,6 @@ class SimpleComponentTest extends TestCase
             ->assertSet('content', "First line.\nSecond line.");
     }
 
-    /**
-     * Pins the link default that makes empty hrefs possible: Title and
-     * Subtitle leave it null (so @isset is false and no anchor renders), while
-     * Button and TextWithButton default it to '' (so @isset is true).
-     */
     public function test_title_and_subtitle_default_their_link_to_null(): void
     {
         $this->mountComponent(Title::class)->assertSet('link', null);
@@ -129,7 +116,6 @@ class SimpleComponentTest extends TestCase
         $this->mountComponent(TextWithButton::class)->assertSet('link', '');
     }
 
-    /** Legacy data: content used to be stored as an array of lines. */
     public function test_text_accepts_the_legacy_array_content_shape(): void
     {
         $this->mountComponent(Text::class, ['content' => ['Only line.', 'Ignored.']])

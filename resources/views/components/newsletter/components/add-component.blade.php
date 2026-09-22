@@ -1,11 +1,6 @@
 @props(['blockId', 'index'])
 
 <div>
-    {{--
-        The add-component modal is shared, so its choice is broadcast to every
-        placeholder on the page. Each one checks whether it was the placeholder
-        that opened the modal before acting on it.
-    --}}
     <div class="flex items-center justify-center py-2"
          x-data="{
             addComponent(event) {

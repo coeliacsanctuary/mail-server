@@ -36,11 +36,6 @@ class SaveQuietlyTest extends TestCase
             ->assertDispatched('editorSavedQuietly');
     }
 
-    /**
-     * Guards the fix in commit 9950189. Overriding a parent method drops the
-     * #[On] attribute from the parent's declaration, so the listener has to be
-     * re-declared or autosave silently stops working.
-     */
     public function test_the_save_content_quietly_listener_is_registered(): void
     {
         $contentItem = NewsletterBuilder::make()
@@ -53,10 +48,6 @@ class SaveQuietlyTest extends TestCase
         $this->assertStringContainsString('A Newsletter Title', $contentItem->refresh()->html);
     }
 
-    /**
-     * The override deliberately drops the parent's setTemplateFieldValues()
-     * call - this editor stores its state under "blocks", not "templateValues".
-     */
     public function test_it_does_not_write_template_field_values(): void
     {
         $contentItem = NewsletterBuilder::make()->single()->with('hr')->create();
@@ -66,11 +57,6 @@ class SaveQuietlyTest extends TestCase
         $this->assertArrayNotHasKey('templateValues', $this->structuredHtml($contentItem));
     }
 
-    /**
-     * The end-to-end form of the headline crash: choose a component from the
-     * modal, never touch its fields, hit save. This used to throw
-     * "Undefined array key link" while rendering the MJML.
-     */
     public function test_saving_a_newsletter_with_an_unfilled_component_succeeds(): void
     {
         $contentItem = NewsletterBuilder::make()->single()->empty()->create();

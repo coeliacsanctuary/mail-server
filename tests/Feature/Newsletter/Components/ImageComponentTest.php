@@ -21,12 +21,9 @@ class ImageComponentTest extends TestCase
     {
         parent::setUp();
 
-        // Both the destination disk and Livewire's temporary upload disk
-        // (config/livewire.php) are s3, so this has to be faked before any set().
         Storage::fake('s3');
     }
 
-    /** @param array<string, mixed> $properties */
     private function mountComponent(string $class, array $properties = []): Testable
     {
         return Livewire::test($class, [
@@ -37,7 +34,6 @@ class ImageComponentTest extends TestCase
         ]);
     }
 
-    /** @return array<string, array{class-string, array<string, mixed>}> */
     public static function imageComponentProvider(): array
     {
         return [
@@ -59,11 +55,6 @@ class ImageComponentTest extends TestCase
         $this->assertNotEmpty(Storage::disk('s3')->files('block-1'));
     }
 
-    /**
-     * Pins that the object key is Livewire's temporary filename, not the name
-     * the user uploaded. Unique, but not human readable, and it carries
-     * Livewire's base64 original-name marker into the bucket.
-     */
     #[DataProvider('imageComponentProvider')]
     public function test_the_stored_name_is_the_livewire_temp_name_not_the_original(string $class, array $properties): void
     {
@@ -90,14 +81,6 @@ class ImageComponentTest extends TestCase
         $this->assertEmpty(Storage::disk('s3')->allFiles());
     }
 
-    /**
-     * Pins the one component that breaks on the editor side rather than at
-     * render time: updated() reads $this->properties['content'] unconditionally,
-     * and a freshly added component has no properties at all.
-     *
-     * Not reachable through the UI - both views hide the link input behind
-     * @if($image) - but a shared base class could make it reachable.
-     */
     #[DataProvider('imageComponentProvider')]
     public function test_setting_a_link_before_uploading_throws(string $class, array $properties): void
     {
@@ -126,7 +109,6 @@ class ImageComponentTest extends TestCase
             ->assertSet('alt', 'Stored');
     }
 
-    /** Campaigns saved before alt text existed have no such key. */
     #[DataProvider('imageComponentProvider')]
     public function test_a_legacy_image_with_no_alt_key_hydrates_as_empty(string $class, array $properties): void
     {

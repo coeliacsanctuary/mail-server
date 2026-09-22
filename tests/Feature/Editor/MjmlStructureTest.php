@@ -11,17 +11,8 @@ use Tests\Support\NewsletterBuilder;
 use Tests\TestCase;
 use LibXMLError;
 
-/**
- * The golden-MJML tests assert content; these assert structure.
- *
- * A refactor of the Blade views can produce MJML that a string assertion
- * happily accepts but that is not a balanced document - an unclosed tag, a
- * component wrapper that swallowed its closing element. Parsing catches that
- * without needing to compile anything.
- */
 class MjmlStructureTest extends TestCase
 {
-    /** MJML permits HTML entities that XML does not define. */
     private function assertWellFormed(string $mjml): void
     {
         $parsable = str_replace(['&nbsp;', '&amp;nbsp;'], ' ', $mjml);
@@ -41,7 +32,6 @@ class MjmlStructureTest extends TestCase
         $this->assertNotFalse($parsed, 'MJML is not a balanced document: ' . implode('; ', $errors));
     }
 
-    /** @return array<string, array{string}> */
     public static function componentProvider(): array
     {
         return array_combine(
@@ -90,7 +80,6 @@ class MjmlStructureTest extends TestCase
         );
     }
 
-    /** @return array<string, mixed> */
     private static function propertiesFor(string $component): array
     {
         return match ($component) {

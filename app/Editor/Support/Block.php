@@ -6,10 +6,6 @@ namespace App\Editor\Support;
 
 use Illuminate\Support\Str;
 
-/**
- * A row of the newsletter: an id, a layout, and one to three columns each
- * holding a component or nothing.
- */
 final class Block
 {
     /** @param list<BlockComponent|null> $columns */
@@ -57,10 +53,6 @@ final class Block
         ];
     }
 
-    /**
-     * Column indexes arrive from the browser. Out-of-range ones used to grow
-     * the block a sparse extra column; they are now ignored.
-     */
     public function putComponent(int $index, BlockComponent $component): void
     {
         if ( ! array_key_exists($index, $this->columns)) {
@@ -82,10 +74,6 @@ final class Block
         $component->properties = $properties;
     }
 
-    /**
-     * Empty a column, which puts the "Add Component" placeholder back and so
-     * doubles as the way to swap one component for another.
-     */
     public function removeComponent(int $index): void
     {
         if ( ! array_key_exists($index, $this->columns)) {
@@ -95,11 +83,6 @@ final class Block
         $this->columns[$index] = null;
     }
 
-    /**
-     * A detached copy with a new id. The clone must be deep - columns hold
-     * mutable BlockComponent objects, and a shallow copy would leave two
-     * blocks sharing one component.
-     */
     public function copy(?string $id = null): self
     {
         return new self(

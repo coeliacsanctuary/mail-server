@@ -17,8 +17,10 @@ Doubles go at the I/O boundary only: `Http::fake()` via the `FakesCoeliacApi` tr
 ## Assert with assertSame
 Use `assertSame`, not `assertEquals`. The one exception is component property arrays, whose key order is deliberately not locked — those stay on `assertEquals`.
 
-## Docblocks record why, not what
-Where a decision is non-obvious or load-bearing, the docblock says why the code is that way and what breaks if it changes — not what it does. Keep writing them, and update the reason when it changes rather than deleting the block.
+## No comments — the code says it
+Code is self-documenting through naming and structure. Do not add explanatory comments or docblocks, and do not reintroduce ones that have been removed: a comment that feels necessary is a signal to rename or restructure, not to write prose. If the reasoning genuinely cannot live in the code, it belongs in these rule files or in the commit message, where it stays out of the reader's way.
+
+The sole exception is a PHPDoc type declaration PHP's own syntax cannot express — generics, array shapes, `@param list<Foo>`. Those are types, not prose, and `composer stan` runs at level 5 over `app/` with `checkModelProperties`, so removing them fails the build.
 
 ## Tests never reach outside the process — MJML included
 No test may reach an external service or shell out to node. Everything is faked at the I/O boundary. `php artisan test` is the whole suite — there are no excluded groups and nothing to run separately.

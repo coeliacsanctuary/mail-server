@@ -6,17 +6,8 @@ namespace Tests\Support\Concerns;
 
 use Illuminate\Support\Facades\Http;
 
-/**
- * Stubs the coeliacsanctuary.co.uk API the editor components read from.
- *
- * Pattern order matters - Http::fake() returns the first match. The show
- * patterns ("…/blogs/*") and index patterns ("…/blogs?*") are disjoint because
- * only "*" is a wildcard, but "wheretoeat/random" genuinely overlaps
- * "wheretoeat/*" and must come first.
- */
 trait FakesCoeliacApi
 {
-    /** @param array<string, mixed> $overrides */
     protected function fakeCoeliacApi(array $overrides = []): void
     {
         Http::fake([
@@ -28,7 +19,6 @@ trait FakesCoeliacApi
             'coeliac.invalid/api/recipes?*' => Http::response(['data' => ['data' => [self::recipePayload()]]]),
             'coeliac.invalid/api/recipes/*' => Http::response(self::recipePayload()),
 
-            // Products are the odd one out: a flat "data" envelope, not "data.data".
             'coeliac.invalid/api/shop/products?*' => Http::response(['data' => [self::productPayload()]]),
             'coeliac.invalid/api/shop/products/*' => Http::response(self::productPayload()),
 
@@ -37,13 +27,6 @@ trait FakesCoeliacApi
         ]);
     }
 
-    /**
-     * Blog and Recipe spread the response straight into ApiResult's constructor,
-     * so these keys must match its parameter names exactly.
-     *
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     protected static function blogPayload(array $overrides = []): array
     {
         return [
@@ -58,10 +41,6 @@ trait FakesCoeliacApi
         ];
     }
 
-    /**
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     protected static function recipePayload(array $overrides = []): array
     {
         return [
@@ -76,13 +55,6 @@ trait FakesCoeliacApi
         ];
     }
 
-    /**
-     * Product carries an extra "price" key that Product::getProduct() lifts
-     * into ApiResult::$extra.
-     *
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     protected static function productPayload(array $overrides = []): array
     {
         return [
@@ -98,14 +70,6 @@ trait FakesCoeliacApi
         ];
     }
 
-    /**
-     * Eatery is the only component whose API field names differ from
-     * ApiResult's: name/info/full_location rather than
-     * title/description/meta_description.
-     *
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     protected static function eateryPayload(array $overrides = []): array
     {
         return [

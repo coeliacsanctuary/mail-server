@@ -1,13 +1,5 @@
 @props(['field' => 'image'])
 
-{{--
-    The file picker, with progress. Uploads go to S3, so a phone photo can take
-    several seconds during which the editor otherwise looks like it has hung.
-
-    The livewire-upload-* events are dispatched on the <input> and bubble to this
-    wrapper. Plain wire:model rather than wire:model.live.blur: modifiers mean
-    nothing to a file input, which always uploads on change.
---}}
 <div
     x-data="{ uploading: false, progress: 0 }"
     x-on:livewire-upload-start="uploading = true; progress = 0"

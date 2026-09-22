@@ -4,28 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Support;
 
-/**
- * The property bag each component persists, mirroring its updated() method
- * exactly as it behaves today.
- *
- * The divergences below are load-bearing, not accidents to be tidied up here:
- *
- *  - Key ORDER differs. Blog writes title before description; Recipe and
- *    Product after. json_encode preserves insertion order, so today's stored
- *    JSON differs cosmetically between them.
- *  - Eatery uses different key NAMES for the same concepts (name/info/location
- *    rather than title/description/meta_description).
- *  - TitleWithText stores its heading under "title"; Title and Subtitle store
- *    theirs under "content".
- *
- * Encoding them in one file is half the documentation of the current system.
- */
 final class ComponentData
 {
-    /**
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     public static function blog(array $overrides = []): array
     {
         return [
@@ -39,10 +19,6 @@ final class ComponentData
         ];
     }
 
-    /**
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     public static function recipe(array $overrides = []): array
     {
         return [
@@ -56,10 +32,6 @@ final class ComponentData
         ];
     }
 
-    /**
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     public static function product(array $overrides = []): array
     {
         return [
@@ -74,10 +46,6 @@ final class ComponentData
         ];
     }
 
-    /**
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     public static function eatery(array $overrides = []): array
     {
         return [
@@ -94,10 +62,6 @@ final class ComponentData
         ];
     }
 
-    /**
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     public static function title(array $overrides = []): array
     {
         return [
@@ -107,10 +71,6 @@ final class ComponentData
         ];
     }
 
-    /**
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     public static function subtitle(array $overrides = []): array
     {
         return [
@@ -120,10 +80,6 @@ final class ComponentData
         ];
     }
 
-    /**
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     public static function titleWithText(array $overrides = []): array
     {
         return [
@@ -134,10 +90,6 @@ final class ComponentData
         ];
     }
 
-    /**
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     public static function text(array $overrides = []): array
     {
         return [
@@ -146,10 +98,6 @@ final class ComponentData
         ];
     }
 
-    /**
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     public static function textWithButton(array $overrides = []): array
     {
         return [
@@ -160,10 +108,6 @@ final class ComponentData
         ];
     }
 
-    /**
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     public static function button(array $overrides = []): array
     {
         return [
@@ -173,10 +117,6 @@ final class ComponentData
         ];
     }
 
-    /**
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     public static function image(array $overrides = []): array
     {
         return [
@@ -186,10 +126,6 @@ final class ComponentData
         ];
     }
 
-    /**
-     * @param array<string, mixed> $overrides
-     * @return array<string, mixed>
-     */
     public static function imageWithButton(array $overrides = []): array
     {
         return [

@@ -18,7 +18,6 @@ class Product extends SearchableApiComponent
         return 'products';
     }
 
-    /** Products are not paginated, so results sit under "data", not "data.data". */
     protected function searchResultsPath(): string
     {
         return 'data';
@@ -39,7 +38,6 @@ class Product extends SearchableApiComponent
         return ['price' => $result->extra['price']];
     }
 
-    /** A product shows its price where the others show a publish date. */
     protected function meta(ApiResult $result): string
     {
         return $result->extra['price'];

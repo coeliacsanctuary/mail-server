@@ -15,13 +15,6 @@ use Tests\Support\Concerns\ReadsStructuredHtml;
 use Tests\Support\NewsletterBuilder;
 use Tests\TestCase;
 
-/**
- * The server half of drag-and-drop. Livewire's wire:sort reports the block's
- * index AFTER the drop, so remove-then-insert-at-position is the right
- * semantic in both directions.
- *
- * The client half has no PHP coverage and needs a browser — see the plan.
- */
 class ReorderBlockTest extends TestCase
 {
     use ReadsStructuredHtml;
@@ -65,7 +58,6 @@ class ReorderBlockTest extends TestCase
         $this->assertSame([0, 1, 2], array_keys($this->blocks($contentItem)));
     }
 
-    /** reorderBlock is a public Livewire method, so the position is hostile input. */
     #[DataProvider('outOfRangeProvider')]
     public function test_an_out_of_range_position_does_nothing(int $position): void
     {
@@ -86,12 +78,6 @@ class ReorderBlockTest extends TestCase
         ];
     }
 
-    /**
-     * Every other test here uses the builder's tidy "block-N" ids. Real blocks
-     * get a uuid from Str::uuid(), and the drag-and-drop bug that shipped was
-     * about how that id survives the trip through a Blade attribute — so
-     * exercise the real shape end to end.
-     */
     public function test_it_reorders_blocks_created_through_the_editor(): void
     {
         $contentItem = NewsletterBuilder::make()->create();
@@ -107,7 +93,6 @@ class ReorderBlockTest extends TestCase
         $this->assertSame([$second, $first], $this->blockIds($contentItem));
     }
 
-    /** The exact failure that shipped: a quoted id must not be treated as valid. */
     public function test_a_quoted_id_is_not_silently_accepted(): void
     {
         $contentItem = $this->threeBlocks();
@@ -145,7 +130,6 @@ class ReorderBlockTest extends TestCase
         );
     }
 
-    /** Consistent with moveBlock: the preview pane stays stale until save. */
     public function test_reordering_does_not_refresh_the_preview(): void
     {
         $contentItem = $this->threeBlocks();
@@ -160,18 +144,6 @@ class ReorderBlockTest extends TestCase
         $this->assertSame($compiledOnMount, $this->mjml->timesCompiled());
     }
 
-    /**
-     * The guard for the nested-Livewire hazard.
-     *
-     * Each block holds a child Livewire component, and Blog fetches from the
-     * API in mount(). Reordering must not re-mount them, or a drag would fire
-     * one request per API-backed block. Livewire's SupportNestingComponents
-     * hijacks the mount for any previously-seen wire:key and returns a stub —
-     * and the keys here are derived from block id, not position.
-     *
-     * If someone ever "tidies" those keys into something position-based, this
-     * goes from 3 to 6 and names the problem.
-     */
     public function test_reordering_does_not_remount_the_api_backed_components(): void
     {
         $this->fakeCoeliacApi();
@@ -200,20 +172,12 @@ class ReorderBlockTest extends TestCase
         $this->assertStringContainsString('wire:sort.ghost="reorderBlock"', $html);
         $this->assertStringContainsString('wire:sort:handle', $html);
 
-        // One sortable item per block, each carrying its BARE id.
-        //
-        // The attribute is used verbatim as a string, never evaluated as
-        // JavaScript, so it must not be quoted — wrapping it in @js() made the
-        // quotes part of the id and every drop failed with "No block ['<uuid>']".
         $this->assertSame(3, mb_substr_count($html, 'wire:sort:item='));
         foreach (['block-1', 'block-2', 'block-3'] as $id) {
             $this->assertStringContainsString("wire:sort:item=\"{$id}\"", $html);
         }
         $this->assertStringNotContainsString('wire:sort:item="\'', $html);
 
-        // Whether "Add Block" sits OUTSIDE the sort container is a structural
-        // property that a flat string can't prove — it's on the browser
-        // checklist. All this asserts is that it still renders.
         $this->assertStringContainsString('Add Block', $html);
     }
 }

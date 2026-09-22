@@ -15,15 +15,6 @@ use Tests\Support\ComponentData;
 use Tests\Support\Concerns\ReadsStructuredHtml;
 use Tests\TestCase;
 
-/**
- * A missing or malformed document now decodes to "no blocks" in one place
- * (BlockCollection::fromJson), so every mutation reports the same thing: the
- * block you asked for is not there.
- *
- * Before the typed objects, moveBlock/deleteBlock/addComponent/saveComponent
- * each reached straight for $data['blocks'] and raised a PHP warning that
- * Laravel promoted to an ErrorException, with a message that varied by input.
- */
 class CorruptStructuredHtmlTest extends TestCase
 {
     use ReadsStructuredHtml;
@@ -100,15 +91,6 @@ class CorruptStructuredHtmlTest extends TestCase
         ];
     }
 
-    /**
-     * The two sides of the editor disagree about unknown component names.
-     *
-     * editor/rendered.blade.php guards with View::exists() and skips them (see
-     * NewsletterCompilerTest), but editable/block.blade.php interpolates the
-     * name straight into <livewire:is> with no guard - so a stored name that no
-     * longer resolves takes the whole editor page down, with no way to recover
-     * through the UI.
-     */
     public function test_an_unknown_component_name_breaks_the_editor(): void
     {
         $contentItem = $this->contentItemWith(json_encode([

@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Support\Concerns;
 
-/**
- * Blade emits ragged whitespace around @if/@foreach, so every MJML assertion
- * goes through one shared normaliser. Without it, re-indenting a view breaks
- * every golden string in the suite.
- */
 trait AssertsMjml
 {
     protected function normaliseMjml(string $mjml): string

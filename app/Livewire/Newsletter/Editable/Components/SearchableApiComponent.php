@@ -10,13 +10,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
-/**
- * Shared behaviour for the components that search coeliacsanctuary.co.uk and
- * pin one result into a newsletter column.
- *
- * Subclasses express their differences as methods rather than a config array,
- * so a missing one is a compile error rather than a request to the API root.
- */
 abstract class SearchableApiComponent extends NewsletterComponent
 {
     public ?int $selectedId = null;
@@ -30,20 +23,10 @@ abstract class SearchableApiComponent extends NewsletterComponent
     /** @var Collection<int, ApiResult> */
     public Collection $results;
 
-    /** The API path, used for both search and single fetch ("api/blogs"). */
     abstract protected function endpoint(): string;
 
-    /** Plural noun for the search placeholder and empty state ("blogs"). */
     abstract protected function label(): string;
 
-    /**
-     * The name shown above the column, matching the label every other component
-     * renders.
-     *
-     * Derived rather than abstract: the three subclasses are named after exactly
-     * what they are, so a stub per subclass would only repeat the class name.
-     * Override if that stops being true.
-     */
     protected function heading(): string
     {
         return Str::headline(class_basename(static::class));
@@ -64,10 +47,6 @@ abstract class SearchableApiComponent extends NewsletterComponent
         }
     }
 
-    /**
-     * Searching deliberately does not persist anything - it would overwrite the
-     * saved block with whatever is half-typed in the search box.
-     */
     public function updatedSearch(): void
     {
         $this->results = Http::coeliac()
@@ -112,31 +91,23 @@ abstract class SearchableApiComponent extends NewsletterComponent
         ]);
     }
 
-    /** Dot path to the results array inside the search response. */
     protected function searchResultsPath(): string
     {
         return 'data.data';
     }
 
-    /** The line shown under the title of the selected item. */
     protected function meta(ApiResult $result): string
     {
         return $result->created_at;
     }
 
-    /**
-     * Extra keys persisted alongside the standard set.
-     *
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     protected function extraProperties(ApiResult $result): array
     {
         return [];
     }
 
     /**
-     * Non-standard fields lifted off the API payload into ApiResult::$extra.
-     *
      * @param  array<string, mixed>  $payload
      * @return array<string, mixed>
      */
@@ -152,13 +123,7 @@ abstract class SearchableApiComponent extends NewsletterComponent
         );
     }
 
-    /**
-     * Mapped field by field rather than spread into the constructor. The old
-     * `new ApiResult(...$response)` meant any field added to the API upstream
-     * became a fatal "Unknown named parameter".
-     *
-     * @param array<string, mixed> $payload
-     */
+    /** @param array<string, mixed> $payload */
     protected function toApiResult(array $payload): ApiResult
     {
         return new ApiResult(
@@ -173,7 +138,6 @@ abstract class SearchableApiComponent extends NewsletterComponent
         );
     }
 
-    /** A single column has room for the long description; two or three do not. */
     protected function defaultDescription(ApiResult $result): string
     {
         return $this->block === 'single'
